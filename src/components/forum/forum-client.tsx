@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Loader2, Send, MessageCircle, ChevronsLeft, ChevronsRight, MessageSquare, Lock } from 'lucide-react';
+import { Loader2, Send, MessageCircle, ChevronsLeft, ChevronsRight, MessageSquare, Lock, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -212,7 +212,12 @@ export default function ForumClient() {
                                             <div className="flex-grow">
                                                 <div className='flex items-center gap-2'>
                                                     <p className="font-semibold text-sm">{reply.authorName}</p>
-                                                    {reply.isAdminReply && <Badge variant="secondary">Official</Badge>}
+                                                    {reply.isAdminReply && (
+                                                        <Badge variant="secondary" className="gap-1 pl-2 pr-2.5">
+                                                            <CheckCircle2 className="h-3.5 w-3.5 text-blue-500" />
+                                                            Official
+                                                        </Badge>
+                                                    )}
                                                 </div>
                                                 <p className="text-foreground/80">{reply.reply}</p>
                                             </div>

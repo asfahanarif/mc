@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Trash2, Pencil, Save, X, MessageSquare, Lock, MessageCircle, Send, Loader2 } from 'lucide-react';
+import { Trash2, Pencil, Save, X, MessageSquare, Lock, MessageCircle, Send, Loader2, CheckCircle2 } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { cn } from '@/lib/utils';
@@ -271,7 +271,12 @@ export default function ForumManager() {
                         <div className='flex justify-between items-center'>
                              <div className='flex items-center gap-2'>
                                 <p className="font-semibold text-sm">{reply.authorName}</p>
-                                {reply.isAdminReply && <Badge variant="secondary">Official</Badge>}
+                                {reply.isAdminReply && (
+                                    <Badge variant="secondary" className="gap-1 pl-2 pr-2.5">
+                                        <CheckCircle2 className="h-3.5 w-3.5 text-blue-500" />
+                                        Official
+                                    </Badge>
+                                )}
                              </div>
                              <div className="flex items-center">
                                 <EditContentDialog 
