@@ -1,6 +1,8 @@
+"use client";
 
-
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { MainNav } from "./main-nav";
 import { MobileNav } from "./mobile-nav";
 import { Logo } from "../shared/logo";
@@ -52,13 +54,38 @@ const NavBar = () => (
 
 
 export default function Header() {
+  const [show, setShow] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const controlNavbar = () => {
+      if (typeof window !== 'undefined') {
+        if (window.scrollY > lastScrollY && window.scrollY > 200) { // if scroll down hide the navbar
+          setShow(false);
+        } else { // if scroll up show the navbar
+          setShow(true);
+        }
+        // remember current page location to use in the next move
+        setLastScrollY(window.scrollY);
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', controlNavbar);
+
+      // cleanup function
+      return () => {
+        window.removeEventListener('scroll', controlNavbar);
+      };
+    }
+  }, [lastScrollY]);
+
   return (
-    <header className="w-full border-b">
+    <header className={cn("w-full border-b sticky top-0 z-50 transition-transform duration-300", !show && "-translate-y-full")}>
       <TopHeader />
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm">
+      <div className="bg-background/95 backdrop-blur-sm">
         <NavBar />
       </div>
     </header>
   );
 }
-
