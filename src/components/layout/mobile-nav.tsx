@@ -35,10 +35,8 @@ export function MobileNav() {
                     onClick={() => setIsOpen(false)}
                     className={cn(
                         "text-lg font-medium relative py-2 px-4 rounded-full",
-                        link.label === 'Donate' 
-                          ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                          : "text-foreground/70 hover:text-primary",
-                        pathname === link.href && link.label !== 'Donate' && "text-primary"
+                        "text-foreground/70 hover:text-primary",
+                        pathname === link.href && "text-primary"
                     )}
                     >
                     {link.label}

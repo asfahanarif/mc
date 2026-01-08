@@ -9,7 +9,6 @@ export const navLinks = [
   { href: "/forum", label: "Forum" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
-  { href: "/donate", label: "Donate" },
 ];
 
 export const testimonials: Testimonial[] = [

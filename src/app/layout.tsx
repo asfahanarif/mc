@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { ScrollToTop } from "@/components/shared/scroll-to-top";
+import { FloatingDonateButton } from "@/components/shared/floating-donate-button";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default function RootLayout({
           <Footer />
           <Toaster />
           <ScrollToTop />
+          <FloatingDonateButton />
         </ThemeProvider>
       </body>
     </html>
