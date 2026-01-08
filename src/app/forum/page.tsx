@@ -111,7 +111,7 @@ function ReplyForm({ post, userPost, onReplied }: { post: ForumPost & {id: strin
 export default function ForumPage() {
     const forumImage = placeholderImages.find(p => p.id === 'forum-bg');
     const firestore = useFirestore();
-    const forumQuery = useMemoFirebase(() => query(collection(firestore, 'forum_posts'), where("secret", "!=", null), orderBy('timestamp', 'desc')), [firestore]);
+    const forumQuery = useMemoFirebase(() => query(collection(firestore, 'forum_posts'), where("secret", "!=", null), orderBy('secret'), orderBy('timestamp', 'desc')), [firestore]);
     const { data: forumPosts, isLoading } = useCollection<ForumPost>(forumQuery);
     const { toast } = useToast();
     
@@ -141,10 +141,8 @@ export default function ForumPage() {
 
     const getUserPost = (postId: string) => userPosts.find(p => p.id === postId);
 
-    const visiblePosts = forumPosts?.filter(post => post.secret !== null);
-    
-    const totalPages = visiblePosts ? Math.ceil(visiblePosts.length / POSTS_PER_PAGE) : 0;
-    const paginatedPosts = visiblePosts?.slice(
+    const totalPages = forumPosts ? Math.ceil(forumPosts.length / POSTS_PER_PAGE) : 0;
+    const paginatedPosts = forumPosts?.slice(
         (currentPage - 1) * POSTS_PER_PAGE,
         currentPage * POSTS_PER_PAGE
     );
