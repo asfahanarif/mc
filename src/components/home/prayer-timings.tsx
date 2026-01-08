@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Search, Clock, LocateFixed, Loader2 } from 'lucide-react';
+import { Search, LocateFixed, Loader2, Sunrise, Sun, Sunset, Moon, Star } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -16,7 +16,13 @@ import {
 } from "@/components/ui/select";
 import { countries } from '@/lib/countries';
 
-const prayerNames = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+const prayerDetails = [
+  { name: "Fajr", icon: <Sunrise className="h-6 w-6 text-accent" /> },
+  { name: "Dhuhr", icon: <Sun className="h-6 w-6 text-accent" /> },
+  { name: "Asr", icon: <Sun className="h-6 w-6 text-accent" /> },
+  { name: "Maghrib", icon: <Sunset className="h-6 w-6 text-accent" /> },
+  { name: "Isha", icon: <Moon className="h-6 w-6 text-accent" /> },
+];
 
 type PrayerTimes = {
   [key: string]: string;
@@ -30,7 +36,7 @@ export function PrayerTimings() {
   const [error, setError] = useState<string | null>(null);
   const [locationName, setLocationName] = useState('');
 
-  const fetchPrayerTimes = async () => {
+  const fetchPrayerTimes = async (method = 3) => {
     if (!city || !country) {
       setError('Please select a country and enter a city.');
       return;
@@ -41,7 +47,7 @@ export function PrayerTimings() {
     setPrayerTimes(null);
     try {
       const countryName = countries.find(c => c.iso3 === country)?.name || country;
-      const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${countryName}&method=3&school=1`);
+      const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${countryName}&method=${method}&school=1`);
       if (!response.ok) {
         throw new Error('City not found or API error. Please check the spelling and country.');
       }
@@ -116,7 +122,7 @@ export function PrayerTimings() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchPrayerTimes();
+    fetchPrayerTimes(3); // Muslim World League
   }
 
   return (
@@ -161,13 +167,12 @@ export function PrayerTimings() {
 
       {isLoading ? (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {prayerNames.map((name) => (
-            <Card key={name}>
-              <CardHeader>
-                <CardTitle className="text-lg font-medium text-center">{name}</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <Skeleton className="h-8 w-20 mx-auto" />
+          {prayerDetails.map((prayer) => (
+            <Card key={prayer.name}>
+              <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <Skeleton className="h-5 w-16" />
+                <Skeleton className="h-8 w-20" />
               </CardContent>
             </Card>
           ))}
@@ -178,16 +183,14 @@ export function PrayerTimings() {
             <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : prayerTimes ? (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {prayerNames.map((name) => (
-            <Card key={name} className="text-center shadow-md hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-xl font-headline text-primary">{name}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-foreground flex items-center justify-center gap-2">
-                    <Clock className="h-6 w-6 text-accent" />
-                    {prayerTimes[name]}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          {prayerDetails.map((prayer) => (
+            <Card key={prayer.name} className="text-center shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
+              <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
+                {prayer.icon}
+                <p className="text-lg font-headline text-primary">{prayer.name}</p>
+                <p className="text-2xl font-bold text-foreground">
+                    {prayerTimes[prayer.name]}
                 </p>
               </CardContent>
             </Card>
