@@ -38,6 +38,7 @@ export const ForumPostSchema = z.object({
   answer: z.string().nullable(),
   timestamp: z.any(), // Firestore server timestamp
   isAnswered: z.boolean(),
+  secret: z.string().optional(),
 });
 
 export type ForumPost = z.infer<typeof ForumPostSchema>;

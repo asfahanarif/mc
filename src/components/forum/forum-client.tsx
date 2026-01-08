@@ -11,6 +11,9 @@ import { useToast } from '@/hooks/use-toast';
 import { addDocumentNonBlocking, useFirestore } from '@/firebase';
 import { collection, serverTimestamp } from 'firebase/firestore';
 
+// Helper to generate a simple random token
+const generateSecret = () => Math.random().toString(36).substring(2);
+
 export default function ForumClient({ allQuestions }: { allQuestions: any[] }) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -22,23 +25,40 @@ export default function ForumClient({ allQuestions }: { allQuestions: any[] }) {
     const formData = new FormData(e.target as HTMLFormElement);
     const question = formData.get('question') as string;
     const authorName = formData.get('authorName') as string || 'Anonymous';
+    const secret = generateSecret();
 
-
-    startTransition(() => {
+    startTransition(async () => {
       const postsCollection = collection(firestore, 'forum_posts');
-      addDocumentNonBlocking(postsCollection, {
-        authorName,
-        question,
-        answer: null,
-        isAnswered: false,
-        timestamp: serverTimestamp(),
-      });
-      
-      toast({
-        title: 'Question Submitted!',
-        description: 'Your question has been sent to the admin team for review.',
-      });
-      (e.target as HTMLFormElement).reset();
+      try {
+        const docRef = await addDocumentNonBlocking(postsCollection, {
+          authorName,
+          question,
+          answer: null,
+          isAnswered: false,
+          timestamp: serverTimestamp(),
+          secret,
+        });
+
+        if (docRef) {
+          // Store the post ID and secret in local storage
+          const userPosts = JSON.parse(localStorage.getItem('user_forum_posts') || '[]');
+          userPosts.push({ id: docRef.id, secret });
+          localStorage.setItem('user_forum_posts', JSON.stringify(userPosts));
+        }
+        
+        toast({
+          title: 'Question Submitted!',
+          description: 'Your question has been sent to the admin team for review.',
+        });
+        (e.target as HTMLFormElement).reset();
+
+      } catch (error) {
+         toast({
+          title: 'Error',
+          description: 'Could not submit your question. Please try again.',
+          variant: 'destructive',
+        });
+      }
     });
   };
 
