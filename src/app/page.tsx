@@ -56,10 +56,10 @@ export default function Home() {
           <div className="flex flex-col items-center space-y-6">
             <Logo />
             <div className="space-y-4">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-headline font-bold tracking-tight text-primary">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-headline font-bold tracking-tight text-primary/80">
                 Welcome to Muslimahs Club
               </h1>
-              <p className="max-w-[700px] text-2xl font-headline font-bold tracking-tighter sm:text-4xl text-primary/80">
+              <p className="max-w-[700px] text-2xl font-headline font-bold tracking-tighter sm:text-3xl text-primary">
                 Empowering Muslimahs Through Qur'an &amp; Sunnah!
               </p>
               <p className="max-w-[700px] mx-auto text-foreground/70 md:text-lg">
