@@ -55,6 +55,9 @@ export default function Home() {
           <div className="flex flex-col items-center space-y-6">
             <Logo />
             <div className="space-y-2">
+              <h2 className="text-2xl font-headline font-bold tracking-tight sm:text-3xl text-primary/80">
+                Welcome to Muslimahs Club
+              </h2>
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl text-primary">
                 Empowering Muslimahs Through Qur'an &amp; Sunnah!
               </h1>

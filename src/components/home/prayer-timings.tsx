@@ -25,37 +25,43 @@ export function PrayerTimings() {
   const fetchPrayerTimes = async (url: string) => {
       setIsLoading(true);
       setError(null);
+      setPrayerTimes(null);
       try {
         const response = await fetch(url);
         if (!response.ok) {
-          throw new Error('City not found or API error.');
+          throw new Error('City not found or API error. Please check the spelling.');
         }
         const data = await response.json();
         if (data.code === 200) {
           setPrayerTimes(data.data.timings);
-          if (data.data.meta.timezone) {
-            setLocationName(data.data.meta.timezone.split('/')[1].replace(/_/g, ' '));
-          }
+          const meta = data.data.meta;
+          const location = meta.timezone.split('/')[1]?.replace(/_/g, ' ') || 'your location';
+          setLocationName(location);
         } else {
-          throw new Error(data.data || 'Could not fetch prayer times.');
+          throw new Error(data.data || 'Could not fetch prayer times. Please try a different city.');
         }
       } catch (err: any) {
         setError(err.message);
         setPrayerTimes(null);
+        setLocationName('');
       } finally {
         setIsLoading(false);
       }
   }
 
   useEffect(() => {
+    // Initial fetch for default city
     if (city) {
       fetchPrayerTimes(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=&method=2`);
     }
-  }, [city]);
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setCity(inputCity);
+    if(inputCity && inputCity.trim() !== '') {
+      setCity(inputCity);
+      fetchPrayerTimes(`https://api.aladhan.com/v1/timingsByCity?city=${inputCity}&country=&method=2`);
+    }
   }
 
   const handleGPS = () => {
@@ -66,6 +72,7 @@ export function PrayerTimings() {
           const { latitude, longitude } = position.coords;
           fetchPrayerTimes(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2`);
           setInputCity('');
+          setCity('');
         },
         (err) => {
           setError("Could not get location. Please enable location services or search manually.");
@@ -87,7 +94,7 @@ export function PrayerTimings() {
                     type="text"
                     value={inputCity}
                     onChange={(e) => setInputCity(e.target.value)}
-                    placeholder="Enter city name..."
+                    placeholder="Enter any city worldwide..."
                     className="flex-grow"
                 />
                 <Button type="submit" variant="outline" size="icon" aria-label="Search">
