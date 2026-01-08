@@ -213,12 +213,9 @@ export default function ForumClient() {
                                                 <div className='flex items-center gap-2'>
                                                     <p className="font-semibold text-sm">{reply.authorName}</p>
                                                     {reply.isAdminReply && (
-                                                        <div className="flex items-center gap-1">
-                                                            <span className="text-xs font-semibold text-blue-500">Admin</span>
-                                                            <Badge variant="secondary" className="p-1 h-fit leading-none">
-                                                                <CheckCircle2 className="h-3 w-3 text-blue-500" />
-                                                            </Badge>
-                                                        </div>
+                                                        <Badge variant="secondary" className="p-1 h-fit leading-none bg-transparent hover:bg-transparent">
+                                                            <CheckCircle2 className="h-4 w-4 text-blue-500" />
+                                                        </Badge>
                                                     )}
                                                 </div>
                                                 <p className="text-foreground/80">{reply.reply}</p>
