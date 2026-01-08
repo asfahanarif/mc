@@ -1,4 +1,3 @@
-
 'use client';
 import { useState, useTransition, Fragment } from 'react';
 import { useCollection, useFirestore, useMemoFirebase, addDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
@@ -9,10 +8,11 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Loader2, Send, MessageCircle, ChevronsLeft, ChevronsRight, MessageSquare } from 'lucide-react';
+import { Loader2, Send, MessageCircle, ChevronsLeft, ChevronsRight, MessageSquare, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -44,6 +44,7 @@ function PostQuestionForm({ onNewPost }: { onNewPost: () => void }) {
           question,
           replies: [] as ForumReply[],
           timestamp: serverTimestamp(),
+          isClosed: false,
         });
         
         toast({
@@ -115,6 +116,7 @@ function ReplyForm({ postId, onReplied }: { postId: string, onReplied: () => voi
                 authorName,
                 reply,
                 timestamp: new Date(),
+                isAdminReply: false,
             };
             updateDocumentNonBlocking(postRef, {
                 replies: arrayUnion(newReply)
@@ -156,11 +158,8 @@ function ReplyForm({ postId, onReplied }: { postId: string, onReplied: () => voi
 export default function ForumClient() {
     const firestore = useFirestore();
     const forumQuery = useMemoFirebase(() => query(collection(firestore, 'forum_posts'), orderBy('timestamp', 'desc')), [firestore]);
-    const { data: forumPosts, isLoading, error } = useCollection<ForumPost>(forumQuery);
-    const [_, setForceRender] = useState(0);
+    const { data: forumPosts, isLoading, error, refetch } = useCollection<ForumPost>(forumQuery);
     const [currentPage, setCurrentPage] = useState(1);
-
-    const forceUpdate = () => setForceRender(c => c + 1);
 
     const totalPages = forumPosts ? Math.ceil(forumPosts.length / POSTS_PER_PAGE) : 0;
     const paginatedPosts = forumPosts?.slice(
@@ -170,7 +169,7 @@ export default function ForumClient() {
 
     return (
         <>
-            <PostQuestionForm onNewPost={forceUpdate} />
+            <PostQuestionForm onNewPost={refetch} />
 
             <div className="space-y-8 mt-12">
                 {isLoading && [...Array(3)].map((_,i) => <Skeleton key={i} className="h-60 w-full" />)}
@@ -178,7 +177,7 @@ export default function ForumClient() {
                 {error && <p className="text-destructive text-center">Could not load forum posts. Please try again later.</p>}
 
                 {paginatedPosts?.map((post) => (
-                    <Card key={post.id} className="shadow-md">
+                    <Card key={post.id} className={cn("shadow-md", post.isClosed && "bg-muted/20")}>
                         <CardHeader>
                             <div className="flex gap-4 items-start">
                                 <Avatar>
@@ -190,6 +189,12 @@ export default function ForumClient() {
                                         {post.timestamp?.toDate().toLocaleDateString()}
                                     </p>
                                 </div>
+                                {post.isClosed && (
+                                    <Badge variant="destructive" className="gap-1">
+                                        <Lock className="h-3 w-3" />
+                                        Closed
+                                    </Badge>
+                                )}
                             </div>
                             <p className="text-foreground/90 pt-4 text-base">{post.question}</p>
                         </CardHeader>
@@ -205,14 +210,23 @@ export default function ForumClient() {
                                                 </AvatarFallback>
                                             </Avatar>
                                             <div className="flex-grow">
-                                                <p className="font-semibold text-sm">{reply.authorName}</p>
+                                                <div className='flex items-center gap-2'>
+                                                    <p className="font-semibold text-sm">{reply.authorName}</p>
+                                                    {reply.isAdminReply && <Badge variant="secondary">Admin</Badge>}
+                                                </div>
                                                 <p className="text-foreground/80">{reply.reply}</p>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                             )}
-                            <ReplyForm postId={post.id} onReplied={forceUpdate} />
+                            {post.isClosed ? (
+                                <div className="mt-6 text-center text-sm text-muted-foreground p-4 bg-muted/30 rounded-md">
+                                    This thread has been closed by an administrator. No new replies can be added.
+                                </div>
+                            ) : (
+                                <ReplyForm postId={post.id} onReplied={refetch} />
+                            )}
                         </CardContent>
                     </Card>
                 ))}

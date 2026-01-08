@@ -36,6 +36,7 @@ export const ForumReplySchema = z.object({
   authorName: z.string(),
   reply: z.string(),
   timestamp: z.any(),
+  isAdminReply: z.boolean().optional(),
 });
 
 export const ForumPostSchema = z.object({
@@ -43,6 +44,7 @@ export const ForumPostSchema = z.object({
   question: z.string(),
   replies: z.array(ForumReplySchema),
   timestamp: z.any(), // Firestore server timestamp
+  isClosed: z.boolean().optional(),
 });
 
 export type ForumReply = z.infer<typeof ForumReplySchema>;

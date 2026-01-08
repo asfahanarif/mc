@@ -8,7 +8,8 @@
  * generally public to read, but all write operations (create, update, delete)
  * are restricted to authenticated administrators.
  * The forum is open: anyone can read, create posts, and add replies.
- * Only administrators can modify or delete forum content.
+ * Only administrators can modify or delete forum content, close threads,
+ * or post replies as an admin.
  *
  * Data Structure:
  * The data is organized into several flat, top-level collections:
@@ -54,16 +55,38 @@ service cloud.firestore {
       return post.authorName is string && post.authorName.size() > 0 &&
              post.question is string && post.question.size() > 0 &&
              post.replies is list && post.replies.size() == 0 &&
-             post.timestamp == request.time;
+             post.timestamp == request.time &&
+             post.isClosed == false;
     }
 
     /**
-     * Validates an incoming reply being added to the replies array.
+     * Validates an incoming public reply being added to the replies array.
+     * Ensures the thread is not closed and the reply is not an admin reply.
      */
-    function isValidNewReply() {
-        // Ensure we are only adding one reply at a time.
-        return request.resource.data.replies.size() == resource.data.replies.size() + 1;
+    function isValidNewPublicReply() {
+        let newReply = request.resource.data.replies[request.resource.data.replies.size() - 1];
+        return request.resource.data.replies.size() == resource.data.replies.size() + 1 &&
+               resource.data.isClosed != true &&
+               newReply.isAdminReply == false;
     }
+    
+    /**
+     * Checks if an admin is performing a valid update.
+     * Admins can:
+     * - Change the question text.
+     * - Close or re-open a thread.
+     * - Add or remove replies.
+     * - Post admin-badged replies.
+     */
+    function isValidAdminUpdate() {
+      // Allows admins to modify any field except for the original author/timestamp
+      let post = request.resource.data;
+      let existingPost = resource.data;
+      return isAdmin() &&
+             post.authorName == existingPost.authorName &&
+             post.timestamp == existingPost.timestamp;
+    }
+
 
     /**
      * Validates the schema of a reply object.
@@ -72,7 +95,8 @@ service cloud.firestore {
       return reply.id is string &&
              reply.authorName is string &&
              reply.reply is string &&
-             reply.timestamp is timestamp;
+             reply.timestamp is timestamp &&
+             reply.isAdminReply is bool;
     }
 
     // ----------------------------------------------------------------------
@@ -85,7 +109,7 @@ service cloud.firestore {
      * @path /events/{eventId}
      */
     match /events/{eventId} {
-      allow read: if true;
+      allow read, list: if true;
       allow write: if isAdmin();
     }
 
@@ -95,7 +119,7 @@ service cloud.firestore {
      * @path /testimonials/{testimonialId}
      */
     match /testimonials/{testimonialId} {
-      allow read: if true;
+      allow read, list: if true;
       allow write: if isAdmin();
     }
 
@@ -105,20 +129,20 @@ service cloud.firestore {
      * @path /team_members/{teamMemberId}
      */
     match /team_members/{teamMemberId} {
-      allow read: if true;
+      allow read, list: if true;
       allow write: if isAdmin();
     }
 
     /**
      * @description Controls access to forum posts.
-     * Anyone can read or create a post. Anyone can add a reply.
-     * Admins can update any part of the post, or delete it entirely.
+     * Anyone can read or create a post. Anyone can add a public reply to an open thread.
+     * Admins can update any part of the post, delete it, close/open it, and add admin replies.
      * @path /forum_posts/{forumPostId}
      */
     match /forum_posts/{forumPostId} {
-      allow read: if true;
+      allow read, list: if true;
       allow create: if isValidNewForumPost();
-      allow update: if isValidNewReply() || isAdmin();
+      allow update: if isValidNewPublicReply() || isValidAdminUpdate();
       allow delete: if isAdmin();
     }
 

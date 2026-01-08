@@ -139,6 +139,10 @@
           "type": "string",
           "description": "Timestamp of when the question was posted.",
           "format": "date-time"
+        },
+        "isClosed": {
+            "type": "boolean",
+            "description": "Indicates if the forum thread is closed for new replies."
         }
       },
       "required": [
@@ -170,6 +174,10 @@
           "type": "string",
           "description": "Timestamp of when the reply was posted.",
           "format": "date-time"
+        },
+        "isAdminReply": {
+            "type": "boolean",
+            "description": "Indicates if the reply was made by an administrator."
         }
       },
       "required": [

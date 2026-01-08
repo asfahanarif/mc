@@ -1,15 +1,14 @@
-
 'use client';
 import { useState } from 'react';
-import { useCollection, updateDocumentNonBlocking, deleteDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
+import { useCollection, updateDocumentNonBlocking, deleteDocumentNonBlocking, useFirestore, useMemoFirebase, addDocumentNonBlocking } from '@/firebase';
 import { collection, doc, arrayUnion, serverTimestamp, arrayRemove, query, orderBy } from 'firebase/firestore';
 import type { ForumPost, ForumReply } from '@/lib/schemas';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Trash2, Pencil, Save, X, MessageSquare } from 'lucide-react';
+import { Trash2, Pencil, Save, X, MessageSquare, Lock, MessageCircle, Send, Loader2 } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { cn } from '@/lib/utils';
@@ -22,7 +21,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-
+import { Badge } from '@/components/ui/badge';
+import { v4 as uuidv4 } from 'uuid';
+import { getAnswerSuggestion, type GetAnswerSuggestionInput } from '@/ai/flows/admin-assisted-q-and-a';
 
 type ForumPostWithId = ForumPost & { id: string };
 
@@ -68,10 +69,98 @@ function EditContentDialog({
 }
 
 
+function AdminReplyForm({ postId, question, onReplied }: { postId: string, question: string, onReplied: () => void }) {
+    const { toast } = useToast();
+    const [isPending, setIsPending] = useState(false);
+    const [isGettingSuggestion, setIsGettingSuggestion] = useState(false);
+    const [replyText, setReplyText] = useState('');
+    const firestore = useFirestore();
+
+    const handleGetSuggestion = async () => {
+        setIsGettingSuggestion(true);
+        try {
+            const input: GetAnswerSuggestionInput = { question };
+            const result = await getAnswerSuggestion(input);
+            setReplyText(result.suggestedAnswer);
+        } catch (error) {
+            console.error('Error getting AI suggestion:', error);
+            toast({ title: 'Error', description: 'Could not get an AI suggestion.', variant: 'destructive' });
+        } finally {
+            setIsGettingSuggestion(false);
+        }
+    }
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        
+        if (!replyText.trim()) {
+            toast({ title: 'Please provide a reply.', variant: 'destructive' });
+            return;
+        }
+
+        setIsPending(true);
+
+        const postRef = doc(firestore, 'forum_posts', postId);
+        const newReply: ForumReply = {
+            id: uuidv4(),
+            authorName: 'Admin',
+            reply: replyText,
+            timestamp: new Date(),
+            isAdminReply: true,
+        };
+
+        updateDocumentNonBlocking(postRef, {
+            replies: arrayUnion(newReply)
+        });
+        
+        toast({ title: 'Reply posted as Admin!' });
+        setReplyText('');
+        onReplied();
+        setIsPending(false);
+    }
+
+    return (
+        <Card className="bg-primary/5 mt-4">
+            <form onSubmit={handleSubmit}>
+                <CardHeader>
+                    <CardTitle className="text-base font-headline flex items-center justify-between">
+                        <span>Reply as Admin</span>
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={handleGetSuggestion}
+                            disabled={isGettingSuggestion}
+                        >
+                            {isGettingSuggestion ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
+                            Get AI Suggestion
+                        </Button>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Textarea 
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Write your official answer..." 
+                        required 
+                        rows={4} />
+                </CardContent>
+                <CardFooter>
+                    <Button type="submit" disabled={isPending}>
+                        {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MessageCircle className="mr-2 h-4 w-4" />}
+                        Submit Reply
+                    </Button>
+                </CardFooter>
+            </form>
+        </Card>
+    )
+}
+
+
 export default function ForumManager() {
   const firestore = useFirestore();
   const forumPostsQuery = useMemoFirebase(() => query(collection(firestore, 'forum_posts'), orderBy('timestamp', 'desc')), [firestore]);
-  const { data: posts, isLoading } = useCollection<ForumPost>(forumPostsQuery);
+  const { data: posts, isLoading, refetch } = useCollection<ForumPost>(forumPostsQuery);
   const { toast } = useToast();
 
   const handleDeletePost = (post: ForumPostWithId) => {
@@ -86,17 +175,16 @@ export default function ForumManager() {
     }
   }
 
-    const handleEditQuestion = (post: ForumPostWithId, newQuestion: string) => {
-        const postRef = doc(firestore, 'forum_posts', post.id);
-        updateDocumentNonBlocking(postRef, { question: newQuestion });
-        toast({ title: "Question updated successfully." });
-    }
+  const handleEditQuestion = (post: ForumPostWithId, newQuestion: string) => {
+      const postRef = doc(firestore, 'forum_posts', post.id);
+      updateDocumentNonBlocking(postRef, { question: newQuestion });
+      toast({ title: "Question updated successfully." });
+  }
 
   const handleEditReply = (post: ForumPostWithId, originalReply: ForumReply, newReplyText: string) => {
     const postRef = doc(firestore, 'forum_posts', post.id);
     const updatedReply = { ...originalReply, reply: newReplyText };
     
-    // Atomically remove the old reply and add the updated one
     updateDocumentNonBlocking(postRef, {
         replies: arrayRemove(originalReply)
     }).then(() => {
@@ -121,6 +209,16 @@ export default function ForumManager() {
      }
   }
 
+  const handleToggleCloseThread = (post: ForumPostWithId) => {
+    const postRef = doc(firestore, 'forum_posts', post.id);
+    const newStatus = !post.isClosed;
+    updateDocumentNonBlocking(postRef, { isClosed: newStatus });
+    toast({
+      title: newStatus ? 'Thread Closed' : 'Thread Re-opened',
+      description: newStatus ? 'Users can no longer reply to this thread.' : 'Users can now reply to this thread again.',
+    });
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -131,14 +229,21 @@ export default function ForumManager() {
         {isLoading && [...Array(3)].map((_, i) => <Skeleton key={i} className="h-48 w-full" />)}
         
         {posts?.map((post) => (
-          <Card key={post.id} className="overflow-hidden">
+          <Card key={post.id} className={cn("overflow-hidden", post.isClosed && "bg-muted/40 border-dashed")}>
             <CardHeader className='bg-muted/30'>
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm text-muted-foreground">From: {post.authorName}</p>
+                  <div className='flex items-center gap-2'>
+                    <p className="text-sm text-muted-foreground">From: {post.authorName}</p>
+                    {post.isClosed && <Badge variant="destructive"><Lock className="h-3 w-3 mr-1"/>Closed</Badge>}
+                  </div>
                   <CardTitle className="text-lg mt-1">{post.question}</CardTitle>
                 </div>
                 <div className="flex items-center flex-shrink-0">
+                    <Button variant="outline" size="sm" className='mr-2' onClick={() => handleToggleCloseThread(post)}>
+                        <Lock className='h-4 w-4 mr-2' />
+                        {post.isClosed ? 'Re-open' : 'Close'} Thread
+                    </Button>
                     <EditContentDialog 
                         title="Edit Question"
                         description="Modify the original question text below."
@@ -164,7 +269,10 @@ export default function ForumManager() {
                       </Avatar>
                       <div className="flex-grow p-3 rounded-lg bg-secondary/50">
                         <div className='flex justify-between items-center'>
-                             <p className="font-semibold text-sm">{reply.authorName}</p>
+                             <div className='flex items-center gap-2'>
+                                <p className="font-semibold text-sm">{reply.authorName}</p>
+                                {reply.isAdminReply && <Badge variant="secondary">Admin</Badge>}
+                             </div>
                              <div className="flex items-center">
                                 <EditContentDialog 
                                     title="Edit Reply"
@@ -185,6 +293,7 @@ export default function ForumManager() {
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-4">No replies yet.</p>
               )}
+               {!post.isClosed && <AdminReplyForm postId={post.id} question={post.question} onReplied={() => refetch()} />}
             </CardContent>
           </Card>
         ))}
