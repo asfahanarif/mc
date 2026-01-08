@@ -2,7 +2,7 @@
 'use client';
 import { useState } from 'react';
 import { useCollection, updateDocumentNonBlocking, deleteDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, doc, arrayUnion, serverTimestamp, arrayRemove, query, orderBy, arrayRemove, arrayUnion } from 'firebase/firestore';
+import { collection, doc, arrayUnion, serverTimestamp, arrayRemove, query, orderBy } from 'firebase/firestore';
 import type { ForumPost, ForumReply } from '@/lib/schemas';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
