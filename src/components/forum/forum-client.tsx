@@ -2,14 +2,14 @@
 'use client';
 import { useState, useTransition, Fragment } from 'react';
 import { useCollection, useFirestore, useMemoFirebase, addDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
-import { collection, doc, serverTimestamp, arrayUnion, query, orderBy, where } from 'firebase/firestore';
+import { collection, doc, serverTimestamp, arrayUnion, query, orderBy } from 'firebase/firestore';
 import type { ForumPost, ForumReply } from '@/lib/schemas';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Loader2, Send, MessageCircle, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Loader2, Send, MessageCircle, ChevronsLeft, ChevronsRight, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
