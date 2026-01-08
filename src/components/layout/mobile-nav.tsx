@@ -9,6 +9,7 @@ import { Menu } from "lucide-react";
 import { navLinks } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "../shared/theme-toggle";
+import { Logo } from "../shared/logo";
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,7 +26,7 @@ export function MobileNav() {
       <SheetContent side="right">
         <div className="flex flex-col h-full">
             <Link href="/" className="mb-8" onClick={() => setIsOpen(false)}>
-                <span className="font-bold font-headline text-2xl">Muslimahs Club</span>
+                <Logo className="!h-16 !w-auto" />
             </Link>
             <nav className="flex flex-col gap-4 flex-grow">
             {navLinks.map((link) => (

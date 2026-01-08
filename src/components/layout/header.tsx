@@ -4,6 +4,7 @@ import { MainNav } from "./main-nav";
 import { MobileNav } from "./mobile-nav";
 import { Instagram, Youtube } from "lucide-react";
 import { WhatsAppIcon } from "../icons/whatsapp";
+import { Logo } from "../shared/logo";
 
 const TopBar = () => (
   <div className="bg-black text-white h-10 flex items-center">
@@ -34,8 +35,8 @@ export default function Header() {
       <TopBar />
       <div className="container flex h-20 items-center justify-center">
         <div className="w-full md:w-[80%] lg:w-[70%] bg-background/80 backdrop-blur-sm rounded-full border shadow-sm px-6 flex items-center justify-between">
-           <Link href="/" className="flex items-center space-x-2">
-                <span className="font-bold font-headline text-lg">Muslimahs Club</span>
+           <Link href="/" className="flex items-center">
+                <Logo className="!h-12 !w-auto" />
             </Link>
           <div className="hidden md:block">
             <MainNav />
