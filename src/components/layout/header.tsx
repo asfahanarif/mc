@@ -9,7 +9,7 @@ import { Logo } from "../shared/logo";
 import { Button } from "../ui/button";
 
 const TopBar = () => (
-  <div className="hidden md:flex bg-black text-white h-10 items-center">
+  <div className="bg-black text-white h-10 items-center hidden md:flex">
     <div className="container flex justify-between items-center">
       <div className="flex items-center gap-4">
         <p className="text-sm font-medium">Join Sister Community!</p>
