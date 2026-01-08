@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { useDialog } from "@/components/providers/dialog-provider";
 import { Heart } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 declare global {
   interface Window {
@@ -58,22 +59,28 @@ export function DonationDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px] mx-4">
-        <DialogHeader>
-          <DialogTitle className="font-headline text-3xl text-primary text-center">
-            Support Our Mission
-          </DialogTitle>
-          <DialogDescription className="text-center text-lg">
-            Sadaqah Jariyah (Continuous Charity)
-          </DialogDescription>
-        </DialogHeader>
-        <div className="py-4 text-center">
-          <p className="text-sm text-foreground/80 mb-6">
-            Your contribution helps us continue to provide valuable resources and
-            a supportive community for women worldwide. May Allah reward you.
-          </p>
-          <div id="donate-button-container" className="flex justify-center">
-            <div id="donate-button"></div>
+      <DialogContent className={cn(
+        "sm:max-w-[425px] mx-4 p-4",
+        "bg-transparent border-0 shadow-none",
+        "sm:bg-background sm:border sm:shadow-lg"
+      )}>
+        <div className="bg-background/90 backdrop-blur-lg rounded-lg p-6">
+          <DialogHeader>
+            <DialogTitle className="font-headline text-3xl text-primary text-center">
+              Support Our Mission
+            </DialogTitle>
+            <DialogDescription className="text-center text-lg">
+              Sadaqah Jariyah (Continuous Charity)
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 text-center">
+            <p className="text-sm text-foreground/80 mb-6">
+              Your contribution helps us continue to provide valuable resources and
+              a supportive community for women worldwide. May Allah reward you.
+            </p>
+            <div id="donate-button-container" className="flex justify-center">
+              <div id="donate-button"></div>
+            </div>
           </div>
         </div>
       </DialogContent>
