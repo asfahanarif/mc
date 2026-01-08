@@ -60,7 +60,7 @@ export function DonationDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogContent className={cn(
-        "sm:max-w-[425px] mx-4 p-4",
+        "sm:max-w-[425px]",
         "bg-transparent border-0 shadow-none",
         "sm:bg-background sm:border sm:shadow-lg"
       )}>
