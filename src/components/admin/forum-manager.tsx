@@ -103,7 +103,7 @@ function AdminReplyForm({ postId, question, onReplied }: { postId: string, quest
         const postRef = doc(firestore, 'forum_posts', postId);
         const newReply: ForumReply = {
             id: uuidv4(),
-            authorName: 'Official',
+            authorName: 'Admin',
             reply: replyText,
             timestamp: new Date(),
             isAdminReply: true,
@@ -272,10 +272,12 @@ export default function ForumManager() {
                              <div className='flex items-center gap-2'>
                                 <p className="font-semibold text-sm">{reply.authorName}</p>
                                 {reply.isAdminReply && (
-                                    <Badge variant="secondary" className="gap-1 pl-2 pr-2.5">
-                                        <CheckCircle2 className="h-3.5 w-3.5 text-blue-500" />
-                                        Official
-                                    </Badge>
+                                    <div className="flex items-center gap-1">
+                                        <span className="text-xs font-semibold text-blue-500">Admin</span>
+                                        <Badge variant="secondary" className="p-1 h-fit leading-none">
+                                            <CheckCircle2 className="h-3 w-3 text-blue-500" />
+                                        </Badge>
+                                    </div>
                                 )}
                              </div>
                              <div className="flex items-center">
