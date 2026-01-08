@@ -2,7 +2,7 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import { useEffect } from "react";
-import { submitContactForm from "@/lib/actions";
+import { submitContactForm } from "@/lib/actions";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
