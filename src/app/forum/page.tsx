@@ -126,8 +126,10 @@ export default function ForumPage() {
 
     const handleDelete = (postId: string, secret: string) => {
         if (window.confirm("Are you sure you want to delete this question? This action is permanent.")) {
-            // Firestore rules require the secret to be passed for deletion validation
-            deleteDocumentNonBlocking(doc(firestore, 'forum_posts', postId));
+            // "Delete" by updating the document to remove the secret, which security rules can validate.
+            // This makes the action non-repeatable for the user.
+            const postRef = doc(firestore, 'forum_posts', postId);
+            updateDocumentNonBlocking(postRef, { secret: null });
             removePostFromLocalStorage(postId);
             forceUpdate();
             toast({ title: "Question deleted.", variant: "destructive" });
@@ -135,6 +137,8 @@ export default function ForumPage() {
     }
 
     const getUserPost = (postId: string) => userPosts.find(p => p.id === postId);
+
+    const visiblePosts = forumPosts?.filter(post => post.secret !== null);
 
     return (
         <div>
@@ -149,7 +153,7 @@ export default function ForumPage() {
 
                     <div className="space-y-8">
                         {isLoading && [...Array(3)].map((_,i) => <Skeleton key={i} className="h-40 w-full" />)}
-                        {forumPosts?.map((post) => {
+                        {visiblePosts?.map((post) => {
                             const userPost = getUserPost(post.id);
                             return (
                                 <Card key={post.id} className="shadow-md">

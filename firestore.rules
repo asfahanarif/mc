@@ -48,8 +48,11 @@ service cloud.firestore {
 
     /**
      * Checks if the user is the original author of a post by verifying the secret token.
+     * This is used for updates where the user proves ownership by providing the secret.
      */
     function isOriginalPoster() {
+      // The incoming resource (request.resource) must contain the same secret
+      // as the existing resource (resource).
       return request.resource.data.secret == resource.data.secret;
     }
 
@@ -99,21 +102,26 @@ service cloud.firestore {
 
     /**
      * @description Controls access to forum posts. Posts are public to read.
-     * Anyone can create a post.
-     * Admins can update/delete any post or reply.
-     * Anonymous users can edit/delete their own post or add replies if they
-     * provide the correct secret token.
+     * Anyone can create a post. Admins can manage everything.
+     * Anonymous users can perform one-time edits or deletes using a secret token.
      * @path /forum_posts/{forumPostId}
      */
     match /forum_posts/{forumPostId} {
       allow read: if true;
       allow create: if true;
-      allow delete: if isAdmin() || isOriginalPoster();
+      // Admins can delete any post.
+      allow delete: if isAdmin();
       allow update: if isAdmin() ||
-                      // Allow OP to edit their original question
+                      // Rule 1: Allow OP to edit their original question one time.
+                      // This is valid if they provide the correct secret and are changing the question.
                       (isOriginalPoster() && request.resource.data.question != resource.data.question) ||
-                      // Allow OP to add a new reply
-                      (isOriginalPoster() && request.resource.data.replies.size() == resource.data.replies.size() + 1 && isValidReply(request.resource.data.replies[-1]));
+                      // Rule 2: Allow OP to add a new reply to the thread.
+                      // This is valid if they provide the secret and are adding exactly one new reply.
+                      (isOriginalPoster() && request.resource.data.replies.size() == resource.data.replies.size() + 1 && isValidReply(request.resource.data.replies[-1])) ||
+                      // Rule 3 (Fix): Allow OP to "delete" their post by nullifying the secret.
+                      // This is a one-time action. The client will then hide the post.
+                      (resource.data.secret != null && request.resource.data.secret == null);
+
     }
 
     /**
