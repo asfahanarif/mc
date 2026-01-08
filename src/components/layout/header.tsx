@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { MainNav } from "./main-nav";
@@ -62,33 +61,10 @@ const NavBar = () => (
 );
 
 export default function Header() {
-  const [show, setShow] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-
-  useEffect(() => {
-    const controlNavbar = () => {
-      if (typeof window !== 'undefined') {
-        if (window.scrollY > lastScrollY && window.scrollY > 200) {
-          setShow(false);
-        } else {
-          setShow(true);
-        }
-        setLastScrollY(window.scrollY);
-      }
-    };
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', controlNavbar);
-      return () => {
-        window.removeEventListener('scroll', controlNavbar);
-      };
-    }
-  }, [lastScrollY]);
-
   return (
-    <header className={cn("w-full transition-transform duration-300", !show && "-translate-y-full")}>
+    <header className="w-full sticky top-0 z-50">
       <TopHeader />
-      <div className="sticky top-0 z-50 py-2">
+      <div className="py-2">
         <NavBar />
       </div>
     </header>
