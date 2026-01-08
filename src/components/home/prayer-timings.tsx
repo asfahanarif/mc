@@ -6,7 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Search, Clock, MapPin } from 'lucide-react';
+import { Search, Clock } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { countries } from '@/lib/countries';
 
 const prayerNames = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
@@ -15,96 +23,72 @@ type PrayerTimes = {
 };
 
 export function PrayerTimings() {
-  const [city, setCity] = useState('London');
-  const [inputCity, setInputCity] = useState('London');
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('');
   const [prayerTimes, setPrayerTimes] = useState<PrayerTimes | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [locationName, setLocationName] = useState('London');
+  const [locationName, setLocationName] = useState('');
 
-  const fetchPrayerTimes = async (url: string) => {
-      setIsLoading(true);
-      setError(null);
-      setPrayerTimes(null);
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('City not found or API error. Please check the spelling.');
-        }
-        const data = await response.json();
-        if (data.code === 200) {
-          setPrayerTimes(data.data.timings);
-          const meta = data.data.meta;
-          const location = meta.timezone.split('/')[1]?.replace(/_/g, ' ') || 'your location';
-          setLocationName(location);
-        } else {
-          throw new Error(data.data || 'Could not fetch prayer times. Please try a different city.');
-        }
-      } catch (err: any) {
-        setError(err.message);
-        setPrayerTimes(null);
-        setLocationName('');
-      } finally {
-        setIsLoading(false);
-      }
-  }
-
-  useEffect(() => {
-    // Initial fetch for default city
-    if (city) {
-      fetchPrayerTimes(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=&method=2`);
+  const fetchPrayerTimes = async () => {
+    if (!city || !country) {
+      setError('Please select a country and enter a city.');
+      return;
     }
-  }, []);
+
+    setIsLoading(true);
+    setError(null);
+    setPrayerTimes(null);
+    try {
+      const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2`);
+      if (!response.ok) {
+        throw new Error('City not found or API error. Please check the spelling and country.');
+      }
+      const data = await response.json();
+      if (data.code === 200) {
+        setPrayerTimes(data.data.timings);
+        setLocationName(`${city}, ${countries.find(c => c.iso3 === country)?.name || country}`);
+      } else {
+        throw new Error(data.data || 'Could not fetch prayer times. Please try a different city.');
+      }
+    } catch (err: any) {
+      setError(err.message);
+      setPrayerTimes(null);
+      setLocationName('');
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if(inputCity && inputCity.trim() !== '') {
-      setCity(inputCity);
-      fetchPrayerTimes(`https://api.aladhan.com/v1/timingsByCity?city=${inputCity}&country=&method=2`);
-    }
+    fetchPrayerTimes();
   }
-
-  const handleGPS = () => {
-    if (navigator.geolocation) {
-      setIsLoading(true);
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          fetchPrayerTimes(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2`);
-          setInputCity('');
-          setCity('');
-        },
-        (err) => {
-          setError("Could not get location. Please enable location services or search manually.");
-          setIsLoading(false);
-        }
-      );
-    } else {
-      setError("Geolocation is not supported by this browser.");
-      setIsLoading(false);
-    }
-  };
-
 
   return (
     <div className="max-w-4xl mx-auto">
-        <div className="flex flex-col sm:flex-row gap-2 mb-8 max-w-md mx-auto">
-            <form onSubmit={handleSearch} className="flex-grow flex gap-2">
-                <Input
-                    type="text"
-                    value={inputCity}
-                    onChange={(e) => setInputCity(e.target.value)}
-                    placeholder="Enter any city worldwide..."
-                    className="flex-grow"
-                />
-                <Button type="submit" variant="outline" size="icon" aria-label="Search">
-                    <Search className="h-5 w-5" />
-                </Button>
-            </form>
-            <Button onClick={handleGPS} variant="outline">
-                <MapPin className="mr-2 h-5 w-5" /> Use My Location
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 mb-8 max-w-lg mx-auto">
+          <Select onValueChange={setCountry} value={country}>
+            <SelectTrigger className="sm:w-[250px]">
+              <SelectValue placeholder="Select a Country" />
+            </SelectTrigger>
+            <SelectContent>
+              {countries.map((c) => (
+                <SelectItem key={c.iso3} value={c.iso3}>{c.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+            <Input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="Enter city..."
+                className="flex-grow"
+            />
+            <Button type="submit" variant="outline" size="icon" aria-label="Search">
+                <Search className="h-5 w-5" />
             </Button>
-        </div>
+        </form>
 
         {locationName && !isLoading && !error && (
             <h3 className="text-xl font-semibold text-center mb-4">Prayer Times for {locationName}</h3>
