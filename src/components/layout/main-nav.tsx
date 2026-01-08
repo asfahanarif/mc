@@ -18,7 +18,7 @@ export function MainNav() {
           className={cn(
             "relative py-2 text-sm font-medium rounded-full transition-colors",
             link.label === 'Donate' 
-                ? "bg-primary text-primary-foreground hover:bg-primary/90 px-5" 
+                ? "btn-primary-gradient hover:opacity-90 px-5" 
                 : "hover:text-primary px-3",
             pathname === link.href && link.label !== 'Donate' ? "text-primary" : link.label !== 'Donate' ? "text-foreground/70" : "",
             "after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300",

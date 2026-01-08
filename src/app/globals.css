@@ -10,7 +10,7 @@
     --card-foreground: 20 14% 4%;
     --popover: 40 33% 97%;
     --popover-foreground: 20 14% 4%;
-    --primary: 35 30% 57%;
+    --primary: 35 33% 41%;
     --primary-foreground: 40 33% 98%;
     --secondary: 30 24% 92%;
     --secondary-foreground: 20 14% 4%;
@@ -37,7 +37,7 @@
     --card-foreground: 0 0% 98%;
     --popover: 20 14% 4%;
     --popover-foreground: 0 0% 98%;
-    --primary: 35 30% 57%;
+    --primary: 35 33% 41%;
     --primary-foreground: 40 33% 98%;
     --secondary: 20 5% 10%;
     --secondary-foreground: 0 0% 98%;
@@ -64,5 +64,11 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .btn-primary-gradient {
+    @apply bg-gradient-to-br from-primary to-yellow-600/70 text-primary-foreground;
   }
 }
