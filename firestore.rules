@@ -1,0 +1,159 @@
+/**
+ * Core Philosophy:
+ * This ruleset implements a Role-Based Access Control (RBAC) model. A user's
+ * administrative privileges are determined by the existence of a document
+ * corresponding to their user ID in the '/roles_admin' collection.
+ * Content collections (events, testimonials, team members, forum posts) are
+ * generally public to read, but all write operations (create, update, delete)
+ * are restricted to authenticated administrators. This provides a secure
+_by_default
+ * posture for content management while allowing public read access.
+ *
+ * Data Structure:
+ * The data is organized into several flat, top-level collections:
+ * - /events: Stores event information.
+ * - /testimonials: Stores member testimonials.
+ * - /team_members: Stores profiles of team members.
+ * - /forum_posts: Stores public questions and admin-provided answers.
+ * - /roles_admin: A special collection used solely for authorization. The
+ *   presence of a document /roles_admin/{userId} grants admin rights.
+ * This flat structure simplifies security rules and improves performance by
+ * avoiding complex, nested reads for authorization checks.
+ *
+ * Key Security Decisions:
+ * - Admin Privilege Management: Admin roles are managed by the existence of a
+ *   document in the `/roles_admin/{userId}` collection. This collection is
+ *   intentionally made inaccessible from the client-side to prevent any user
+ *   from granting themselves administrative privileges. Admin roles must be
+ *   assigned out-of-band (e.g., via the Firebase Console or a trusted backend server).
+ * - Public Content: All primary content is world-readable to support the
+ *   application's public-facing website.
+ * - Write Restrictions: All write operations on public content are strictly
+ *   limited to users identified as administrators.
+ * - Forum Posts: Any authenticated user can create a forum post (ask a question),
+ *   but only administrators can update them (to provide an answer) or delete them.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----------------------------------------------------------------------
+    // Helper Functions
+    // ----------------------------------------------------------------------
+
+    /**
+     * Checks if a user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user is an administrator.
+     * Admin status is granted if a document with the user's UID exists in the
+     * '/roles_admin' collection.
+     */
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    /**
+     * Confirms admin status for operations on existing documents.
+     * Ensures that update/delete requests target a document that actually exists.
+     */
+    function isExistingDocAdmin() {
+      return isAdmin() && resource != null;
+    }
+
+    // ----------------------------------------------------------------------
+    // Collection Rules
+    // ----------------------------------------------------------------------
+
+    /**
+     * @description Controls access to event data. Events are public to read but
+     * can only be created, modified, or deleted by an administrator.
+     * @path /events/{eventId}
+     * @allow (get) Any user, signed in or not, can read a single event.
+     * @allow (create) An authenticated admin can create a new event.
+     * @deny (update) A regular authenticated user cannot update an event.
+     * @principle Public read with admin-only writes.
+     */
+    match /events/{eventId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isAdmin();
+      allow update: if isExistingDocAdmin();
+      allow delete: if isExistingDocAdmin();
+    }
+
+    /**
+     * @description Controls access to testimonials. Testimonials are public to
+     * read but can only be created, modified, or deleted by an administrator.
+     * @path /testimonials/{testimonialId}
+     * @allow (list) Any user, signed in or not, can list all testimonials.
+     * @allow (create) An authenticated admin can create a new testimonial.
+     * @deny (delete) A non-admin user cannot delete a testimonial.
+     * @principle Public read with admin-only writes.
+     */
+    match /testimonials/{testimonialId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isAdmin();
+      allow update: if isExistingDocAdmin();
+      allow delete: if isExistingDocAdmin();
+    }
+
+    /**
+     * @description Controls access to team member profiles. These profiles are
+     * public to read but can only be managed by administrators.
+     * @path /team_members/{teamMemberId}
+     * @allow (get) Any user can read a team member's profile.
+     * @allow (create) An administrator can add a new team member.
+     * @deny (update) A regular signed-in user cannot modify a team member's profile.
+     * @principle Public read with admin-only writes.
+     */
+    match /team_members/{teamMemberId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isAdmin();
+      allow update: if isExistingDocAdmin();
+      allow delete: if isExistingDocAdmin();
+    }
+
+    /**
+     * @description Controls access to forum posts. Posts are public to read, can
+     * be created by any authenticated user, but can only be answered (updated)
+     * or deleted by administrators.
+     * @path /forum_posts/{forumPostId}
+     * @allow (create) Any signed-in user can create a new forum post (ask a question).
+     * @allow (update) An administrator can update a post (to add an answer).
+     * @deny (update) A regular user who created the post cannot update it later.
+     * @deny (delete) A regular user cannot delete a forum post.
+     * @principle Allows public creation with admin-only modification.
+     */
+    match /forum_posts/{forumPostId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn();
+      allow update: if isExistingDocAdmin();
+      allow delete: if isExistingDocAdmin();
+    }
+
+    /**
+     * @description Secures the admin role collection. This collection is used for
+     * authorization checks only and should never be modified by any client.
+     * All client-side access is denied to prevent privilege escalation.
+     * @path /roles_admin/{userId}
+     * @allow (get) No client-side reads are permitted to prevent enumeration of admins.
+     * @deny (create) A user cannot make themselves an admin.
+     * @principle Deny all client access for critical authorization data.
+     */
+    match /roles_admin/{userId} {
+      allow get: if false;
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}

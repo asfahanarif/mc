@@ -1,0 +1,240 @@
+{
+  "entities": {
+    "Event": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Event",
+      "type": "object",
+      "description": "Represents an event hosted by Muslimahs Club.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Event entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the event."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the event."
+        },
+        "date": {
+          "type": "string",
+          "description": "Date and time of the event.",
+          "format": "date-time"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location of the event (physical or online)."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the image associated with the event.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "date",
+        "location"
+      ]
+    },
+    "Testimonial": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Testimonial",
+      "type": "object",
+      "description": "Represents a testimonial from a member.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Testimonial entity."
+        },
+        "authorName": {
+          "type": "string",
+          "description": "Name of the author of the testimonial."
+        },
+        "authorTitle": {
+          "type": "string",
+          "description": "Title of the author."
+        },
+        "content": {
+          "type": "string",
+          "description": "The text content of the testimonial."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the author's image.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "authorName",
+        "content"
+      ]
+    },
+    "TeamMember": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "TeamMember",
+      "type": "object",
+      "description": "Represents a member of the Muslimahs Club team.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the TeamMember entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the team member."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title or role of the team member."
+        },
+        "bio": {
+          "type": "string",
+          "description": "Short biography of the team member."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the team member's image.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "title",
+        "bio"
+      ]
+    },
+    "ForumPost": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ForumPost",
+      "type": "object",
+      "description": "Represents a question posted in the open forum.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ForumPost entity."
+        },
+        "authorName": {
+          "type": "string",
+          "description": "Name of the user who posted the question."
+        },
+        "question": {
+          "type": "string",
+          "description": "The question text."
+        },
+        "answer": {
+          "type": "string",
+          "description": "Admin's answer to the question.  Can be null if unanswered."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the question was posted.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "authorName",
+        "question",
+        "timestamp"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/events/{eventId}",
+        "definition": {
+          "entityName": "Event",
+          "schema": {
+            "$ref": "#/backend/entities/Event"
+          },
+          "description": "Stores events.  Administrators can create, read, update, and delete events.",
+          "params": [
+            {
+              "name": "eventId",
+              "description": "The unique identifier for the event."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/testimonials/{testimonialId}",
+        "definition": {
+          "entityName": "Testimonial",
+          "schema": {
+            "$ref": "#/backend/entities/Testimonial"
+          },
+          "description": "Stores testimonials. Administrators can create, read, update, and delete testimonials.",
+          "params": [
+            {
+              "name": "testimonialId",
+              "description": "The unique identifier for the testimonial."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/team_members/{teamMemberId}",
+        "definition": {
+          "entityName": "TeamMember",
+          "schema": {
+            "$ref": "#/backend/entities/TeamMember"
+          },
+          "description": "Stores team members. Administrators can create, read, update, and delete team members.",
+          "params": [
+            {
+              "name": "teamMemberId",
+              "description": "The unique identifier for the team member."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/forum_posts/{forumPostId}",
+        "definition": {
+          "entityName": "ForumPost",
+          "schema": {
+            "$ref": "#/backend/entities/ForumPost"
+          },
+          "description": "Stores forum posts.  Administrators can read, update (answer), and potentially delete forum posts.",
+          "params": [
+            {
+              "name": "forumPostId",
+              "description": "The unique identifier for the forum post."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "RoleAdmin",
+          "schema": {
+            "$ref": "#/backend/entities/RoleAdmin"
+          },
+          "description": "Collection to store admin roles. The existence of a document for a user ID in this collection grants admin privileges.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user who is an admin."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support the Muslimahs Club application, focusing on ease of management for events, testimonials, team members, and forum answers via a backend admin page.  The primary goal is to create a structure that is secure, scalable, and facilitates simple security rules, particularly around who can create, read, update, and delete each type of entity.\n\n**Authorization Independence:**  All data is stored in root-level collections, enabling straightforward security rules based on admin role.  No `get()` calls are required in the rules, making them more efficient and easier to debug.\n\n**Structural Segregation:**  Each content type (events, testimonials, team members, forum posts) is stored in its own dedicated collection. This segregation ensures a homogeneous security posture for each content type, simplifying security rule definition.\n\n**QAPs (Rules are not Filters):** The structure inherently supports secure `list` operations.  Since admin access is managed at the collection level, listing all documents within a collection is secured by verifying the request originates from an admin.\n\nGiven the requirement for an admin page to manage content, a simple role-based access control (RBAC) model is implemented. The presence of a document in the `/roles_admin/{uid}` collection signifies that the user is an administrator."
+  }
+}
