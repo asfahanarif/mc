@@ -119,18 +119,18 @@ service cloud.firestore {
 
     /**
      * @description Controls access to forum posts. Posts are public to read, can
-     * be created by any authenticated user, but can only be answered (updated)
+     * be created by any user, but can only be answered (updated)
      * or deleted by administrators.
      * @path /forum_posts/{forumPostId}
      * @allow (read) Any user, signed in or not, can read forum posts.
-     * @allow (create) Any signed-in user can create a new forum post (ask a question).
+     * @allow (create) Any user can create a new forum post (ask a question).
      * @allow (update) An administrator can update a post (to add an answer).
      * @deny (delete) A regular user cannot delete a forum post.
      * @principle Allows public creation with admin-only modification.
      */
     match /forum_posts/{forumPostId} {
       allow read: if true;
-      allow create: if isSignedIn();
+      allow create: if true;
       allow update: if isExistingDocAdmin();
       allow delete: if isExistingDocAdmin();
     }
