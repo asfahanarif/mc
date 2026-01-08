@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, BookOpen, Calendar, Mail, Mic, Newspaper, Quote, Users, Globe, Video, Presentation } from "lucide-react";
 import { PrayerTimings } from "@/components/home/prayer-timings";
 import { NewsletterForm } from "@/components/home/newsletter-form";
@@ -15,7 +15,7 @@ const counters = [
     { icon: Presentation, label: "Events", value: "150+", screen: "large" },
     { icon: Globe, label: "Countries", value: "10+", screen: "all" },
     { icon: Video, label: "Online Events", value: "140+", screen: "mobile" },
-    { icon: Presentation, label: "Onsite Events", value: "10+", screen: "mobile" },
+    { icon: Presentation, label: "Onsite Events", value: "6", screen: "mobile" },
 ];
 
 const featuredItems = [
@@ -83,9 +83,18 @@ export default function Home() {
 
       <section id="counters" className="w-full bg-secondary/50 py-12 lg:px-20">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-center text-center items-center">
-            {counters.filter(item => item.screen !== 'large').map((item) => (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 justify-center text-center items-center">
+            {counters.filter(item => item.screen !== 'large' && item.screen !== 'all').map((item) => (
               <Card key={item.label} className="bg-background/50 hover:shadow-lg transition-shadow md:hidden">
+                <CardContent className="pt-4 flex flex-col items-center justify-center gap-1">
+                    <item.icon className="h-8 w-8 text-primary" />
+                    <p className="text-2xl font-bold text-foreground">{item.value}</p>
+                    <p className="text-sm text-muted-foreground">{item.label}</p>
+                </CardContent>
+              </Card>
+            ))}
+             {counters.filter(item => item.screen === 'all').map((item) => (
+              <Card key={item.label} className="bg-background/50 hover:shadow-lg transition-shadow">
                 <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
                     <item.icon className="h-10 w-10 text-primary" />
                     <p className="text-3xl font-bold text-foreground">{item.value}</p>
@@ -93,7 +102,7 @@ export default function Home() {
                 </CardContent>
               </Card>
             ))}
-             {counters.filter(item => item.screen !== 'mobile').map((item) => (
+            {counters.filter(item => item.screen === 'large').map((item) => (
               <Card key={item.label} className="bg-background/50 hover:shadow-lg transition-shadow hidden md:block">
                 <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
                     <item.icon className="h-10 w-10 text-primary" />
@@ -128,14 +137,12 @@ export default function Home() {
                     <Image src={item.image.imageUrl} alt={item.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={item.image.imageHint}/>
                   </div>
                 )}
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 font-headline">
+                <CardContent className="pt-6 flex-grow">
+                  <h3 className="flex items-center gap-2 font-headline text-xl font-semibold">
                     <item.icon className="h-6 w-6 text-primary" />
                     {item.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p className="text-foreground/80">{item.description}</p>
+                  </h3>
+                  <p className="text-foreground/80 mt-2">{item.description}</p>
                 </CardContent>
                 <CardContent>
                   <Button asChild variant="link" className="p-0 h-auto">
@@ -175,5 +182,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
