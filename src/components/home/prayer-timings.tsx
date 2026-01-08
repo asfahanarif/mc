@@ -6,9 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Clock } from 'lucide-react';
-import { countries } from '@/lib/countries';
+import { Search, Clock, MapPin } from 'lucide-react';
 
 const prayerNames = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
@@ -16,62 +14,28 @@ type PrayerTimes = {
   [key: string]: string;
 };
 
-type City = {
-  name: string;
-};
-
 export function PrayerTimings() {
-  const [country, setCountry] = useState('United Kingdom');
   const [city, setCity] = useState('London');
-  const [cities, setCities] = useState<string[]>([]);
+  const [inputCity, setInputCity] = useState('London');
   const [prayerTimes, setPrayerTimes] = useState<PrayerTimes | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isCitiesLoading, setIsCitiesLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [locationName, setLocationName] = useState('London');
 
-  useEffect(() => {
-    if (!country) return;
-
-    const fetchCities = async () => {
-        setIsCitiesLoading(true);
-        try {
-            const response = await fetch('https://countriesnow.space/api/v0.1/countries/cities', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ country })
-            });
-            if (!response.ok) throw new Error('Could not fetch cities for the selected country.');
-            const data = await response.json();
-            if (data.error) throw new Error(data.msg);
-            setCities(data.data);
-            if (data.data.length > 0) {
-              const defaultCity = data.data.includes('London') ? 'London' : data.data[0];
-              setCity(defaultCity);
-            }
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setIsCitiesLoading(false);
-        }
-    }
-    fetchCities();
-  }, [country]);
-
-
-  useEffect(() => {
-    if (!city || !country) return;
-
-    const fetchPrayerTimes = async () => {
+  const fetchPrayerTimes = async (url: string) => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2`);
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error('City not found or API error.');
         }
         const data = await response.json();
         if (data.code === 200) {
           setPrayerTimes(data.data.timings);
+          if (data.data.meta.timezone) {
+            setLocationName(data.data.meta.timezone.split('/')[1].replace(/_/g, ' '));
+          }
         } else {
           throw new Error(data.data || 'Could not fetch prayer times.');
         }
@@ -81,33 +45,63 @@ export function PrayerTimings() {
       } finally {
         setIsLoading(false);
       }
-    };
+  }
 
-    fetchPrayerTimes();
-  }, [city, country]);
+  useEffect(() => {
+    if (city) {
+      fetchPrayerTimes(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=&method=2`);
+    }
+  }, [city]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCity(inputCity);
+  }
+
+  const handleGPS = () => {
+    if (navigator.geolocation) {
+      setIsLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          fetchPrayerTimes(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2`);
+          setInputCity('');
+        },
+        (err) => {
+          setError("Could not get location. Please enable location services or search manually.");
+          setIsLoading(false);
+        }
+      );
+    } else {
+      setError("Geolocation is not supported by this browser.");
+      setIsLoading(false);
+    }
+  };
 
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex flex-col sm:flex-row gap-2 mb-8 max-w-md mx-auto">
-        <Select onValueChange={setCountry} value={country}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a country" />
-          </SelectTrigger>
-          <SelectContent>
-            {countries.map(c => <SelectItem key={c.iso3} value={c.name}>{c.name}</SelectItem>)}
-          </SelectContent>
-        </Select>
-         <Select onValueChange={setCity} value={city} disabled={isCitiesLoading || cities.length === 0}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a city" />
-          </SelectTrigger>
-          <SelectContent>
-            {isCitiesLoading ? <SelectItem value="loading" disabled>Loading cities...</SelectItem> :
-             cities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-          </SelectContent>
-        </Select>
-      </div>
+        <div className="flex flex-col sm:flex-row gap-2 mb-8 max-w-md mx-auto">
+            <form onSubmit={handleSearch} className="flex-grow flex gap-2">
+                <Input
+                    type="text"
+                    value={inputCity}
+                    onChange={(e) => setInputCity(e.target.value)}
+                    placeholder="Enter city name..."
+                    className="flex-grow"
+                />
+                <Button type="submit" variant="outline" size="icon" aria-label="Search">
+                    <Search className="h-5 w-5" />
+                </Button>
+            </form>
+            <Button onClick={handleGPS} variant="outline">
+                <MapPin className="mr-2 h-5 w-5" /> Use My Location
+            </Button>
+        </div>
+
+        {locationName && !isLoading && !error && (
+            <h3 className="text-xl font-semibold text-center mb-4">Prayer Times for {locationName}</h3>
+        )}
 
       {isLoading ? (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
