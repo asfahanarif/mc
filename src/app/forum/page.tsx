@@ -124,9 +124,12 @@ export default function ForumPage() {
         if (typeof window !== 'undefined') {
             setUserPosts(JSON.parse(localStorage.getItem('user_forum_posts') || '[]'));
         }
-    }, [forumPosts]);
+    }, []);
 
-    const forceUpdate = () => setForceRender(c => c + 1);
+    const forceUpdate = () => {
+        setUserPosts(JSON.parse(localStorage.getItem('user_forum_posts') || '[]'));
+        setForceRender(c => c + 1)
+    };
 
     const handleDelete = (postId: string, secret: string) => {
         if (window.confirm("Are you sure you want to delete this question? This action is permanent.")) {
@@ -157,7 +160,7 @@ export default function ForumPage() {
             />
             <section className="py-16 md:py-24">
                 <div className="container max-w-4xl space-y-12">
-                    <ForumClient />
+                    <ForumClient onNewPost={forceUpdate} />
 
                     <div className="space-y-8">
                         {isLoading && [...Array(3)].map((_,i) => <Skeleton key={i} className="h-40 w-full" />)}

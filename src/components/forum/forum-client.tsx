@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useTransition } from 'react';
@@ -15,7 +16,7 @@ import type { ForumReply } from '@/lib/schemas';
 // Helper to generate a simple random token
 const generateSecret = () => Math.random().toString(36).substring(2);
 
-export default function ForumClient() {
+export default function ForumClient({ onNewPost }: { onNewPost: () => void }) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const firestore = useFirestore();
@@ -51,6 +52,7 @@ export default function ForumClient() {
           const userPosts = JSON.parse(localStorage.getItem('user_forum_posts') || '[]');
           userPosts.push({ id: docRef.id, secret, authorName });
           localStorage.setItem('user_forum_posts', JSON.stringify(userPosts));
+          onNewPost();
         }
         
         toast({
