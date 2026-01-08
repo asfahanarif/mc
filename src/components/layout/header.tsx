@@ -15,6 +15,26 @@ const socialLinks = [
   { name: "YouTube", href: "https://www.youtube.com/@muslimahsclub", icon: YoutubeIcon },
 ]
 
+const TopHeader = () => (
+    <div className="bg-primary text-primary-foreground">
+        <div className="container flex h-10 items-center justify-between">
+            <p className="text-sm font-medium">
+                Join our global sisterhood!
+            </p>
+            <div className="flex items-center gap-2">
+                {socialLinks.map(link => (
+                <Button asChild key={link.name} variant="ghost" size="icon" className="hover:bg-primary/80">
+                    <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.name} className="group">
+                    <link.icon className="h-5 w-5 text-primary-foreground transition-all" />
+                    </a>
+                </Button>
+                ))}
+                <ThemeToggle />
+            </div>
+        </div>
+    </div>
+)
+
 const NavBar = () => (
   <div className="container flex h-20 items-center justify-between">
       <Link href="/" className="flex items-center">
@@ -22,16 +42,6 @@ const NavBar = () => (
       </Link>
       <div className="hidden md:block">
         <MainNav />
-      </div>
-      <div className="hidden md:flex items-center gap-2">
-        {socialLinks.map(link => (
-          <Button asChild key={link.name} variant="ghost" size="icon">
-            <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.name} className="group">
-              <link.icon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-all" />
-            </a>
-          </Button>
-        ))}
-        <ThemeToggle />
       </div>
       <div className="md:hidden">
         <MobileNav />
@@ -43,6 +53,7 @@ const NavBar = () => (
 export default function Header() {
   return (
     <header className="w-full sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b">
+      <TopHeader />
       <NavBar />
     </header>
   );
