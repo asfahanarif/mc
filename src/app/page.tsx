@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, BookOpen, Calendar, Mail, Mic, Newspaper, Quote, Users, Globe, Video } from "lucide-react";
+import { ArrowRight, BookOpen, Calendar, Mail, Mic, Newspaper, Quote, Users, Globe, Video, Presentation } from "lucide-react";
 import { PrayerTimings } from "@/components/home/prayer-timings";
 import { NewsletterForm } from "@/components/home/newsletter-form";
 import { Logo } from "@/components/shared/logo";
@@ -11,10 +11,11 @@ import { TestimonialsCarousel } from "@/components/home/testimonials";
 import { placeholderImages } from "@/lib/data";
 
 const counters = [
-    { icon: Users, label: "Sisters", value: "1200+" },
-    { icon: Video, label: "Online Events", value: "140+" },
-    { icon: Calendar, label: "Onsite Events", value: "6" },
-    { icon: Globe, label: "Countries", value: "10+" },
+    { icon: Users, label: "Sisters", value: "1200+", className: "" },
+    { icon: Video, label: "Online Events", value: "140+", className: "lg:hidden" },
+    { icon: Calendar, label: "Onsite Events", value: "6", className: "lg:hidden" },
+    { icon: Presentation, label: "Events", value: "150+", className: "hidden lg:flex" },
+    { icon: Globe, label: "Countries", value: "10+", className: "" },
 ];
 
 const featuredItems = [
@@ -84,7 +85,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-12 md:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {counters.map((item) => (
-              <div key={item.label} className="flex flex-col items-center gap-2">
+              <div key={item.label} className={`flex flex-col items-center gap-2 ${item.className}`}>
                 <item.icon className="h-10 w-10 text-primary" />
                 <p className="text-3xl font-bold text-foreground">{item.value}</p>
                 <p className="text-md text-muted-foreground">{item.label}</p>
