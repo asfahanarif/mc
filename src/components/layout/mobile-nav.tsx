@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -23,7 +24,7 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent 
         side="top" 
-        className="bg-transparent backdrop-blur-md border-0 shadow-none p-0"
+        className="bg-transparent backdrop-blur-md border-0 shadow-none p-0 transition-all duration-500 ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
       >
         <div className="mx-6 mt-20 p-4 bg-background/70 border rounded-xl shadow-lg transition-all duration-300 ease-in-out">
             <nav className="flex flex-col gap-4 flex-grow items-center text-center">
@@ -33,10 +34,11 @@ export function MobileNav() {
                     href={link.href}
                     onClick={() => setIsOpen(false)}
                     className={cn(
-                        "text-lg font-medium relative py-1",
-                        pathname === link.href ? "text-primary" : "text-foreground/70 hover:text-primary",
-                        "after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300",
-                        pathname === link.href && "after:w-5"
+                        "text-lg font-medium relative py-2 px-4 rounded-full",
+                        link.label === 'Donate' 
+                          ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                          : "text-foreground/70 hover:text-primary",
+                        pathname === link.href && link.label !== 'Donate' && "text-primary"
                     )}
                     >
                     {link.label}
