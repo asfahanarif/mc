@@ -52,7 +52,7 @@ const featuredItems = [
 export default function Home() {
   return (
     <div className="flex flex-col items-center">
-      <section className="w-full py-20 md:py-32 flex flex-col items-center justify-center text-center bg-background">
+      <section className="w-full pt-10 pb-20 md:pt-16 md:pb-32 flex flex-col items-center justify-center text-center bg-background">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center space-y-6">
             <Logo className="transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
