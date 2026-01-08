@@ -44,7 +44,7 @@ const TopHeader = () => (
 const NavBar = () => (
     <div className="container flex h-16 items-center justify-center">
         <div className="w-full md:w-[80%] lg:w-[70%] bg-background/95 backdrop-blur-sm rounded-full border shadow-sm px-6 flex items-center justify-between h-full">
-            <Link href="/" className="flex items-center text-2xl font-bold font-headline text-primary">
+            <Link href="/" className="flex items-center text-4xl font-display text-primary">
                 MC
             </Link>
             <div className="hidden md:block">
