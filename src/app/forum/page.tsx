@@ -6,8 +6,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { CheckCircle, HelpCircle, Pencil, Trash2, Reply } from "lucide-react";
 import ForumClient from "@/components/forum/forum-client";
-import { useCollection, useFirestore, useMemoFirebase, updateDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase";
-import { collection, doc, serverTimestamp, arrayUnion } from "firebase/firestore";
+import { useCollection, useFirestore, useMemoFirebase, updateDocumentNonBlocking } from "@/firebase";
+import { collection, doc, serverTimestamp, arrayUnion, query, orderBy } from "firebase/firestore";
 import type { ForumPost, ForumReply } from "@/lib/schemas";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -109,7 +109,7 @@ function ReplyForm({ post, userPost, onReplied }: { post: ForumPost & {id: strin
 export default function ForumPage() {
     const forumImage = placeholderImages.find(p => p.id === 'forum-bg');
     const firestore = useFirestore();
-    const forumQuery = useMemoFirebase(() => collection(firestore, 'forum_posts'), [firestore]);
+    const forumQuery = useMemoFirebase(() => query(collection(firestore, 'forum_posts'), orderBy('timestamp', 'desc')), [firestore]);
     const { data: forumPosts, isLoading } = useCollection<ForumPost>(forumQuery);
     const { toast } = useToast();
     
@@ -126,9 +126,9 @@ export default function ForumPage() {
 
     const handleDelete = (postId: string, secret: string) => {
         if (window.confirm("Are you sure you want to delete this question? This action is permanent.")) {
+            const postRef = doc(firestore, 'forum_posts', postId);
             // "Delete" by updating the document to remove the secret, which security rules can validate.
             // This makes the action non-repeatable for the user.
-            const postRef = doc(firestore, 'forum_posts', postId);
             updateDocumentNonBlocking(postRef, { secret: null });
             removePostFromLocalStorage(postId);
             forceUpdate();
