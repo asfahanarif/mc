@@ -72,7 +72,7 @@ export default function Home() {
               <p className="max-w-[700px] text-xl sm:text-2xl font-headline font-bold tracking-tighter text-foreground">
                 Empowering Muslimahs Through Qur'an &amp; Sunnah!
               </p>
-              <p className="max-w-[700px] mx-auto text-foreground/70 md:text-lg">
+              <p className="max-w-[700px] mx-auto text-foreground text-lg md:text-xl">
                 Join a global sisterhood dedicated to learning, sharing, and growing in faith.
               </p>
             </div>
