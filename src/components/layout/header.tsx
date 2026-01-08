@@ -13,12 +13,12 @@ import { WhatsAppIcon } from "../icons/whatsapp";
 import { ThemeToggle } from "../shared/theme-toggle";
 
 const socialLinks = [
-  { name: "Instagram", href: "https://www.instagram.com/muslimahsclub", icon: InstagramIcon },
-  { name: "YouTube", href: "https://www.youtube.com/@muslimahsclub", icon: YoutubeIcon },
+  { name: "Instagram", href: "https://www.instagram.com/muslimahsclub", icon: InstagramIcon, color: "bg-[#E1306C]" },
+  { name: "YouTube", href: "https://www.youtube.com/@muslimahsclub", icon: YoutubeIcon, color: "bg-[#FF0000]" },
 ]
 
 const TopHeader = () => (
-    <div className="bg-black text-white">
+    <div className="bg-black text-white hidden sm:block">
         <div className="container flex h-10 items-center justify-center sm:justify-between">
             <div className="flex items-center gap-4">
                 <p className="text-sm font-medium">
@@ -33,11 +33,9 @@ const TopHeader = () => (
             </div>
             <div className="hidden sm:flex items-center gap-2">
                 {socialLinks.map(link => (
-                    <Button asChild key={link.name} variant="ghost" size="icon" className="hover:bg-white/20">
-                        <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.name} className="group">
-                            <link.icon className="h-5 w-5 text-white transition-all" />
-                        </a>
-                    </Button>
+                    <a key={link.name} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.name} className={cn("flex items-center justify-center h-7 w-7 rounded-full", link.color)}>
+                        <link.icon className="h-4 w-4 text-white" />
+                    </a>
                 ))}
             </div>
         </div>
@@ -54,13 +52,6 @@ const NavBar = () => (
                 <MainNav />
             </div>
             <div className="hidden md:flex items-center gap-1">
-                 {socialLinks.map(link => (
-                    <Button asChild key={link.name} variant="ghost" size="icon">
-                        <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.name}>
-                           <link.icon className="h-5 w-5 text-muted-foreground hover:text-primary transition-all" />
-                        </a>
-                    </Button>
-                ))}
                 <ThemeToggle />
             </div>
             <div className="md:hidden">
