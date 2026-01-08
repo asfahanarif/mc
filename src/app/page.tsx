@@ -11,9 +11,11 @@ import { TestimonialsCarousel } from "@/components/home/testimonials";
 import { placeholderImages } from "@/lib/data";
 
 const counters = [
-    { icon: Users, label: "Sisters", value: "1200+" },
-    { icon: Presentation, label: "Events", value: "150+" },
-    { icon: Globe, label: "Countries", value: "10+" },
+    { icon: Users, label: "Sisters", value: "1200+", screen: "all" },
+    { icon: Presentation, label: "Events", value: "150+", screen: "large" },
+    { icon: Globe, label: "Countries", value: "10+", screen: "all" },
+    { icon: Video, label: "Online Events", value: "140+", screen: "mobile" },
+    { icon: Presentation, label: "Onsite Events", value: "10+", screen: "mobile" },
 ];
 
 const featuredItems = [
@@ -79,16 +81,25 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="w-full bg-secondary/50">
-        <div className="container mx-auto px-4 py-12 md:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 justify-center text-center items-center">
-            {counters.map((item) => (
-              <Card key={item.label} className="bg-background/50 hover:shadow-lg transition-shadow">
-                  <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
-                      <item.icon className="h-10 w-10 text-primary" />
-                      <p className="text-3xl font-bold text-foreground">{item.value}</p>
-                      <p className="text-md text-muted-foreground">{item.label}</p>
-                  </CardContent>
+      <section id="counters" className="w-full bg-secondary/50 py-12 lg:px-20">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-center text-center items-center">
+            {counters.filter(item => item.screen !== 'large').map((item) => (
+              <Card key={item.label} className="bg-background/50 hover:shadow-lg transition-shadow md:hidden">
+                <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
+                    <item.icon className="h-10 w-10 text-primary" />
+                    <p className="text-3xl font-bold text-foreground">{item.value}</p>
+                    <p className="text-md text-muted-foreground">{item.label}</p>
+                </CardContent>
+              </Card>
+            ))}
+             {counters.filter(item => item.screen !== 'mobile').map((item) => (
+              <Card key={item.label} className="bg-background/50 hover:shadow-lg transition-shadow hidden md:block">
+                <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
+                    <item.icon className="h-10 w-10 text-primary" />
+                    <p className="text-3xl font-bold text-foreground">{item.value}</p>
+                    <p className="text-md text-muted-foreground">{item.label}</p>
+                </CardContent>
               </Card>
             ))}
           </div>
@@ -164,3 +175,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
