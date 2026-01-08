@@ -11,13 +11,6 @@ import { TestimonialsCarousel } from "@/components/home/testimonials";
 import { placeholderImages } from "@/lib/data";
 
 const counters = [
-    { icon: Users, label: "Sisters", value: "1200+", className: "flex lg:hidden" },
-    { icon: Video, label: "Online Events", value: "140+", className: "flex lg:hidden" },
-    { icon: Calendar, label: "Onsite Events", value: "6", className: "flex lg:hidden" },
-    { icon: Globe, label: "Countries", value: "10+", className: "flex lg:hidden" },
-];
-
-const desktopCounters = [
     { icon: Users, label: "Sisters", value: "1200+" },
     { icon: Presentation, label: "Events", value: "150+" },
     { icon: Globe, label: "Countries", value: "10+" },
@@ -88,19 +81,8 @@ export default function Home() {
 
       <section className="w-full bg-secondary/50">
         <div className="container mx-auto px-4 py-12 md:px-6">
-          {/* Mobile and Tablet View */}
-          <div className="grid grid-cols-2 justify-center gap-8 text-center items-center md:grid-cols-4 lg:hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 justify-center text-center items-center">
             {counters.map((item) => (
-              <div key={item.label} className={`flex flex-col items-center justify-center gap-2 ${item.className}`}>
-                <item.icon className="h-10 w-10 text-primary" />
-                <p className="text-3xl font-bold text-foreground">{item.value}</p>
-                <p className="text-md text-muted-foreground">{item.label}</p>
-              </div>
-            ))}
-          </div>
-          {/* Desktop View */}
-          <div className="hidden lg:grid lg:grid-cols-3 gap-8 text-center items-center justify-center lg:px-20">
-            {desktopCounters.map((item) => (
               <Card key={item.label} className="bg-background/50 hover:shadow-lg transition-shadow">
                   <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
                       <item.icon className="h-10 w-10 text-primary" />
