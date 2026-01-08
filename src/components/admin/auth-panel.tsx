@@ -6,8 +6,8 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { initiateEmailSignIn } from '@/firebase';
 import { useAuth } from '@/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function AuthPanel() {
   const [email, setEmail] = useState('admin@muslimahs.club');
@@ -16,18 +16,15 @@ export default function AuthPanel() {
   const { toast } = useToast();
 
   const handleSignIn = async () => {
-    // Hardcode the check for the admin password for extra clarity on the client-side
-    if (password !== 'admin@mc') {
-        toast({ title: 'Authentication Error', description: 'Invalid password.', variant: 'destructive' });
-        return;
-    }
-
     try {
-      // Firebase will still verify the credentials on the backend
-      initiateEmailSignIn(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       toast({ title: 'Sign In Successful', description: 'You are now logged in.' });
     } catch (error: any) {
-      toast({ title: 'Authentication Error', description: error.message, variant: 'destructive' });
+      // Use Firebase's error message for more specific feedback
+      const errorMessage = error.code === 'auth/invalid-credential'
+        ? 'Invalid email or password. Please try again.'
+        : error.message;
+      toast({ title: 'Authentication Error', description: errorMessage, variant: 'destructive' });
     }
   };
 
