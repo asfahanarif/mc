@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { FirebaseClientProvider } from "@/firebase";
 import { ThemeProvider } from "@/components/shared/theme-provider";
@@ -11,7 +12,7 @@ import { DialogProvider } from "@/components/providers/dialog-provider";
 
 export const metadata: Metadata = {
   title: "Muslimahs Club",
-  description: "Empowering Muslim Women Through Qur'an & Sunnah!",
+  description: "Empowering Women Through Qur'an & Sunnah!",
 };
 
 export default function RootLayout({
@@ -26,7 +27,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=WindSong:wght@400&display=swap" rel="stylesheet" />
       </head>
-      <body className="font-body antialiased">
+      <body className="font-body antialiased" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
