@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { placeholderImages } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { CheckCircle, HelpCircle, Pencil, Trash2, Reply } from "lucide-react";
+import { CheckCircle, HelpCircle, Pencil, Trash2, Reply, ChevronsLeft, ChevronsRight } from "lucide-react";
 import ForumClient from "@/components/forum/forum-client";
 import { useCollection, useFirestore, useMemoFirebase, updateDocumentNonBlocking } from "@/firebase";
 import { collection, doc, serverTimestamp, arrayUnion, query, orderBy } from "firebase/firestore";
@@ -17,6 +17,8 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 type UserPost = { id: string; secret: string; authorName: string };
+
+const POSTS_PER_PAGE = 10;
 
 function removePostFromLocalStorage(postId: string) {
     const userPosts: UserPost[] = JSON.parse(localStorage.getItem('user_forum_posts') || '[]');
@@ -115,6 +117,7 @@ export default function ForumPage() {
     
     const [userPosts, setUserPosts] = useState<UserPost[]>([]);
     const [_, setForceRender] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -139,6 +142,12 @@ export default function ForumPage() {
     const getUserPost = (postId: string) => userPosts.find(p => p.id === postId);
 
     const visiblePosts = forumPosts?.filter(post => post.secret !== null);
+    
+    const totalPages = visiblePosts ? Math.ceil(visiblePosts.length / POSTS_PER_PAGE) : 0;
+    const paginatedPosts = visiblePosts?.slice(
+        (currentPage - 1) * POSTS_PER_PAGE,
+        currentPage * POSTS_PER_PAGE
+    );
 
     return (
         <div>
@@ -153,7 +162,7 @@ export default function ForumPage() {
 
                     <div className="space-y-8">
                         {isLoading && [...Array(3)].map((_,i) => <Skeleton key={i} className="h-40 w-full" />)}
-                        {visiblePosts?.map((post) => {
+                        {paginatedPosts?.map((post) => {
                             const userPost = getUserPost(post.id);
                             return (
                                 <Card key={post.id} className="shadow-md">
@@ -214,6 +223,18 @@ export default function ForumPage() {
                             )
                         })}
                     </div>
+
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-center space-x-2 mt-12">
+                            <Button variant="outline" size="icon" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                                <ChevronsLeft className="h-4 w-4" />
+                            </Button>
+                            <span className="text-sm">Page {currentPage} of {totalPages}</span>
+                            <Button variant="outline" size="icon" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                                <ChevronsRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </section>
         </div>
