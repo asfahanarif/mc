@@ -40,14 +40,15 @@ export function PrayerTimings() {
     setError(null);
     setPrayerTimes(null);
     try {
-      const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2&school=1`);
+      const countryName = countries.find(c => c.iso3 === country)?.name || country;
+      const response = await fetch(`https://api.alquran.cloud/v1/timingsByCity?city=${city}&country=${countryName}&method=2&school=1`);
       if (!response.ok) {
         throw new Error('City not found or API error. Please check the spelling and country.');
       }
       const data = await response.json();
       if (data.code === 200) {
         setPrayerTimes(data.data.timings);
-        setLocationName(`${city}, ${countries.find(c => c.iso3 === country)?.name || country}`);
+        setLocationName(`${city}, ${countryName}`);
       } else {
         throw new Error(data.data || 'Could not fetch prayer times. Please try a different city.');
       }
@@ -66,7 +67,7 @@ export function PrayerTimings() {
     setPrayerTimes(null);
     try {
       // Fetch prayer times
-      const timingsResponse = await fetch(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2&school=1`);
+      const timingsResponse = await fetch(`https://api.alquran.cloud/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2&school=1`);
       if (!timingsResponse.ok) throw new Error("Could not fetch prayer times for your location.");
       const timingsData = await timingsResponse.json();
       if (timingsData.code !== 200) throw new Error("Could not calculate prayer times for your location.");
