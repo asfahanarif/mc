@@ -1,3 +1,64 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "article",
+      "description": "A woman reading a book in a cozy library.",
+      "imageUrl": "https://images.unsplash.com/photo-1553729784-e91953dec042?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyZWFkaW5nJTIwYm9va3xlbnwwfHx8fDE3Njc4NDM5NjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "reading book"
+    },
+    {
+      "id": "dua",
+      "description": "Hands held up in prayer.",
+      "imageUrl": "https://images.unsplash.com/photo-1583090318293-ebd145b2c63f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxwcmF5aW5nJTIwaGFuZHN8ZW58MHx8fHwxNzY3ODc3MjkwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "praying hands"
+    },
+    {
+      "id": "hadith",
+      "description": "An ancient manuscript with Arabic calligraphy.",
+      "imageUrl": "https://images.unsplash.com/photo-1720700955600-a21cd215d1a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxpc2xhbWljJTIwbWFudXNjcmlwdHxlbnwwfHx8fDE3Njc3ODYwMDJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "islamic manuscript"
+    },
+    {
+      "id": "event",
+      "description": "A conference room with people attending a seminar.",
+      "imageUrl": "https://images.unsplash.com/photo-1591197172062-c718f82aba20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y29tbXVuaXR5JTIwZXZlbnR8ZW58MHx8fHwxNzY3ODExOTEwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "community event"
+    },
+    {
+      "id": "about-team",
+      "description": "A diverse group of professional women posing for a team photo.",
+      "imageUrl": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkaXZlcnNlJTIwdGVhbXxlbnwwfHx8fDE3Njc4MDQ4NTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "diverse team"
+    },
+    {
+      "id": "forum-bg",
+      "description": "An abstract background with Islamic geometric patterns.",
+      "imageUrl": "https://images.unsplash.com/photo-1550537687-c91072c4792d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxpc2xhbWljJTIwcGF0dGVybnxlbnwwfHx8fDE3Njc3ODE5MDh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "islamic pattern"
+    },
+    {
+      "id": "quran-explorer",
+      "description": "The Quran open on a wooden stand.",
+      "imageUrl": "https://images.unsplash.com/photo-1582037527235-675d8dedb142?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8b3BlbiUyMHF1cmFufGVufDB8fHx8MTc2Nzg4NDU3MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "open quran"
+    },
+    {
+      "id": "resources-library",
+      "description": "A vast library with shelves full of books.",
+      "imageUrl": "https://images.unsplash.com/photo-1709053756402-4acab65476e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsaWJyYXJ5JTIwc2hlbHZlc3xlbnwwfHx8fDE3Njc4ODQ1NzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "library shelves"
+    },
+    {
+      "id": "contact-us",
+      "description": "A close-up of a person writing a letter.",
+      "imageUrl": "https://images.unsplash.com/photo-1587135991058-8816b028691f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx3cml0aW5nJTIwbGV0dGVyfGVufDB8fHx8MTc2Nzg4NDU3MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "writing letter"
+    },
+    {
+      "id": "donate-hero",
+      "description": "Hands offering a heart symbol.",
+      "imageUrl": "https://images.unsplash.com/photo-1698047181077-d77608c3f85b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y2hhcml0eSUyMGdpdmluZ3xlbnwwfHx8fDE3Njc4ODQ1NzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "charity giving"
+    }
+  ]
 }

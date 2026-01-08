@@ -1,3 +1,177 @@
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, BookOpen, Calendar, Mail, Mic, Newspaper, Quote } from "lucide-react";
+import { PrayerTimings } from "@/components/home/prayer-timings";
+import { NewsletterForm } from "@/components/home/newsletter-form";
+import { Logo } from "@/components/shared/logo";
+import { TestimonialsCarousel } from "@/components/home/testimonials";
+import { placeholderImages } from "@/lib/data";
+
+const counters = {
+  desktop: [
+    { label: "Sisters", value: "1200+" },
+    { label: "Events", value: "140+" },
+    { label: "Countries", value: "10+" },
+  ],
+  mobile: [
+    { label: "Sisters", value: "1200+" },
+    { label: "Online Events", value: "140+" },
+    { label: "Onsite Events", value: "6" },
+    { label: "Countries", value: "10+" },
+  ],
+};
+
+const featuredItems = [
+  {
+    icon: Newspaper,
+    title: "Featured Articles",
+    description: "Insightful articles on various Islamic topics.",
+    link: "/resources",
+    image: placeholderImages.find(p => p.id === "article")
+  },
+  {
+    icon: BookOpen,
+    title: "Featured Duas",
+    description: "Find supplications for every occasion.",
+    link: "/resources",
+    image: placeholderImages.find(p => p.id === "dua")
+  },
+  {
+    icon: Quote,
+    title: "Featured Hadith",
+    description: "Pearls of wisdom from the Prophet (PBUH).",
+    link: "/resources",
+    image: placeholderImages.find(p => p.id === "hadith")
+  },
+  {
+    icon: Calendar,
+    title: "Featured Events",
+    description: "Join our upcoming online and onsite events.",
+    link: "/events",
+    image: placeholderImages.find(p => p.id === "event")
+  },
+];
+
 export default function Home() {
-  return <></>;
+  return (
+    <div className="flex flex-col items-center">
+      <section className="w-full py-20 md:py-32 flex flex-col items-center justify-center text-center bg-background">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center space-y-6">
+            <Logo />
+            <div className="space-y-2">
+              <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl text-primary">
+                Empowering Muslim Women Through Qur'an &amp; Sunnah!
+              </h1>
+              <p className="max-w-[700px] mx-auto text-foreground/80 md:text-xl">
+                Building knowledge, faith, and sisterhood in one global community.
+              </p>
+            </div>
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                <a href="https://chat.whatsapp.com/ErUV6XUaWyq6xml6k6eKfE" target="_blank" rel="noopener noreferrer">
+                  Join Community
+                </a>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link href="/resources">Explore Resources</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full bg-secondary/50">
+        <div className="container mx-auto px-4 py-12 md:px-6">
+          {/* Desktop Counters */}
+          <div className="hidden md:grid grid-cols-3 gap-8 text-center">
+            {counters.desktop.map((item) => (
+              <div key={item.label}>
+                <p className="text-4xl font-bold text-primary">{item.value}</p>
+                <p className="text-lg text-foreground/80">{item.label}</p>
+              </div>
+            ))}
+          </div>
+          {/* Mobile Counters */}
+          <div className="md:hidden grid grid-cols-2 gap-8 text-center">
+            {counters.mobile.map((item) => (
+              <div key={item.label}>
+                <p className="text-3xl font-bold text-primary">{item.value}</p>
+                <p className="text-md text-foreground/80">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="prayer" className="w-full py-16 md:py-24 bg-background">
+        <div className="container px-4 md:px-6">
+          <div className="text-center space-y-3 mb-12">
+            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">Prayer Timings</h2>
+            <p className="max-w-[600px] mx-auto text-foreground/80 md:text-lg">
+              Get accurate prayer times for your city.
+            </p>
+          </div>
+          <PrayerTimings />
+        </div>
+      </section>
+      
+      <section className="w-full py-16 md:py-24 bg-secondary/50">
+        <div className="container px-4 md:px-6">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {featuredItems.map((item) => (
+              <Card key={item.title} className="group overflow-hidden flex flex-col">
+                {item.image && (
+                  <div className="relative h-48 w-full">
+                    <Image src={item.image.imageUrl} alt={item.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint={item.image.imageHint}/>
+                  </div>
+                )}
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 font-headline">
+                    <item.icon className="h-6 w-6 text-primary" />
+                    {item.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <p className="text-foreground/80">{item.description}</p>
+                </CardContent>
+                <CardContent>
+                  <Button asChild variant="link" className="p-0 h-auto">
+                    <Link href={item.link}>Learn More <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+      
+      <section className="w-full py-16 md:py-24 bg-background">
+        <div className="container px-4 md:px-6">
+          <div className="text-center space-y-3 mb-12">
+            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">What Our Sisters Say</h2>
+          </div>
+          <TestimonialsCarousel />
+        </div>
+      </section>
+
+      <section className="w-full py-16 md:py-24 bg-primary/10">
+        <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">
+          <div className="space-y-3">
+            <h2 className="text-3xl font-headline font-bold tracking-tighter md:text-4xl/tight text-primary">
+              Subscribe to Our Newsletter
+            </h2>
+            <p className="mx-auto max-w-[600px] text-foreground/80 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              Stay updated with our latest news, events, and articles.
+            </p>
+          </div>
+          <div className="mx-auto w-full max-w-sm space-y-2">
+            <NewsletterForm />
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }
