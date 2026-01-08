@@ -47,23 +47,26 @@ service cloud.firestore {
     }
 
     /**
-     * Checks if the user is the original author of a post by verifying the secret token.
-     * This is used for updates where the user proves ownership by providing the secret.
+     * Validates the fields of a new forum post.
      */
-    function isOriginalPoster() {
-      // The incoming resource (request.resource) must contain the same secret
-      // as the existing resource (resource).
-      return request.resource.data.secret == resource.data.secret;
+    function isValidNewPost() {
+      return request.resource.data.authorName is string &&
+             request.resource.data.question is string &&
+             request.resource.data.replies.size() == 0 &&
+             request.resource.data.isAnswered == false &&
+             request.resource.data.timestamp == request.time;
     }
 
     /**
-     * Validates the fields of a new reply.
+     * Validates an admin's reply.
      */
-    function isValidReply(reply) {
-      return reply.authorName is string &&
+    function isValidAdminReply(post) {
+      let reply = request.resource.data.replies[request.resource.data.replies.size() - 1];
+      return request.resource.data.replies.size() == post.replies.size() + 1 &&
+             reply.authorType == 'admin' &&
+             reply.authorName == 'Admin' &&
              reply.reply is string &&
-             reply.timestamp == request.time &&
-             (reply.authorType == 'user' || reply.authorType == 'admin');
+             reply.timestamp == request.time;
     }
 
     // ----------------------------------------------------------------------
@@ -101,27 +104,20 @@ service cloud.firestore {
     }
 
     /**
-     * @description Controls access to forum posts. Posts are public to read.
-     * Anyone can create a post. Admins can manage everything.
-     * Anonymous users can perform one-time edits or deletes using a secret token.
+     * @description Controls access to forum posts.
+     * Anyone can read or create a post.
+     * Admins can read, update (reply to), and delete any post.
      * @path /forum_posts/{forumPostId}
      */
     match /forum_posts/{forumPostId} {
-      allow read: if true;
-      allow create: if true;
-      // Admins can delete any post.
+      // Anyone can read a single post. Admins can list all posts.
+      allow get: if true;
+      allow list: if isAdmin();
+      // Anyone can create a new post, if the data is valid.
+      allow create: if isValidNewPost();
+      // Admins can update posts (to add replies) or delete them.
+      allow update: if isAdmin() && isValidAdminReply(resource.data);
       allow delete: if isAdmin();
-      allow update: if isAdmin() ||
-                      // Rule 1: Allow OP to edit their original question one time.
-                      // This is valid if they provide the correct secret and are changing the question.
-                      (isOriginalPoster() && request.resource.data.question != resource.data.question) ||
-                      // Rule 2: Allow OP to add a new reply to the thread.
-                      // This is valid if they provide the secret and are adding exactly one new reply.
-                      (isOriginalPoster() && request.resource.data.replies.size() == resource.data.replies.size() + 1 && isValidReply(request.resource.data.replies[-1])) ||
-                      // Rule 3 (Fix): Allow OP to "delete" their post by nullifying the secret.
-                      // This is a one-time action. The client will then hide the post.
-                      (resource.data.secret != null && request.resource.data.secret == null && request.resource.data.question == resource.data.question);
-
     }
 
     /**
