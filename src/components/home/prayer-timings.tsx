@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Search, Clock } from 'lucide-react';
+import { Search, Clock, LocateFixed, Loader2 } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -40,7 +40,7 @@ export function PrayerTimings() {
     setError(null);
     setPrayerTimes(null);
     try {
-      const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2&school=0`);
+      const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2&school=1`);
       if (!response.ok) {
         throw new Error('City not found or API error. Please check the spelling and country.');
       }
@@ -60,6 +60,50 @@ export function PrayerTimings() {
     }
   }
 
+  const fetchByCoordinates = (latitude: number, longitude: number) => {
+    setIsLoading(true);
+    setError(null);
+    setPrayerTimes(null);
+    fetch(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2&school=1`)
+      .then(response => {
+        if (!response.ok) throw new Error("Could not fetch data for your location.");
+        return response.json();
+      })
+      .then(data => {
+        if (data.code === 200) {
+          setPrayerTimes(data.data.timings);
+          // The API doesn't return a location name with coordinate search, so we set a generic one.
+          setLocationName("Your Current Location");
+        } else {
+          throw new Error("Could not calculate prayer times for your location.");
+        }
+      })
+      .catch(err => {
+        setError(err.message);
+        setPrayerTimes(null);
+        setLocationName('');
+      })
+      .finally(() => setIsLoading(false));
+  };
+  
+  const handleGeoLocation = () => {
+    if (navigator.geolocation) {
+      setIsLoading(true);
+      setError(null);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          fetchByCoordinates(position.coords.latitude, position.coords.longitude);
+        },
+        (err) => {
+          setError("Could not access your location. Please enable location services in your browser settings.");
+          setIsLoading(false);
+        }
+      );
+    } else {
+      setError("Geolocation is not supported by this browser.");
+    }
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchPrayerTimes();
@@ -67,7 +111,7 @@ export function PrayerTimings() {
 
   return (
     <div className="max-w-4xl mx-auto">
-        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 mb-8 max-w-lg mx-auto">
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 mb-4 max-w-lg mx-auto">
           <Select onValueChange={setCountry} value={country}>
             <SelectTrigger className="sm:w-[250px]">
               <SelectValue placeholder="Select a Country" />
@@ -85,10 +129,21 @@ export function PrayerTimings() {
                 placeholder="Enter city..."
                 className="flex-grow"
             />
-            <Button type="submit" variant="outline" size="icon" aria-label="Search">
+            <Button type="submit" variant="outline" size="icon" aria-label="Search" disabled={isLoading}>
                 <Search className="h-5 w-5" />
             </Button>
         </form>
+         <div className="text-center mb-8">
+            <Button onClick={handleGeoLocation} disabled={isLoading}>
+                {isLoading && !prayerTimes ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <LocateFixed className="mr-2 h-4 w-4" />
+                )}
+                Use My Location
+            </Button>
+        </div>
+
 
         {locationName && !isLoading && !error && (
             <h3 className="text-xl font-semibold text-center mb-4">Prayer Times for {locationName}</h3>
