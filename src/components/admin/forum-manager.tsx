@@ -113,7 +113,7 @@ function AdminReplyForm({ postId, question, onReplied }: { postId: string, quest
             replies: arrayUnion(newReply)
         });
         
-        toast({ title: 'Reply posted as Official!' });
+        toast({ title: 'Reply posted as Admin!' });
         setReplyText('');
         onReplied();
         setIsPending(false);
@@ -124,7 +124,7 @@ function AdminReplyForm({ postId, question, onReplied }: { postId: string, quest
             <form onSubmit={handleSubmit}>
                 <CardHeader>
                     <CardTitle className="text-base font-headline flex items-center justify-between">
-                        <span>Reply as Official</span>
+                        <span>Reply as Admin</span>
                         <Button
                             type="button"
                             size="sm"
