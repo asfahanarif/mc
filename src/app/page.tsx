@@ -69,10 +69,10 @@ export default function Home() {
                 <div className="flex-grow border-t border-primary/20"></div>
               </div>
 
-              <p className="max-w-[700px] text-xl sm:text-2xl font-headline font-bold tracking-tighter text-foreground">
+              <p className="max-w-[700px] text-2xl sm:text-3xl font-headline font-bold tracking-tighter text-foreground">
                 Empowering Muslimahs Through Qur'an &amp; Sunnah!
               </p>
-              <p className="max-w-[700px] mx-auto text-foreground text-lg md:text-xl">
+              <p className="max-w-[700px] mx-auto text-foreground text-base md:text-lg">
                 Join a global sisterhood dedicated to learning, sharing, and growing in faith.
               </p>
             </div>
