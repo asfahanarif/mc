@@ -30,16 +30,19 @@ const TopBar = () => (
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-sm border-b">
-      <div className="container flex h-20 items-center justify-between">
-         <Link href="/" className="flex items-center">
-              <Logo className="!h-16 !w-16" />
+    <header className="sticky top-0 z-50 w-full">
+      <TopBar />
+      <div className="container flex h-20 items-center justify-center">
+        <div className="w-full md:w-[80%] lg:w-[70%] bg-background/80 backdrop-blur-sm rounded-full border shadow-sm px-6 flex items-center justify-between">
+          <Link href="/" className="flex items-center">
+              <Logo className="!h-12 !w-auto" />
           </Link>
-        <div className="hidden md:block">
-          <MainNav />
-        </div>
-        <div className="md:hidden">
-          <MobileNav />
+          <div className="hidden md:block">
+            <MainNav />
+          </div>
+          <div className="md:hidden">
+            <MobileNav />
+          </div>
         </div>
       </div>
     </header>

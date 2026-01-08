@@ -28,9 +28,9 @@ export default function DonatePage() {
                             <p>
                                 By donating, you are helping us build a legacy of knowledge and sisterhood. Your support is invaluable.
                             </p>
-                            <Button asChild size="lg" className="mt-4">
+                            <Button asChild size="lg" className="mt-4 group transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105">
                                 <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer">
-                                    <Heart className="mr-2 h-5 w-5" /> Donate Now via PayPal
+                                    <Heart className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:scale-125 group-hover:fill-red-500 text-red-500" /> Donate Now via PayPal
                                 </a>
                             </Button>
                         </CardContent>
