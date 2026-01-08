@@ -212,7 +212,7 @@ export default function ForumClient() {
                                             <div className="flex-grow">
                                                 <div className='flex items-center gap-2'>
                                                     <p className="font-semibold text-sm">{reply.authorName}</p>
-                                                    {reply.isAdminReply && <Badge variant="secondary">Admin</Badge>}
+                                                    {reply.isAdminReply && <Badge variant="secondary">Official</Badge>}
                                                 </div>
                                                 <p className="text-foreground/80">{reply.reply}</p>
                                             </div>

@@ -103,7 +103,7 @@ function AdminReplyForm({ postId, question, onReplied }: { postId: string, quest
         const postRef = doc(firestore, 'forum_posts', postId);
         const newReply: ForumReply = {
             id: uuidv4(),
-            authorName: 'Admin',
+            authorName: 'Official',
             reply: replyText,
             timestamp: new Date(),
             isAdminReply: true,
@@ -113,7 +113,7 @@ function AdminReplyForm({ postId, question, onReplied }: { postId: string, quest
             replies: arrayUnion(newReply)
         });
         
-        toast({ title: 'Reply posted as Admin!' });
+        toast({ title: 'Reply posted as Official!' });
         setReplyText('');
         onReplied();
         setIsPending(false);
@@ -124,7 +124,7 @@ function AdminReplyForm({ postId, question, onReplied }: { postId: string, quest
             <form onSubmit={handleSubmit}>
                 <CardHeader>
                     <CardTitle className="text-base font-headline flex items-center justify-between">
-                        <span>Reply as Admin</span>
+                        <span>Reply as Official</span>
                         <Button
                             type="button"
                             size="sm"
@@ -271,7 +271,7 @@ export default function ForumManager() {
                         <div className='flex justify-between items-center'>
                              <div className='flex items-center gap-2'>
                                 <p className="font-semibold text-sm">{reply.authorName}</p>
-                                {reply.isAdminReply && <Badge variant="secondary">Admin</Badge>}
+                                {reply.isAdminReply && <Badge variant="secondary">Official</Badge>}
                              </div>
                              <div className="flex items-center">
                                 <EditContentDialog 
