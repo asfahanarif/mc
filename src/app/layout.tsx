@@ -6,6 +6,7 @@ import Footer from "@/components/layout/footer";
 import { ScrollToTop } from "@/components/shared/scroll-to-top";
 import { FloatingDonateButton } from "@/components/shared/floating-donate-button";
 import "./globals.css";
+import { DialogProvider } from "@/components/providers/dialog-provider";
 
 export const metadata: Metadata = {
   title: "Muslimahs Club",
@@ -31,12 +32,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-          <Toaster />
-          <ScrollToTop />
-          <FloatingDonateButton />
+          <DialogProvider>
+            <Header />
+            <main className="min-h-screen">{children}</main>
+            <Footer />
+            <Toaster />
+            <ScrollToTop />
+            <FloatingDonateButton />
+          </DialogProvider>
         </ThemeProvider>
       </body>
     </html>
