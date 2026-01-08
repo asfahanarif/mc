@@ -1,4 +1,5 @@
 
+
 import Link from "next/link";
 import { MainNav } from "./main-nav";
 import { MobileNav } from "./mobile-nav";
@@ -52,9 +53,12 @@ const NavBar = () => (
 
 export default function Header() {
   return (
-    <header className="w-full sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b">
+    <header className="w-full border-b">
       <TopHeader />
-      <NavBar />
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm">
+        <NavBar />
+      </div>
     </header>
   );
 }
+
