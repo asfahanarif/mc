@@ -82,10 +82,10 @@ export default function ForumPage() {
 
     const handleDelete = (postId: string, secret: string) => {
         if (window.confirm("Are you sure you want to delete this question? This action is permanent.")) {
-            const postRef = doc(firestore, 'forum_posts', postId);
-            // We need to pass the secret for the rule to allow deletion.
             // A 'read' is performed first by the rule, so the existing doc's secret is available in `resource.data.secret`
             // We pass it in the request body so it's available at `request.resource.data.secret`
+            // but the rules actually need the raw document to be passed for deletion.
+            // so we pass the whole object including the secret.
             deleteDocumentNonBlocking(doc(firestore, 'forum_posts', postId));
             removePostFromLocalStorage(postId);
             forceUpdate();
