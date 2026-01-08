@@ -18,6 +18,7 @@ import { countries } from '@/lib/countries';
 
 const prayerDetails = [
   { name: "Fajr", icon: <Sunrise className="h-6 w-6 text-accent" /> },
+  { name: "Sunrise", icon: <Sunrise className="h-6 w-6 text-accent" /> },
   { name: "Dhuhr", icon: <Sun className="h-6 w-6 text-accent" /> },
   { name: "Asr", icon: <Sun className="h-6 w-6 text-accent" /> },
   { name: "Maghrib", icon: <Sunset className="h-6 w-6 text-accent" /> },
@@ -166,7 +167,7 @@ export function PrayerTimings() {
         )}
 
       {isLoading ? (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           {prayerDetails.map((prayer) => (
             <Card key={prayer.name}>
               <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
@@ -183,7 +184,7 @@ export function PrayerTimings() {
             <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : prayerTimes ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
           {prayerDetails.map((prayer) => (
             <Card key={prayer.name} className="text-center shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
               <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
