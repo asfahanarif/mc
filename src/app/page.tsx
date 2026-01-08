@@ -57,7 +57,7 @@ export default function Home() {
           <div className="flex flex-col items-center space-y-6">
             <Logo className="transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
             <div className="space-y-4">
-              <h1 className="text-4xl sm:text-5xl md:text-7xl font-headline font-bold tracking-tight text-foreground">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold tracking-tight text-primary">
                 Welcome to Muslimahs Club
               </h1>
 
@@ -69,7 +69,7 @@ export default function Home() {
                 <div className="flex-grow border-t border-primary/20"></div>
               </div>
 
-              <p className="max-w-[700px] text-primary text-3xl sm:text-4xl font-headline font-bold tracking-tighter">
+              <p className="max-w-[700px] text-foreground text-2xl sm:text-3xl font-headline font-bold tracking-tighter">
                 Empowering Women Through Qur'an &amp; Sunnah!
               </p>
               <p className="max-w-[700px] mx-auto text-foreground text-sm md:text-base">
@@ -197,6 +197,8 @@ export default function Home() {
     
 
 
+
+    
 
     
 
