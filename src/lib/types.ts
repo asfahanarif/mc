@@ -3,60 +3,9 @@ export type NavLink = {
     label: string;
 };
 
-export type Testimonial = {
-    id: string;
-    name: string;
-    location: string;
-    comment: string;
-    avatar: string;
-};
-
-export type ForumPost = {
-    id: string;
-    author: string;
-    question: string;
-    answer: string | null;
-    isAnswered: boolean;
-};
-
-export type Article = {
-    id: string;
-    title: string;
-    source: string;
-    category: string;
-    content: string;
-};
-
-export type Dua = {
-    id: string;
-    category: 'Morning' | 'Evening' | 'General';
-    title: string;
-    content: string;
-    translation: string;
-};
-
-export type Hadith = {
-    book: string;
-    number: number;
-    topic: string;
-    text: string;
-};
-
-export type TeamMember = {
-    id: string;
-    name: string;
-    role: string;
-    avatar: string;
-};
-
-export type EventPost = {
-    id: string;
-    title: string;
-    type: 'Online' | 'Onsite';
-    date: string;
-    description: string;
-    image: string;
-};
+// These types are now replaced by Zod schemas in `lib/schemas.ts`
+// Keeping the file for other potential shared types, but the main
+// data-related types should be inferred from schemas.
 
 export type PlaceholderImage = {
   id: string;

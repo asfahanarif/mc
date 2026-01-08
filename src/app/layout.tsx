@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FirebaseClientProvider } from "@/firebase";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/layout/header";
@@ -32,14 +33,18 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <DialogProvider>
-            <Header />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-            <Toaster />
-            <ScrollToTop />
-            <FloatingDonateButton />
-          </DialogProvider>
+          <FirebaseClientProvider>
+            <DialogProvider>
+              <div id="root-container" className="flex flex-col min-h-screen">
+                <Header />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+              </div>
+              <Toaster />
+              <ScrollToTop />
+              <FloatingDonateButton />
+            </DialogProvider>
+          </FirebaseClientProvider>
         </ThemeProvider>
       </body>
     </html>

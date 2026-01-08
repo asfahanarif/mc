@@ -1,13 +1,21 @@
+'use client';
 import Image from "next/image";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { events, placeholderImages } from "@/lib/data";
+import { placeholderImages } from "@/lib/data";
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
+import type { Event } from "@/lib/schemas";
 import { Calendar, Video, MapPin } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function EventsPage() {
     const eventsImage = placeholderImages.find(p => p.id === 'event');
+    const firestore = useFirestore();
+    const eventsQuery = useMemoFirebase(() => collection(firestore, 'events'), [firestore]);
+    const { data: events, isLoading } = useCollection<Event>(eventsQuery);
 
     return (
         <div>
@@ -19,11 +27,28 @@ export default function EventsPage() {
             <section className="py-16 md:py-24">
                 <div className="container">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {events.map((event) => (
+                        {isLoading && [...Array(3)].map((_, i) => (
+                            <Card key={i}>
+                                <Skeleton className="h-56 w-full" />
+                                <CardHeader>
+                                    <Skeleton className="h-6 w-24 mb-2" />
+                                    <Skeleton className="h-7 w-4/5" />
+                                    <Skeleton className="h-5 w-1/2" />
+                                </CardHeader>
+                                <CardContent>
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-full mt-2" />
+                                </CardContent>
+                                <CardFooter>
+                                    <Skeleton className="h-10 w-32" />
+                                </CardFooter>
+                            </Card>
+                        ))}
+                        {events?.map((event) => (
                             <Card key={event.id} className="flex flex-col overflow-hidden group hover:shadow-xl transition-shadow">
                                 <div className="relative h-56 w-full">
                                     <Image
-                                        src={event.image}
+                                        src={event.imageUrl || `https://picsum.photos/seed/${event.id}/600/400`}
                                         alt={event.title}
                                         fill
                                         className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -38,7 +63,7 @@ export default function EventsPage() {
                                     <CardTitle className="font-headline text-xl">{event.title}</CardTitle>
                                     <div className="flex items-center text-muted-foreground text-sm gap-2 pt-1">
                                         <Calendar className="h-4 w-4" />
-                                        <span>{event.date}</span>
+                                        <span>{new Date(event.date).toLocaleString()}</span>
                                     </div>
                                 </CardHeader>
                                 <CardContent className="flex-grow">

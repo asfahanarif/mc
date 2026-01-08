@@ -1,0 +1,69 @@
+'use client';
+import { useFirebase } from '@/firebase';
+import AuthPanel from '@/components/admin/auth-panel';
+import EventManager from '@/components/admin/event-manager';
+import TestimonialManager from '@/components/admin/testimonial-manager';
+import TeamManager from '@/components/admin/team-manager';
+import ForumManager from '@/components/admin/forum-manager';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { LayoutGrid, Calendar, Users, MessageSquareQuote } from 'lucide-react';
+import Link from 'next/link';
+
+function AdminDashboard() {
+  const { user } = useFirebase();
+
+  const sections = [
+    { title: 'Events', href: '/admin/events', icon: Calendar },
+    { title: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote },
+    { title: 'Team Members', href: '/admin/team', icon: Users },
+    { title: 'Forum Q&A', href: '/admin/forum', icon: MessageSquareQuote },
+  ];
+
+  if (!user) {
+    return <AuthPanel />;
+  }
+
+  return (
+    <div>
+      <h1 className="text-3xl font-bold font-headline mb-2">Admin Dashboard</h1>
+      <p className="text-muted-foreground mb-8">
+        Welcome! Here you can manage the content for your website.
+      </p>
+
+       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {sections.map(section => (
+          <Link href={section.href} key={section.href}>
+            <Card className="hover:shadow-lg hover:border-primary transition-all">
+              <CardHeader className="flex-row items-center gap-4">
+                <section.icon className="h-8 w-8 text-primary" />
+                <div>
+                  <CardTitle>{section.title}</CardTitle>
+                </div>
+              </CardHeader>
+            </Card>
+          </Link>
+        ))}
+      </div>
+      
+      <div className="mt-8">
+        <h2 className='text-2xl font-bold font-headline mb-4'>Your Admin UID</h2>
+        <Card>
+            <CardHeader>
+                <CardTitle>User Information</CardTitle>
+                <CardDescription>Your unique ID for admin access.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <p className="text-sm bg-muted p-2 rounded-md font-mono text-muted-foreground break-all">{user.uid}</p>
+            </CardContent>
+        </Card>
+      </div>
+
+    </div>
+  );
+}
+
+export default function AdminPageRouter() {
+  return (
+      <AdminDashboard />
+  )
+}
