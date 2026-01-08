@@ -2,7 +2,7 @@
 import { useFirebase } from '@/firebase';
 import AuthPanel from '@/components/admin/auth-panel';
 import { Card, CardDescription, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { LayoutGrid, Calendar, Users, MessageSquareQuote } from 'lucide-react';
+import { LayoutGrid, Calendar, Users, MessageSquareQuote, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
 function AdminDashboard() {
@@ -12,7 +12,7 @@ function AdminDashboard() {
     { title: 'Events', href: '/admin/events', icon: Calendar },
     { title: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote },
     { title: 'Team Members', href: '/admin/team', icon: Users },
-    { title: 'Forum Q&A', href: '/admin/forum', icon: MessageSquareQuote },
+    { title: 'Forum Q&A', href: '/admin/forum', icon: MessageSquare },
   ];
 
   if (!user) {

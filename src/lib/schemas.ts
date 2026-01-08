@@ -32,7 +32,7 @@ export const TeamMemberSchema = z.object({
 export type TeamMember = z.infer<typeof TeamMemberSchema>;
 
 export const ForumReplySchema = z.object({
-  id: z.string(),
+  id: z.string().optional(), // Made optional as it's assigned later
   authorName: z.string(),
   authorType: z.enum(['user', 'admin']),
   reply: z.string(),

@@ -24,6 +24,7 @@ import {
   LayoutGrid,
   LogOut,
   ChevronLeft,
+  MessageSquare,
 } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { Button } from '@/components/ui/button';
@@ -33,7 +34,7 @@ const menuItems = [
   { href: '/admin/events', label: 'Events', icon: Calendar },
   { href: '/admin/testimonials', label: 'Testimonials', icon: MessageSquareQuote },
   { href: '/admin/team', label: 'Team', icon: Users },
-  { href: '/admin/forum', label: 'Forum', icon: MessageSquareQuote },
+  { href: '/admin/forum', label: 'Forum', icon: MessageSquare },
 ];
 
 export default function AdminLayout({

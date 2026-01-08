@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A flow for assisting admins in answering user questions using an LLM.
@@ -28,13 +29,13 @@ const answerSuggestionPrompt = ai.definePrompt({
   name: 'answerSuggestionPrompt',
   input: {schema: GetAnswerSuggestionInputSchema},
   output: {schema: GetAnswerSuggestionOutputSchema},
-  prompt: `You are an assistant helping admins answer user questions.
+  prompt: `You are an assistant for an Islamic organization helping admins answer user questions. Provide a helpful, concise, and respectful answer based on mainstream Islamic scholarship.
 
-  Please provide a helpful and relevant answer to the following question:
+  Here is the user's question:
 
   Question: {{{question}}}
 
-  Answer:`,
+  Please provide a suggested answer.`,
 });
 
 const getAnswerSuggestionFlow = ai.defineFlow(

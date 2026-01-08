@@ -1,13 +1,14 @@
+
 'use client';
 import { useState } from 'react';
 import { useCollection, updateDocumentNonBlocking, deleteDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, doc, arrayUnion, serverTimestamp, arrayRemove } from 'firebase/firestore';
+import { collection, doc, arrayUnion, serverTimestamp, arrayRemove, query, orderBy } from 'firebase/firestore';
 import type { ForumPost, ForumReply } from '@/lib/schemas';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle, HelpCircle, Send, Trash2, Bot, Loader2, Reply, MessageSquare } from 'lucide-react';
+import { Send, Trash2, Bot, Loader2, MessageSquare } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
 import { getAnswerSuggestion } from '@/ai/flows/admin-assisted-q-and-a';
 import { Avatar, AvatarFallback } from '../ui/avatar';
@@ -37,8 +38,7 @@ function AdminReplyForm({ post, onReplied }: { post: ForumPostWithId, onReplied:
         if (!replyText.trim()) return;
 
         const postRef = doc(firestore, 'forum_posts', post.id);
-        const newReply = {
-            id: doc(collection(firestore, 'dummy')).id, // temporary unique id
+        const newReply: Omit<ForumReply, 'id' | 'timestamp'> = {
             authorName: 'Admin',
             authorType: 'admin',
             reply: replyText,
@@ -81,7 +81,7 @@ function AdminReplyForm({ post, onReplied }: { post: ForumPostWithId, onReplied:
 
 export default function ForumManager() {
   const firestore = useFirestore();
-  const forumPostsQuery = useMemoFirebase(() => collection(firestore, 'forum_posts'), [firestore]);
+  const forumPostsQuery = useMemoFirebase(() => query(collection(firestore, 'forum_posts'), orderBy('timestamp', 'desc')), [firestore]);
   const { data: posts, isLoading } = useCollection<ForumPost>(forumPostsQuery);
   const { toast } = useToast();
   const [_, forceUpdate] = useState(0);
