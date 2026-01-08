@@ -61,15 +61,15 @@ export default function Home() {
                 Welcome to Muslimahs Club
               </h1>
 
-              <div className="flex justify-center items-center gap-4 text-primary/50 my-4">
+              <div className="flex w-full items-center justify-center gap-4 text-primary/50 my-4 max-w-[200px] mx-auto">
                 <div className="flex-grow border-t border-primary/20"></div>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 h-3 w-3">
                   <path d="M12 2L14.09 8.26L20.36 10.34L14.09 12.42L12 18.68L9.91 12.42L3.64 10.34L9.91 8.26L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 <div className="flex-grow border-t border-primary/20"></div>
               </div>
 
-              <p className="max-w-[700px] text-4xl sm:text-3xl font-headline font-bold tracking-tighter text-primary/80">
+              <p className="max-w-[700px] text-3xl sm:text-4xl font-headline font-bold tracking-tighter text-primary/80">
                 Empowering Muslimahs Through Qur'an &amp; Sunnah!
               </p>
               <p className="max-w-[700px] mx-auto text-foreground/70 md:text-lg">
@@ -191,3 +191,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
