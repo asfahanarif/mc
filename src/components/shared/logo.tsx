@@ -3,13 +3,12 @@ import { cn } from "@/lib/utils";
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <div className={cn("relative h-24 w-24 md:h-32 md:w-32 transition-transform duration-300 hover:scale-110", className)}>
+    <div className={cn("relative h-32 w-48 md:h-40 md:w-60 transition-transform duration-300 hover:scale-105", className)}>
       <Image
         src="https://i.ibb.co/5g03Zq7/MC-logo.png"
-        alt="MuslimahSphere Logo"
-        width={128}
-        height={128}
-        className="rounded-full object-cover"
+        alt="Muslimahs Club Logo"
+        layout="fill"
+        className="object-contain"
         priority
       />
     </div>

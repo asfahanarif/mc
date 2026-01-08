@@ -10,7 +10,7 @@ export default function AboutPage() {
     <div>
       <PageHeader
         title="About Us"
-        subtitle="Meet the dedicated team behind MuslimahSphere, committed to empowering our community."
+        subtitle="Meet the dedicated team behind Muslimahs Club, committed to empowering our community."
         image={aboutImage}
       />
       <section className="py-16 md:py-24">

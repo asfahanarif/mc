@@ -7,7 +7,7 @@ import { ScrollToTop } from "@/components/shared/scroll-to-top";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MuslimahSphere",
+  title: "Muslimahs Club",
   description: "Empowering Muslim Women Through Qur'an & Sunnah!",
 };
 

@@ -18,7 +18,7 @@ export default function DonatePage() {
                 <div className="container max-w-2xl">
                     <Card className="text-center shadow-lg">
                         <CardHeader>
-                            <CardTitle className="font-headline text-3xl text-primary">Donate to MuslimahSphere</CardTitle>
+                            <CardTitle className="font-headline text-3xl text-primary">Donate to Muslimahs Club</CardTitle>
                             <CardDescription className="text-lg">Sadaqah Jariyah (Continuous Charity)</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4 text-lg text-foreground/80">

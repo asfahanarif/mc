@@ -16,7 +16,7 @@ export const testimonials: Testimonial[] = [
         id: "1",
         name: "Aisha B.",
         location: "Toronto, Canada",
-        comment: "MuslimahSphere has been a true blessing. The community is so supportive, and the resources have helped me grow so much in my deen. I finally feel like I have a place where I belong.",
+        comment: "Muslimahs Club has been a true blessing. The community is so supportive, and the resources have helped me grow so much in my deen. I finally feel like I have a place where I belong.",
         avatar: "https://picsum.photos/seed/1/40/40"
     },
     {
