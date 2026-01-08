@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { navLinks } from "@/lib/data";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "../shared/theme-toggle";
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +25,7 @@ export function MobileNav() {
         side="top" 
         className="bg-transparent backdrop-blur-md border-0 shadow-none p-0"
       >
-        <div className="mx-6 mt-20 p-4 bg-background/70 border rounded-xl shadow-lg">
+        <div className="mx-6 mt-20 p-4 bg-background/70 border rounded-xl shadow-lg transition-all duration-300 ease-in-out">
             <nav className="flex flex-col gap-4 flex-grow items-center text-center">
                 {navLinks.map((link) => (
                     <Link
@@ -44,9 +43,6 @@ export function MobileNav() {
                     </Link>
                 ))}
             </nav>
-            <div className="mt-6 flex justify-center">
-                <ThemeToggle />
-            </div>
         </div>
       </SheetContent>
     </Sheet>

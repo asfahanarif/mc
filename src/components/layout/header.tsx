@@ -50,11 +50,11 @@ const NavBar = () => (
             <div className="hidden md:block">
                 <MainNav />
             </div>
-            <div className="hidden md:flex items-center gap-1">
+            <div className="flex items-center gap-1">
                 <ThemeToggle />
-            </div>
-            <div className="md:hidden">
-                <MobileNav />
+                <div className="md:hidden">
+                    <MobileNav />
+                </div>
             </div>
         </div>
     </div>
