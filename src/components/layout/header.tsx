@@ -1,10 +1,10 @@
+
 "use client";
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { MainNav } from "./main-nav";
 import { MobileNav } from "./mobile-nav";
-import { Logo } from "../shared/logo";
 import { Button } from "../ui/button";
 import { InstagramIcon } from "../icons/instagram";
 import { YoutubeIcon } from "../icons/youtube";
@@ -44,8 +44,8 @@ const TopHeader = () => (
 const NavBar = () => (
     <div className="container flex h-16 items-center justify-center">
         <div className="w-full md:w-[80%] lg:w-[70%] bg-background/95 backdrop-blur-sm rounded-full border shadow-sm px-6 flex items-center justify-between h-full">
-            <Link href="/" className="flex items-center">
-                <Logo className="!h-12 !w-auto" />
+            <Link href="/" className="flex items-center text-2xl font-bold font-headline text-primary">
+                MC
             </Link>
             <div className="hidden md:block">
                 <MainNav />
