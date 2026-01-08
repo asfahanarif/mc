@@ -7,15 +7,16 @@
  * Content collections (events, testimonials, team members) are
  * generally public to read, but all write operations (create, update, delete)
  * are restricted to authenticated administrators.
- * Forum posts can be created by anyone, but can only be answered by admins.
- * Users can edit/delete their own posts one time via a secret token.
+ * Forum posts can be created by anyone. Users can edit/delete their own
+ * initial post one-time via a secret token. They can also reply to threads
+ * they started if they provide the same secret. Admins can manage all forum content.
  *
  * Data Structure:
  * The data is organized into several flat, top-level collections:
  * - /events: Stores event information.
  * - /testimonials: Stores member testimonials.
  * - /team_members: Stores profiles of team members.
- * - /forum_posts: Stores public questions and admin-provided answers.
+ * - /forum_posts: Stores public questions and their reply threads.
  * - /roles_admin: A special collection used solely for authorization. The
  *   presence of a document /roles_admin/{userId} grants admin rights.
  * This flat structure simplifies security rules and improves performance by
@@ -43,6 +44,23 @@ service cloud.firestore {
      */
     function isAdmin() {
       return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    /**
+     * Checks if the user is the original author of a post by verifying the secret token.
+     */
+    function isOriginalPoster() {
+      return request.resource.data.secret == resource.data.secret;
+    }
+
+    /**
+     * Validates the fields of a new reply.
+     */
+    function isValidReply(reply) {
+      return reply.authorName is string &&
+             reply.reply is string &&
+             reply.timestamp == request.time &&
+             (reply.authorType == 'user' || reply.authorType == 'admin');
     }
 
     // ----------------------------------------------------------------------
@@ -80,15 +98,22 @@ service cloud.firestore {
     }
 
     /**
-     * @description Controls access to forum posts. Posts are public to read,
-     * can be created by any user. Admins can answer/delete any post.
-     * Anonymous users can edit/delete their own post if they provide a secret.
+     * @description Controls access to forum posts. Posts are public to read.
+     * Anyone can create a post.
+     * Admins can update/delete any post or reply.
+     * Anonymous users can edit/delete their own post or add replies if they
+     * provide the correct secret token.
      * @path /forum_posts/{forumPostId}
      */
     match /forum_posts/{forumPostId} {
       allow read: if true;
       allow create: if true;
-      allow update, delete: if isAdmin() || request.resource.data.secret == resource.data.secret;
+      allow delete: if isAdmin() || isOriginalPoster();
+      allow update: if isAdmin() ||
+                      // Allow OP to edit their original question
+                      (isOriginalPoster() && request.resource.data.question != resource.data.question) ||
+                      // Allow OP to add a new reply
+                      (isOriginalPoster() && request.resource.data.replies.size() == resource.data.replies.size() + 1 && isValidReply(request.resource.data.replies[-1]));
     }
 
     /**

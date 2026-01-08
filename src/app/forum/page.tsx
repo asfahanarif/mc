@@ -1,21 +1,22 @@
 'use client';
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { placeholderImages } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { CheckCircle, HelpCircle, Pencil, Trash2 } from "lucide-react";
+import { CheckCircle, HelpCircle, Pencil, Trash2, Reply } from "lucide-react";
 import ForumClient from "@/components/forum/forum-client";
 import { useCollection, useFirestore, useMemoFirebase, updateDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
-import { ForumPost } from "@/lib/schemas";
+import { collection, doc, serverTimestamp, arrayUnion } from "firebase/firestore";
+import type { ForumPost, ForumReply } from "@/lib/schemas";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
-type UserPost = { id: string; secret: string };
+type UserPost = { id: string; secret: string; authorName: string };
 
 function removePostFromLocalStorage(postId: string) {
     const userPosts: UserPost[] = JSON.parse(localStorage.getItem('user_forum_posts') || '[]');
@@ -62,6 +63,49 @@ function EditPostDialog({ post, secret, onUpdate }: { post: ForumPost & {id: str
     )
 }
 
+function ReplyForm({ post, userPost, onReplied }: { post: ForumPost & {id: string}, userPost: UserPost, onReplied: () => void }) {
+    const [replyText, setReplyText] = useState("");
+    const firestore = useFirestore();
+    const { toast } = useToast();
+
+    const handleReply = () => {
+        if (!replyText.trim()) return;
+
+        const postRef = doc(firestore, 'forum_posts', post.id);
+        const newReply: Omit<ForumReply, 'id' | 'timestamp'> = {
+            authorName: userPost.authorName,
+            authorType: 'user',
+            reply: replyText,
+            timestamp: serverTimestamp(),
+        };
+
+        // We need to pass the secret to satisfy security rules
+        updateDocumentNonBlocking(postRef, { 
+            replies: arrayUnion(newReply),
+            secret: userPost.secret 
+        });
+        
+        toast({ title: "Reply posted!" });
+        setReplyText("");
+        onReplied();
+    };
+
+    return (
+        <div className="ml-12 mt-4 space-y-2 border-t pt-4">
+            <Textarea 
+                value={replyText} 
+                onChange={(e) => setReplyText(e.target.value)} 
+                placeholder="Write your reply..." 
+                rows={3}
+            />
+            <Button onClick={handleReply} size="sm">
+                <Reply className="mr-2 h-4 w-4" />
+                Post Reply
+            </Button>
+        </div>
+    );
+}
+
 export default function ForumPage() {
     const forumImage = placeholderImages.find(p => p.id === 'forum-bg');
     const firestore = useFirestore();
@@ -76,16 +120,13 @@ export default function ForumPage() {
         if (typeof window !== 'undefined') {
             setUserPosts(JSON.parse(localStorage.getItem('user_forum_posts') || '[]'));
         }
-    }, [forumPosts]); // Re-check when forum posts data changes
+    }, [forumPosts]);
 
     const forceUpdate = () => setForceRender(c => c + 1);
 
     const handleDelete = (postId: string, secret: string) => {
         if (window.confirm("Are you sure you want to delete this question? This action is permanent.")) {
-            // A 'read' is performed first by the rule, so the existing doc's secret is available in `resource.data.secret`
-            // We pass it in the request body so it's available at `request.resource.data.secret`
-            // but the rules actually need the raw document to be passed for deletion.
-            // so we pass the whole object including the secret.
+            // Firestore rules require the secret to be passed for deletion validation
             deleteDocumentNonBlocking(doc(firestore, 'forum_posts', postId));
             removePostFromLocalStorage(postId);
             forceUpdate();
@@ -93,7 +134,7 @@ export default function ForumPage() {
         }
     }
 
-    const getUserPostSecret = (postId: string) => userPosts.find(p => p.id === postId)?.secret;
+    const getUserPost = (postId: string) => userPosts.find(p => p.id === postId);
 
     return (
         <div>
@@ -104,14 +145,14 @@ export default function ForumPage() {
             />
             <section className="py-16 md:py-24">
                 <div className="container max-w-4xl space-y-12">
-                    <ForumClient allQuestions={forumPosts || []} />
+                    <ForumClient />
 
                     <div className="space-y-8">
-                        {isLoading && [...Array(3)].map((_,i) => <Skeleton key={i} className="h-32 w-full" />)}
+                        {isLoading && [...Array(3)].map((_,i) => <Skeleton key={i} className="h-40 w-full" />)}
                         {forumPosts?.map((post) => {
-                            const userPostSecret = getUserPostSecret(post.id);
+                            const userPost = getUserPost(post.id);
                             return (
-                                <Card key={post.id} className={`shadow-md ${post.isAnswered ? '' : 'opacity-80'}`}>
+                                <Card key={post.id} className="shadow-md">
                                     <CardHeader className="flex-row gap-4 items-start">
                                         <Avatar>
                                             <AvatarFallback>{post.authorName.charAt(0)}</AvatarFallback>
@@ -120,30 +161,50 @@ export default function ForumPage() {
                                             <CardTitle className="text-lg">Question from {post.authorName}</CardTitle>
                                             <CardDescription className="text-base">{post.question}</CardDescription>
                                         </div>
-                                        {userPostSecret && (
+                                        {userPost?.secret && (
                                             <div className="flex">
-                                                <EditPostDialog post={post} secret={userPostSecret} onUpdate={forceUpdate} />
-                                                <Button variant="ghost" size="icon" onClick={() => handleDelete(post.id, userPostSecret)}>
+                                                <EditPostDialog post={post} secret={userPost.secret} onUpdate={forceUpdate} />
+                                                <Button variant="ghost" size="icon" onClick={() => handleDelete(post.id, userPost.secret)}>
                                                     <Trash2 className="h-4 w-4 text-destructive" />
                                                 </Button>
                                             </div>
                                         )}
                                     </CardHeader>
-                                    {post.answer && (
-                                        <CardContent className="ml-16 border-l-2 pl-6 py-4">
-                                            <h4 className="font-semibold text-primary flex items-center gap-2 mb-2">
-                                                <CheckCircle className="h-5 w-5" /> Admin's Answer
-                                            </h4>
-                                            <p className="text-foreground/90">{post.answer}</p>
-                                        </CardContent>
-                                    )}
-                                    {!post.answer && (
-                                        <CardFooter>
-                                            <p className="text-sm text-muted-foreground flex items-center gap-2 ml-16">
-                                                <HelpCircle className="h-4 w-4"/>
-                                                Awaiting answer from admin
-                                            </p>
-                                        </CardFooter>
+                                    
+                                    <CardContent>
+                                        {post.replies?.length > 0 ? (
+                                            <div className="ml-8 space-y-4">
+                                                {post.replies.map((reply, index) => (
+                                                    <div key={index} className={cn(
+                                                        "flex gap-4 p-4 rounded-lg",
+                                                        reply.authorType === 'admin' ? 'bg-primary/10 border-l-4 border-primary' : 'bg-secondary'
+                                                    )}>
+                                                        <Avatar className="h-8 w-8">
+                                                            <AvatarFallback className="text-xs">
+                                                                {reply.authorType === 'admin' ? 'A' : reply.authorName.charAt(0)}
+                                                            </AvatarFallback>
+                                                        </Avatar>
+                                                        <div className="flex-grow">
+                                                            <p className="font-semibold text-sm">
+                                                                {reply.authorType === 'admin' ? "Admin" : reply.authorName}
+                                                            </p>
+                                                            <p className="text-foreground/90">{reply.reply}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <CardFooter>
+                                                <p className="text-sm text-muted-foreground flex items-center gap-2 ml-16">
+                                                    <HelpCircle className="h-4 w-4"/>
+                                                    Awaiting answer from admin
+                                                </p>
+                                            </CardFooter>
+                                        )}
+                                    </CardContent>
+
+                                    {userPost && post.isAnswered && (
+                                        <ReplyForm post={post} userPost={userPost} onReplied={forceUpdate} />
                                     )}
                                 </Card>
                             )

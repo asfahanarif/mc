@@ -1,56 +1,92 @@
 'use client';
 import { useState } from 'react';
-import { useCollection, setDocumentNonBlocking, deleteDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, doc } from 'firebase/firestore';
-import { ForumPost } from '@/lib/schemas';
+import { useCollection, updateDocumentNonBlocking, deleteDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, doc, arrayUnion, serverTimestamp, arrayRemove } from 'firebase/firestore';
+import type { ForumPost, ForumReply } from '@/lib/schemas';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle, HelpCircle, Send, Trash2, Edit, Bot, Loader2 } from 'lucide-react';
+import { CheckCircle, HelpCircle, Send, Trash2, Bot, Loader2, Reply, MessageSquare } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
 import { getAnswerSuggestion } from '@/ai/flows/admin-assisted-q-and-a';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { cn } from '@/lib/utils';
 
 type ForumPostWithId = ForumPost & { id: string };
+
+function AdminReplyForm({ post, onReplied }: { post: ForumPostWithId, onReplied: () => void }) {
+    const [replyText, setReplyText] = useState("");
+    const [isAiLoading, setIsAiLoading] = useState(false);
+    const firestore = useFirestore();
+    const { toast } = useToast();
+
+    const handleGetAiSuggestion = async (question: string) => {
+        setIsAiLoading(true);
+        try {
+            const result = await getAnswerSuggestion({ question });
+            setReplyText(result.suggestedAnswer);
+        } catch(e) {
+            toast({ title: 'AI Suggestion Failed', description: 'Could not generate an AI suggestion.', variant: 'destructive' });
+        } finally {
+            setIsAiLoading(false);
+        }
+    };
+    
+    const handleReply = () => {
+        if (!replyText.trim()) return;
+
+        const postRef = doc(firestore, 'forum_posts', post.id);
+        const newReply = {
+            id: doc(collection(firestore, 'dummy')).id, // temporary unique id
+            authorName: 'Admin',
+            authorType: 'admin',
+            reply: replyText,
+            timestamp: serverTimestamp(),
+        };
+
+        updateDocumentNonBlocking(postRef, {
+            replies: arrayUnion(newReply),
+            isAnswered: true
+        });
+        
+        toast({ title: "Reply published!" });
+        setReplyText("");
+        onReplied();
+    };
+
+    return (
+        <div className="mt-4 border-t pt-4">
+            <Textarea
+              placeholder="Write your answer or reply here..."
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              rows={4}
+            />
+            <div className="mt-2 flex justify-between">
+                <div className='flex gap-2'>
+                    <Button onClick={handleReply} disabled={!replyText}>
+                      <Send className="mr-2 h-4 w-4" /> Publish Reply
+                    </Button>
+                    <Button variant="outline" onClick={() => handleGetAiSuggestion(post.question)} disabled={isAiLoading}>
+                       {isAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
+                        AI Suggestion
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 
 export default function ForumManager() {
   const firestore = useFirestore();
   const forumPostsQuery = useMemoFirebase(() => collection(firestore, 'forum_posts'), [firestore]);
   const { data: posts, isLoading } = useCollection<ForumPost>(forumPostsQuery);
   const { toast } = useToast();
+  const [_, forceUpdate] = useState(0);
 
-  const [answers, setAnswers] = useState<{[key: string]: string}>({});
-  const [editingPostId, setEditingPostId] = useState<string | null>(null);
-  const [isAiLoading, setIsAiLoading] = useState<{[key: string]: boolean}>({});
-
-  const handleAnswerChange = (id: string, value: string) => {
-    setAnswers(prev => ({ ...prev, [id]: value }));
-  };
-  
-  const handleGetAiSuggestion = async (id: string, question: string) => {
-    setIsAiLoading(prev => ({...prev, [id]: true}));
-    try {
-        const result = await getAnswerSuggestion({ question });
-        handleAnswerChange(id, result.suggestedAnswer);
-    } catch(e) {
-        toast({ title: 'AI Suggestion Failed', description: 'Could not generate an AI suggestion.', variant: 'destructive' });
-    } finally {
-        setIsAiLoading(prev => ({...prev, [id]: false}));
-    }
-  };
-
-  const handleSave = (post: ForumPostWithId) => {
-    const postRef = doc(firestore, 'forum_posts', post.id);
-    const answer = answers[post.id] ?? post.answer; // Use new answer if available
-    setDocumentNonBlocking(postRef, { ...post, answer, isAnswered: true }, { merge: true });
-    toast({
-      title: 'Answer Published',
-      description: `Your answer to "${post.question.substring(0, 30)}..." has been saved.`,
-    });
-    setEditingPostId(null);
-  };
-  
-  const handleDelete = (post: ForumPostWithId) => {
+  const handleDeletePost = (post: ForumPostWithId) => {
     if (window.confirm(`Are you sure you want to delete the question from ${post.authorName}? This is permanent.`)) {
         const postRef = doc(firestore, 'forum_posts', post.id);
         deleteDocumentNonBlocking(postRef);
@@ -61,111 +97,82 @@ export default function ForumManager() {
         })
     }
   }
-  
-  const startEditing = (post: ForumPostWithId) => {
-    setEditingPostId(post.id);
-    if(post.answer) {
-        handleAnswerChange(post.id, post.answer);
-    }
+
+  const handleDeleteReply = (post: ForumPostWithId, reply: ForumReply) => {
+     if (window.confirm(`Are you sure you want to delete this reply? This is permanent.`)) {
+        const postRef = doc(firestore, 'forum_posts', post.id);
+        updateDocumentNonBlocking(postRef, {
+            replies: arrayRemove(reply)
+        });
+        toast({
+            title: 'Reply Deleted',
+            variant: 'destructive'
+        })
+     }
   }
 
-  const unansweredPosts = posts?.filter(p => !p.isAnswered) || [];
-  const answeredPosts = posts?.filter(p => p.isAnswered) || [];
+  const sortedPosts = posts?.sort((a,b) => (a.isAnswered ? 1 : -1) - (b.isAnswered ? 1 : -1) || (b.timestamp?.seconds ?? 0) - (a.timestamp?.seconds ?? 0));
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Forum Management</CardTitle>
-        <CardDescription>Review and answer questions from the community.</CardDescription>
+        <CardDescription>Review questions and manage conversation threads from the community.</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-8">
-        <div>
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2"><HelpCircle className='text-primary' />Awaiting Answers</h3>
-          {isLoading && <div className='space-y-2'>{[...Array(2)].map((_, i) => <Skeleton key={i} className="h-24 w-full" />)}</div>}
-          {unansweredPosts.length > 0 ? (
-            <div className="space-y-4">
-              {unansweredPosts.map((post) => (
-                <Card key={post.id}>
-                  <CardHeader>
-                    <p className="text-muted-foreground">From: {post.authorName}</p>
-                    <CardTitle className="text-lg">{post.question}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Textarea
-                      placeholder="Write your answer here..."
-                      value={answers[post.id] || ''}
-                      onChange={(e) => handleAnswerChange(post.id, e.target.value)}
-                    />
-                  </CardContent>
-                  <CardFooter className='flex justify-between'>
-                    <div className='flex gap-2'>
-                        <Button onClick={() => handleSave(post)} disabled={!answers[post.id]}>
-                          <Send className="mr-2 h-4 w-4" /> Publish Answer
-                        </Button>
-                        <Button variant="outline" onClick={() => handleGetAiSuggestion(post.id, post.question)} disabled={isAiLoading[post.id]}>
-                           {isAiLoading[post.id] ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
-                            AI Suggestion
-                        </Button>
-                    </div>
-                     <Button variant="ghost" size="icon" onClick={() => handleDelete(post)}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            !isLoading && <p className="text-center text-muted-foreground py-8">No unanswered questions.</p>
-          )}
-        </div>
-
-        <div>
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2"><CheckCircle className='text-green-500' />Answered Questions</h3>
-           {isLoading && <div className='space-y-2'>{[...Array(1)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}</div>}
-          {answeredPosts.length > 0 ? (
-            <div className="space-y-4">
-              {answeredPosts.map((post) => (
-                <Card key={post.id} className='bg-secondary/50'>
-                  <CardHeader>
-                    <p className="text-muted-foreground">From: {post.authorName}</p>
-                    <CardTitle className="text-base font-normal">{post.question}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {editingPostId === post.id ? (
-                       <Textarea
-                          value={answers[post.id] || ''}
-                          onChange={(e) => handleAnswerChange(post.id, e.target.value)}
-                        />
-                    ) : (
-                        <p className="border-l-2 border-primary pl-4">{post.answer}</p>
-                    )}
-                  </CardContent>
-                  <CardFooter className='flex justify-between'>
-                     {editingPostId === post.id ? (
-                        <div className='flex gap-2'>
-                            <Button onClick={() => handleSave(post)}>Save Changes</Button>
-                            <Button variant="outline" onClick={() => handleGetAiSuggestion(post.id, post.question)} disabled={isAiLoading[post.id]}>
-                                {isAiLoading[post.id] ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
-                                AI Suggestion
+      <CardContent className="space-y-6">
+        {isLoading && [...Array(3)].map((_, i) => <Skeleton key={i} className="h-32 w-full" />)}
+        
+        {sortedPosts?.map((post) => (
+          <Card key={post.id} className={cn(!post.isAnswered && "border-2 border-primary/50")}>
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm text-muted-foreground">From: {post.authorName}</p>
+                  <CardTitle className="text-lg mt-1">{post.question}</CardTitle>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => handleDeletePost(post)}>
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {post.replies?.length > 0 && (
+                <div className="space-y-4">
+                  {post.replies.map((reply, index) => (
+                    <div key={reply.id || index} className="flex gap-4">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="text-xs">
+                          {reply.authorType === 'admin' ? 'A' : reply.authorName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className={cn(
+                          "flex-grow p-3 rounded-lg",
+                          reply.authorType === 'admin' ? 'bg-primary/10' : 'bg-secondary'
+                      )}>
+                        <div className='flex justify-between items-center'>
+                             <p className="font-semibold text-sm">{reply.authorType === 'admin' ? 'Admin' : reply.authorName}</p>
+                             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleDeleteReply(post, reply)}>
+                                <Trash2 className="h-3 w-3 text-destructive" />
                             </Button>
-                            <Button variant="ghost" onClick={() => setEditingPostId(null)}>Cancel</Button>
                         </div>
-                     ) : (
-                        <Button variant="ghost" onClick={() => startEditing(post)}>
-                            <Edit className="mr-2 h-4 w-4" /> Edit Answer
-                        </Button>
-                     )}
-                     <Button variant="ghost" size="icon" onClick={() => handleDelete(post)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                     </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+                        <p className="text-foreground/90 mt-1">{reply.reply}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <AdminReplyForm post={post} onReplied={() => forceUpdate(c => c + 1)} />
+            </CardContent>
+          </Card>
+        ))}
+
+        {!isLoading && posts?.length === 0 && (
+            <div className="text-center py-12 text-muted-foreground">
+                <MessageSquare className="mx-auto h-12 w-12" />
+                <h3 className="mt-4 text-lg font-semibold">No questions yet</h3>
+                <p>When users ask questions, they will appear here.</p>
             </div>
-          ) : (
-            !isLoading && <p className="text-center text-muted-foreground py-8">No questions have been answered yet.</p>
-          )}
-        </div>
+        )}
       </CardContent>
     </Card>
   );

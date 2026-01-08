@@ -31,14 +31,22 @@ export const TeamMemberSchema = z.object({
 
 export type TeamMember = z.infer<typeof TeamMemberSchema>;
 
+export const ForumReplySchema = z.object({
+  id: z.string(),
+  authorName: z.string(),
+  authorType: z.enum(['user', 'admin']),
+  reply: z.string(),
+  timestamp: z.any(),
+});
 
 export const ForumPostSchema = z.object({
   authorName: z.string(),
   question: z.string(),
-  answer: z.string().nullable(),
+  replies: z.array(ForumReplySchema),
   timestamp: z.any(), // Firestore server timestamp
   isAnswered: z.boolean(),
   secret: z.string().optional(),
 });
 
+export type ForumReply = z.infer<typeof ForumReplySchema>;
 export type ForumPost = z.infer<typeof ForumPostSchema>;

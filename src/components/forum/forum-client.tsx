@@ -10,11 +10,12 @@ import { Loader2, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { addDocumentNonBlocking, useFirestore } from '@/firebase';
 import { collection, serverTimestamp } from 'firebase/firestore';
+import type { ForumReply } from '@/lib/schemas';
 
 // Helper to generate a simple random token
 const generateSecret = () => Math.random().toString(36).substring(2);
 
-export default function ForumClient({ allQuestions }: { allQuestions: any[] }) {
+export default function ForumClient() {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const firestore = useFirestore();
@@ -25,6 +26,12 @@ export default function ForumClient({ allQuestions }: { allQuestions: any[] }) {
     const formData = new FormData(e.target as HTMLFormElement);
     const question = formData.get('question') as string;
     const authorName = formData.get('authorName') as string || 'Anonymous';
+    
+    if (!question.trim() || !authorName.trim()) {
+        toast({ title: 'Please fill out all fields.', variant: 'destructive' });
+        return;
+    }
+
     const secret = generateSecret();
 
     startTransition(async () => {
@@ -33,7 +40,7 @@ export default function ForumClient({ allQuestions }: { allQuestions: any[] }) {
         const docRef = await addDocumentNonBlocking(postsCollection, {
           authorName,
           question,
-          answer: null,
+          replies: [] as ForumReply[],
           isAnswered: false,
           timestamp: serverTimestamp(),
           secret,
@@ -42,7 +49,7 @@ export default function ForumClient({ allQuestions }: { allQuestions: any[] }) {
         if (docRef) {
           // Store the post ID and secret in local storage
           const userPosts = JSON.parse(localStorage.getItem('user_forum_posts') || '[]');
-          userPosts.push({ id: docRef.id, secret });
+          userPosts.push({ id: docRef.id, secret, authorName });
           localStorage.setItem('user_forum_posts', JSON.stringify(userPosts));
         }
         
@@ -67,7 +74,7 @@ export default function ForumClient({ allQuestions }: { allQuestions: any[] }) {
       <form onSubmit={handleSubmit}>
         <CardHeader>
           <CardTitle className="font-headline">Ask a Question</CardTitle>
-          <CardDescription>Your question will be reviewed and answered by an admin.</CardDescription>
+          <CardDescription>Your question will be reviewed and answered by an admin. You'll be able to edit or delete it from this browser.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -76,7 +83,7 @@ export default function ForumClient({ allQuestions }: { allQuestions: any[] }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="question">Your Question</Label>
-            <Textarea id="question" name="question" placeholder="What is the ruling on..." required />
+            <Textarea id="question" name="question" placeholder="What is the ruling on..." required rows={4} />
           </div>
         </CardContent>
         <CardFooter>

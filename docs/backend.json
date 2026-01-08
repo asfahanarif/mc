@@ -114,7 +114,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "ForumPost",
       "type": "object",
-      "description": "Represents a question posted in the open forum.",
+      "description": "Represents a question and its conversation thread in the open forum.",
       "properties": {
         "id": {
           "type": "string",
@@ -128,20 +128,59 @@
           "type": "string",
           "description": "The question text."
         },
-        "answer": {
-          "type": "string",
-          "description": "Admin's answer to the question.  Can be null if unanswered."
+        "replies": {
+          "type": "array",
+          "description": "A list of replies in the conversation thread.",
+          "items": {
+            "$ref": "#/backend/entities/ForumReply"
+          }
         },
         "timestamp": {
           "type": "string",
           "description": "Timestamp of when the question was posted.",
           "format": "date-time"
+        },
+        "isAnswered": {
+          "type": "boolean",
+          "description": "True if an admin has replied to the question."
         }
       },
       "required": [
         "id",
         "authorName",
         "question",
+        "timestamp"
+      ]
+    },
+    "ForumReply": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ForumReply",
+      "type": "object",
+      "description": "Represents a single reply within a forum post thread.",
+      "properties": {
+        "authorName": {
+          "type": "string",
+          "description": "Name of the reply author."
+        },
+        "authorType": {
+          "type": "string",
+          "description": "Type of author, either 'user' or 'admin'.",
+          "enum": ["user", "admin"]
+        },
+        "reply": {
+          "type": "string",
+          "description": "The text content of the reply."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the reply was posted.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "authorName",
+        "authorType",
+        "reply",
         "timestamp"
       ]
     }
