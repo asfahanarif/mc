@@ -1,11 +1,7 @@
 'use client';
 import { useFirebase } from '@/firebase';
 import AuthPanel from '@/components/admin/auth-panel';
-import EventManager from '@/components/admin/event-manager';
-import TestimonialManager from '@/components/admin/testimonial-manager';
-import TeamManager from '@/components/admin/team-manager';
-import ForumManager from '@/components/admin/forum-manager';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardDescription, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { LayoutGrid, Calendar, Users, MessageSquareQuote } from 'lucide-react';
 import Link from 'next/link';
 
@@ -44,20 +40,6 @@ function AdminDashboard() {
           </Link>
         ))}
       </div>
-      
-      <div className="mt-8">
-        <h2 className='text-2xl font-bold font-headline mb-4'>Your Admin UID</h2>
-        <Card>
-            <CardHeader>
-                <CardTitle>User Information</CardTitle>
-                <CardDescription>Your unique ID for admin access.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <p className="text-sm bg-muted p-2 rounded-md font-mono text-muted-foreground break-all">{user.uid}</p>
-            </CardContent>
-        </Card>
-      </div>
-
     </div>
   );
 }

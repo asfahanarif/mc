@@ -6,24 +6,26 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { initiateEmailSignUp, initiateEmailSignIn } from '@/firebase';
+import { initiateEmailSignIn } from '@/firebase';
 import { useAuth } from '@/firebase';
 
 export default function AuthPanel() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('admin@muslimahs.club');
   const [password, setPassword] = useState('');
   const auth = useAuth();
   const { toast } = useToast();
 
-  const handleAuthAction = async (action: 'signUp' | 'signIn') => {
+  const handleSignIn = async () => {
+    // Hardcode the check for the admin password for extra clarity on the client-side
+    if (password !== 'admin@mc') {
+        toast({ title: 'Authentication Error', description: 'Invalid password.', variant: 'destructive' });
+        return;
+    }
+
     try {
-      if (action === 'signUp') {
-        initiateEmailSignUp(auth, email, password);
-        toast({ title: 'Sign Up Successful', description: 'You have been signed up.' });
-      } else {
-        initiateEmailSignIn(auth, email, password);
-        toast({ title: 'Sign In Successful', description: 'You are now logged in.' });
-      }
+      // Firebase will still verify the credentials on the backend
+      initiateEmailSignIn(auth, email, password);
+      toast({ title: 'Sign In Successful', description: 'You are now logged in.' });
     } catch (error: any) {
       toast({ title: 'Authentication Error', description: error.message, variant: 'destructive' });
     }
@@ -33,8 +35,8 @@ export default function AuthPanel() {
     <div className="max-w-md mx-auto mt-10">
       <Card>
         <CardHeader>
-          <CardTitle>Admin Access Required</CardTitle>
-          <CardDescription>Please sign in or sign up to manage your content.</CardDescription>
+          <CardTitle>Admin Login</CardTitle>
+          <CardDescription>Please sign in to manage your content.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -42,9 +44,10 @@ export default function AuthPanel() {
             <Input
               id="email"
               type="email"
-              placeholder="admin@example.com"
+              placeholder="admin@muslimahs.club"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              readOnly
+              className="bg-muted"
             />
           </div>
           <div className="space-y-2">
@@ -59,11 +62,8 @@ export default function AuthPanel() {
           </div>
         </CardContent>
         <CardFooter className="flex gap-2">
-          <Button onClick={() => handleAuthAction('signIn')} className="w-full">
+          <Button onClick={handleSignIn} className="w-full">
             Sign In
-          </Button>
-          <Button onClick={() => handleAuthAction('signUp')} variant="outline" className="w-full">
-            Sign Up
           </Button>
         </CardFooter>
       </Card>
