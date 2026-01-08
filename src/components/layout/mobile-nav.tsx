@@ -25,19 +25,19 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent side="right">
         <div className="flex flex-col h-full">
-            <Link href="/" className="mb-8" onClick={() => setIsOpen(false)}>
-                <Logo className="!h-16 !w-auto" />
+            <Link href="/" className="mb-8 flex justify-center" onClick={() => setIsOpen(false)}>
+                <Logo className="!h-20 !w-auto" />
             </Link>
-            <nav className="flex flex-col gap-4 flex-grow">
+            <nav className="flex flex-col gap-4 flex-grow items-center text-center">
             {navLinks.map((link) => (
                 <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                    "text-lg font-medium relative",
-                    pathname === link.href ? "text-primary" : "text-foreground/70 hover:text-foreground",
-                    "after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300",
+                    "text-xl font-medium relative py-2",
+                    pathname === link.href ? "text-primary" : "text-foreground/70 hover:text-primary",
+                    "after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300",
                     pathname === link.href && "after:w-6"
                 )}
                 >
@@ -45,7 +45,7 @@ export function MobileNav() {
                 </Link>
             ))}
             </nav>
-            <div className="mt-auto">
+            <div className="mt-auto flex justify-center">
                 <ThemeToggle />
             </div>
         </div>
