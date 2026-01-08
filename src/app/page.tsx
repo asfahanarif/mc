@@ -59,7 +59,7 @@ export default function Home() {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-headline font-bold tracking-tight text-primary/80">
                 Welcome to Muslimahs Club
               </h1>
-              <p className="max-w-[700px] text-2xl font-headline font-bold tracking-tighter sm:text-[2.2rem] text-primary">
+              <p className="max-w-[700px] text-2xl font-headline font-bold tracking-tighter sm:text-2xl text-primary">
                 Empowering Muslimahs Through Qur'an &amp; Sunnah!
               </p>
               <p className="max-w-[700px] mx-auto text-foreground/70 md:text-lg">
