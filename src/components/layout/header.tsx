@@ -47,10 +47,10 @@ const NavBar = () => (
             <Link href="/" className="flex items-center text-4xl font-display text-primary">
                 MC
             </Link>
-            <div className="hidden md:block">
-                <MainNav />
-            </div>
             <div className="flex items-center gap-1">
+                <div className="hidden md:block">
+                    <MainNav />
+                </div>
                 <ThemeToggle />
                 <div className="md:hidden">
                     <MobileNav />
