@@ -40,7 +40,7 @@ export function PrayerTimings() {
     setError(null);
     setPrayerTimes(null);
     try {
-      const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2`);
+      const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2&school=0`);
       if (!response.ok) {
         throw new Error('City not found or API error. Please check the spelling and country.');
       }
