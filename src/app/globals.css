@@ -69,6 +69,6 @@
 
 @layer components {
   .btn-primary-gradient {
-    @apply bg-gradient-to-br from-primary to-yellow-600/70 text-primary-foreground;
+    @apply bg-primary text-primary-foreground;
   }
 }
