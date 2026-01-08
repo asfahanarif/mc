@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -54,12 +55,15 @@ export default function Home() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center space-y-6">
             <Logo />
-            <div className="space-y-2">
-              <h1 className="text-xl sm:text-2xl font-headline font-bold tracking-tight text-primary/80">
+            <div className="space-y-4">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold tracking-tight text-primary">
                 Welcome to Muslimahs Club
               </h1>
-              <p className="max-w-[700px] text-3xl font-headline font-bold tracking-tighter sm:text-4xl md:text-5xl text-primary">
+              <p className="max-w-[700px] text-xl font-headline font-bold tracking-tighter sm:text-2xl text-primary/80">
                 Empowering Muslimahs Through Qur'an &amp; Sunnah!
+              </p>
+              <p className="max-w-[700px] mx-auto text-foreground/70 md:text-lg">
+                Join a global sisterhood dedicated to learning, sharing, and growing in faith.
               </p>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row">
@@ -159,3 +163,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
