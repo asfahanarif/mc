@@ -60,30 +60,39 @@ export function PrayerTimings() {
     }
   }
 
-  const fetchByCoordinates = (latitude: number, longitude: number) => {
+  const fetchByCoordinates = async (latitude: number, longitude: number) => {
     setIsLoading(true);
     setError(null);
     setPrayerTimes(null);
-    fetch(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2&school=1`)
-      .then(response => {
-        if (!response.ok) throw new Error("Could not fetch data for your location.");
-        return response.json();
-      })
-      .then(data => {
-        if (data.code === 200) {
-          setPrayerTimes(data.data.timings);
-          // The API doesn't return a location name with coordinate search, so we set a generic one.
-          setLocationName("Your Current Location");
+    try {
+      // Fetch prayer times
+      const timingsResponse = await fetch(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2&school=1`);
+      if (!timingsResponse.ok) throw new Error("Could not fetch prayer times for your location.");
+      const timingsData = await timingsResponse.json();
+      if (timingsData.code !== 200) throw new Error("Could not calculate prayer times for your location.");
+      setPrayerTimes(timingsData.data.timings);
+
+      // Fetch location name
+      try {
+        const locationResponse = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+        if(locationResponse.ok) {
+            const locationData = await locationResponse.json();
+            setLocationName(`${locationData.city}, ${locationData.countryName}`);
         } else {
-          throw new Error("Could not calculate prayer times for your location.");
+             setLocationName("Your Current Location");
         }
-      })
-      .catch(err => {
-        setError(err.message);
-        setPrayerTimes(null);
-        setLocationName('');
-      })
-      .finally(() => setIsLoading(false));
+      } catch (locationError) {
+          console.warn("Could not fetch location name, using generic name.");
+          setLocationName("Your Current Location");
+      }
+
+    } catch (err: any) {
+      setError(err.message);
+      setPrayerTimes(null);
+      setLocationName('');
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   const handleGeoLocation = () => {
