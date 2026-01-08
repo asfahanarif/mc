@@ -19,7 +19,7 @@ export default {
       fontFamily: {
         body: ['Montserrat', 'sans-serif'],
         headline: ['Cormorant Garamond', 'serif'],
-        display: ['"Island Moments"', 'cursive'],
+        display: ['"WindSong"', 'cursive'],
         code: ['monospace'],
       },
       colors: {
