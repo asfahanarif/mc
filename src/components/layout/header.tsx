@@ -33,7 +33,7 @@ const TopBar = () => (
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full">
+    <header className="top-0 z-50 w-full">
       <TopBar />
       <div className="container flex h-20 items-center justify-center">
         <div className="w-full md:w-[80%] lg:w-[70%] bg-background/80 backdrop-blur-sm rounded-full border shadow-sm px-6 flex items-center justify-between">
