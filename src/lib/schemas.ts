@@ -32,9 +32,8 @@ export const TeamMemberSchema = z.object({
 export type TeamMember = z.infer<typeof TeamMemberSchema>;
 
 export const ForumReplySchema = z.object({
-  id: z.string().optional(), // Made optional as it's assigned later
+  id: z.string().uuid(),
   authorName: z.string(),
-  authorType: z.enum(['user', 'admin']),
   reply: z.string(),
   timestamp: z.any(),
 });
@@ -44,8 +43,6 @@ export const ForumPostSchema = z.object({
   question: z.string(),
   replies: z.array(ForumReplySchema),
   timestamp: z.any(), // Firestore server timestamp
-  isAnswered: z.boolean(),
-  secret: z.string().optional(),
 });
 
 export type ForumReply = z.infer<typeof ForumReplySchema>;

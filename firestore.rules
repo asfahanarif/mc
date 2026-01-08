@@ -7,9 +7,8 @@
  * Content collections (events, testimonials, team members) are
  * generally public to read, but all write operations (create, update, delete)
  * are restricted to authenticated administrators.
- * Forum posts can be created by anyone. Users can edit/delete their own
- * initial post one-time via a secret token. They can also reply to threads
- * they started if they provide the same secret. Admins can manage all forum content.
+ * The forum is open: anyone can read, create posts, and add replies.
+ * Only administrators can modify or delete forum content.
  *
  * Data Structure:
  * The data is organized into several flat, top-level collections:
@@ -47,26 +46,33 @@ service cloud.firestore {
     }
 
     /**
-     * Validates the fields of a new forum post.
+     * Validates the schema for a new forum post.
+     * Ensures required fields are present and correctly typed.
      */
-    function isValidNewPost() {
-      return request.resource.data.authorName is string &&
-             request.resource.data.question is string &&
-             request.resource.data.replies.size() == 0 &&
-             request.resource.data.isAnswered == false &&
-             request.resource.data.timestamp == request.time;
+    function isValidNewForumPost() {
+      let post = request.resource.data;
+      return post.authorName is string && post.authorName.size() > 0 &&
+             post.question is string && post.question.size() > 0 &&
+             post.replies is list && post.replies.size() == 0 &&
+             post.timestamp == request.time;
     }
 
     /**
-     * Validates an admin's reply.
+     * Validates an incoming reply being added to the replies array.
      */
-    function isValidAdminReply(post) {
-      let reply = request.resource.data.replies[request.resource.data.replies.size() - 1];
-      return request.resource.data.replies.size() == post.replies.size() + 1 &&
-             reply.authorType == 'admin' &&
-             reply.authorName == 'Admin' &&
+    function isValidNewReply() {
+        // Ensure we are only adding one reply at a time.
+        return request.resource.data.replies.size() == resource.data.replies.size() + 1;
+    }
+
+    /**
+     * Validates the schema of a reply object.
+     */
+    function isReply(reply) {
+      return reply.id is string &&
+             reply.authorName is string &&
              reply.reply is string &&
-             reply.timestamp == request.time;
+             reply.timestamp is timestamp;
     }
 
     // ----------------------------------------------------------------------
@@ -105,18 +111,14 @@ service cloud.firestore {
 
     /**
      * @description Controls access to forum posts.
-     * Anyone can read or create a post.
-     * Admins can read, update (reply to), and delete any post.
+     * Anyone can read or create a post. Anyone can add a reply.
+     * Admins can update any part of the post, or delete it entirely.
      * @path /forum_posts/{forumPostId}
      */
     match /forum_posts/{forumPostId} {
-      // Anyone can read a single post. Admins can list all posts.
-      allow get: if true;
-      allow list: if isAdmin();
-      // Anyone can create a new post, if the data is valid.
-      allow create: if isValidNewPost();
-      // Admins can update posts (to add replies) or delete them.
-      allow update: if isAdmin() && isValidAdminReply(resource.data);
+      allow read: if true;
+      allow create: if isValidNewForumPost();
+      allow update: if isValidNewReply() || isAdmin();
       allow delete: if isAdmin();
     }
 

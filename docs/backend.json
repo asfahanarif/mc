@@ -139,10 +139,6 @@
           "type": "string",
           "description": "Timestamp of when the question was posted.",
           "format": "date-time"
-        },
-        "isAnswered": {
-          "type": "boolean",
-          "description": "True if an admin has replied to the question."
         }
       },
       "required": [
@@ -158,14 +154,13 @@
       "type": "object",
       "description": "Represents a single reply within a forum post thread.",
       "properties": {
+        "id": {
+            "type": "string",
+            "description": "Unique client-generated identifier for the reply."
+        },
         "authorName": {
           "type": "string",
           "description": "Name of the reply author."
-        },
-        "authorType": {
-          "type": "string",
-          "description": "Type of author, either 'user' or 'admin'.",
-          "enum": ["user", "admin"]
         },
         "reply": {
           "type": "string",
@@ -178,8 +173,8 @@
         }
       },
       "required": [
+        "id",
         "authorName",
-        "authorType",
         "reply",
         "timestamp"
       ]
@@ -248,7 +243,7 @@
           "schema": {
             "$ref": "#/backend/entities/ForumPost"
           },
-          "description": "Stores forum posts.  Administrators can read, update (answer), and potentially delete forum posts.",
+          "description": "Stores forum posts. Anyone can create posts and replies. Admins can moderate all content.",
           "params": [
             {
               "name": "forumPostId",
@@ -274,6 +269,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to support the Muslimahs Club application, focusing on ease of management for events, testimonials, team members, and forum answers via a backend admin page.  The primary goal is to create a structure that is secure, scalable, and facilitates simple security rules, particularly around who can create, read, update, and delete each type of entity.\n\n**Authorization Independence:**  All data is stored in root-level collections, enabling straightforward security rules based on admin role.  No `get()` calls are required in the rules, making them more efficient and easier to debug.\n\n**Structural Segregation:**  Each content type (events, testimonials, team members, forum posts) is stored in its own dedicated collection. This segregation ensures a homogeneous security posture for each content type, simplifying security rule definition.\n\n**QAPs (Rules are not Filters):** The structure inherently supports secure `list` operations.  Since admin access is managed at the collection level, listing all documents within a collection is secured by verifying the request originates from an admin.\n\nGiven the requirement for an admin page to manage content, a simple role-based access control (RBAC) model is implemented. The presence of a document in the `/roles_admin/{uid}` collection signifies that the user is an administrator."
+    "reasoning": "The Firestore data structure is designed to support the Muslimahs Club application, focusing on ease of management for events, testimonials, team members, and an open forum. The primary goal is to create a structure that is secure, scalable, and facilitates simple security rules. The forum is designed to be open for public contributions, with full moderation capabilities reserved for administrators."
   }
 }
