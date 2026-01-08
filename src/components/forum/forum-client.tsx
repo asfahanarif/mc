@@ -114,7 +114,7 @@ function ReplyForm({ postId, onReplied }: { postId: string, onReplied: () => voi
                 id: uuidv4(),
                 authorName,
                 reply,
-                timestamp: serverTimestamp(),
+                timestamp: new Date(),
             };
             updateDocumentNonBlocking(postRef, {
                 replies: arrayUnion(newReply)
