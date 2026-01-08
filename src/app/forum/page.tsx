@@ -34,7 +34,7 @@ function EditPostDialog({ post, secret, onUpdate }: { post: ForumPost & {id: str
 
     const handleUpdate = () => {
         const postRef = doc(firestore, 'forum_posts', post.id);
-        updateDocumentNonBlocking(postRef, { ...post, question: updatedQuestion, secret });
+        updateDocumentNonBlocking(postRef, { question: updatedQuestion, secret });
         removePostFromLocalStorage(post.id);
         onUpdate();
         toast({ title: "Question updated!" });

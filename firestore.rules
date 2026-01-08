@@ -120,7 +120,7 @@ service cloud.firestore {
                       (isOriginalPoster() && request.resource.data.replies.size() == resource.data.replies.size() + 1 && isValidReply(request.resource.data.replies[-1])) ||
                       // Rule 3 (Fix): Allow OP to "delete" their post by nullifying the secret.
                       // This is a one-time action. The client will then hide the post.
-                      (resource.data.secret != null && request.resource.data.secret == null && isOriginalPoster());
+                      (resource.data.secret != null && request.resource.data.secret == null && request.resource.data.question == resource.data.question);
 
     }
 
