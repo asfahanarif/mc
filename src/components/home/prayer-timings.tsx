@@ -128,9 +128,9 @@ export function PrayerTimings() {
 
   return (
     <div className="max-w-4xl mx-auto">
-        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 mb-4 max-w-lg mx-auto">
+        <form onSubmit={handleSearch} className="flex flex-col gap-2 mb-4 max-w-lg mx-auto">
           <Select onValueChange={setCountry} value={country}>
-            <SelectTrigger className="sm:w-[250px]">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a Country" />
             </SelectTrigger>
             <SelectContent>
@@ -139,6 +139,7 @@ export function PrayerTimings() {
               ))}
             </SelectContent>
           </Select>
+          <div className="flex gap-2">
             <Input
                 type="text"
                 value={city}
@@ -149,6 +150,7 @@ export function PrayerTimings() {
             <Button type="submit" variant="outline" size="icon" aria-label="Search" disabled={isLoading}>
                 <Search className="h-5 w-5" />
             </Button>
+          </div>
         </form>
          <div className="text-center mb-8">
             <Button onClick={handleGeoLocation} disabled={isLoading}>
