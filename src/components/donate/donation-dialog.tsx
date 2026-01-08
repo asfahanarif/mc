@@ -58,7 +58,7 @@ export function DonationDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] mx-4">
         <DialogHeader>
           <DialogTitle className="font-headline text-3xl text-primary text-center">
             Support Our Mission
