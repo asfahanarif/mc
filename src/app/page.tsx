@@ -55,7 +55,7 @@ export default function Home() {
       <section className="w-full py-20 md:py-32 flex flex-col items-center justify-center text-center bg-background">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center space-y-6">
-            <Logo />
+            <Logo className="transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
             <div className="space-y-4">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold tracking-tight text-primary">
                 Welcome to Muslimahs Club
@@ -81,9 +81,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="w-full bg-secondary/50">
+      <section className="w-full bg-secondary/50 lg:px-32">
         <div className="container mx-auto px-4 py-12 md:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-2 justify-center md:grid-cols-4 lg:grid-cols-3 gap-8 text-center items-center">
             {counters.map((item) => (
               <div key={item.label} className={`flex flex-col items-center justify-center gap-2 ${item.className}`}>
                 <item.icon className="h-10 w-10 text-primary" />
