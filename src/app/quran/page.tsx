@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -51,9 +52,23 @@ export default function QuranPage() {
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   
-  const audioRef = useState(new Audio())[0];
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
 
+  useEffect(() => {
+    // Initialize Audio object only on the client
+    audioRef.current = new Audio();
+
+    const onEnded = () => setPlayingAudio(null);
+    const audio = audioRef.current;
+    audio.addEventListener('ended', onEnded);
+    
+    return () => {
+      audio.removeEventListener('ended', onEnded);
+      audio.pause();
+    };
+  }, []);
+  
   useEffect(() => {
     const fetchSurahs = async () => {
       try {
@@ -104,21 +119,17 @@ export default function QuranPage() {
   };
 
   const playAudio = (audioUrl: string) => {
+    if (!audioRef.current) return;
+    
     if (playingAudio === audioUrl) {
-      audioRef.pause();
+      audioRef.current.pause();
       setPlayingAudio(null);
     } else {
-      audioRef.src = audioUrl;
-      audioRef.play();
+      audioRef.current.src = audioUrl;
+      audioRef.current.play();
       setPlayingAudio(audioUrl);
     }
   };
-
-  useEffect(() => {
-    const onEnded = () => setPlayingAudio(null);
-    audioRef.addEventListener('ended', onEnded);
-    return () => audioRef.removeEventListener('ended', onEnded);
-  }, [audioRef]);
 
 
   return (
