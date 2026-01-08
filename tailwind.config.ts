@@ -101,14 +101,14 @@ export default {
         },
         'fade-in-out': {
           '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.5' },
+          '50%': { opacity: '0.8' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'spin-slow': 'spin-slow 20s linear infinite',
-        'fade-in-out': 'fade-in-out 10s ease-in-out infinite',
+        'fade-in-out': 'fade-in-out 15s ease-in-out infinite',
       },
     },
   },
