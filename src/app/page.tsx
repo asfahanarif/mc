@@ -83,9 +83,9 @@ export default function Home() {
 
       <section className="w-full bg-secondary/50">
         <div className="container mx-auto px-4 py-12 md:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center items-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 gap-8 text-center">
             {counters.map((item) => (
-              <div key={item.label} className={`flex flex-col items-center gap-2 ${item.className}`}>
+              <div key={item.label} className={`flex flex-col items-center justify-center gap-2 ${item.className}`}>
                 <item.icon className="h-10 w-10 text-primary" />
                 <p className="text-3xl font-bold text-foreground">{item.value}</p>
                 <p className="text-md text-muted-foreground">{item.label}</p>
