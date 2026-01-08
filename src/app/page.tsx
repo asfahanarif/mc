@@ -2,26 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, BookOpen, Calendar, Mail, Mic, Newspaper, Quote } from "lucide-react";
+import { ArrowRight, BookOpen, Calendar, Mail, Mic, Newspaper, Quote, Users, Globe, Video } from "lucide-react";
 import { PrayerTimings } from "@/components/home/prayer-timings";
 import { NewsletterForm } from "@/components/home/newsletter-form";
 import { Logo } from "@/components/shared/logo";
 import { TestimonialsCarousel } from "@/components/home/testimonials";
 import { placeholderImages } from "@/lib/data";
 
-const counters = {
-  desktop: [
-    { label: "Sisters", value: "1200+" },
-    { label: "Events", value: "140+" },
-    { label: "Countries", value: "10+" },
-  ],
-  mobile: [
-    { label: "Sisters", value: "1200+" },
-    { label: "Online Events", value: "140+" },
-    { label: "Onsite Events", value: "6" },
-    { label: "Countries", value: "10+" },
-  ],
-};
+const counters = [
+    { icon: Users, label: "Sisters", value: "1200+" },
+    { icon: Video, label: "Online Events", value: "140+" },
+    { icon: Calendar, label: "Onsite Events", value: "6" },
+    { icon: Globe, label: "Countries", value: "10+" },
+];
 
 const featuredItems = [
   {
@@ -63,7 +56,7 @@ export default function Home() {
             <Logo />
             <div className="space-y-2">
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl text-primary">
-                Empowering Muslim Women Through Qur'an &amp; Sunnah!
+                Empowering Muslimahs Through Qur'an &amp; Sunnah!
               </h1>
               <p className="max-w-[700px] mx-auto text-foreground/80 md:text-xl">
                 Building knowledge, faith, and sisterhood in one global community.
@@ -85,21 +78,12 @@ export default function Home() {
 
       <section className="w-full bg-secondary/50">
         <div className="container mx-auto px-4 py-12 md:px-6">
-          {/* Desktop Counters */}
-          <div className="hidden md:grid grid-cols-3 gap-8 text-center">
-            {counters.desktop.map((item) => (
-              <div key={item.label}>
-                <p className="text-4xl font-bold text-primary">{item.value}</p>
-                <p className="text-lg text-foreground/80">{item.label}</p>
-              </div>
-            ))}
-          </div>
-          {/* Mobile Counters */}
-          <div className="md:hidden grid grid-cols-2 gap-8 text-center">
-            {counters.mobile.map((item) => (
-              <div key={item.label}>
-                <p className="text-3xl font-bold text-primary">{item.value}</p>
-                <p className="text-md text-foreground/80">{item.label}</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {counters.map((item) => (
+              <div key={item.label} className="flex flex-col items-center gap-2">
+                <item.icon className="h-10 w-10 text-primary" />
+                <p className="text-3xl font-bold text-foreground">{item.value}</p>
+                <p className="text-md text-muted-foreground">{item.label}</p>
               </div>
             ))}
           </div>
