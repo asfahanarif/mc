@@ -73,14 +73,13 @@ service cloud.firestore {
      * @description Controls access to event data. Events are public to read but
      * can only be created, modified, or deleted by an administrator.
      * @path /events/{eventId}
-     * @allow (get) Any user, signed in or not, can read a single event.
+     * @allow (read) Any user, signed in or not, can read events.
      * @allow (create) An authenticated admin can create a new event.
      * @deny (update) A regular authenticated user cannot update an event.
      * @principle Public read with admin-only writes.
      */
     match /events/{eventId} {
-      allow get: if true;
-      allow list: if true;
+      allow read: if true;
       allow create: if isAdmin();
       allow update: if isExistingDocAdmin();
       allow delete: if isExistingDocAdmin();
@@ -90,14 +89,13 @@ service cloud.firestore {
      * @description Controls access to testimonials. Testimonials are public to
      * read but can only be created, modified, or deleted by an administrator.
      * @path /testimonials/{testimonialId}
-     * @allow (list) Any user, signed in or not, can list all testimonials.
+     * @allow (read) Any user, signed in or not, can read testimonials.
      * @allow (create) An authenticated admin can create a new testimonial.
      * @deny (delete) A non-admin user cannot delete a testimonial.
      * @principle Public read with admin-only writes.
      */
     match /testimonials/{testimonialId} {
-      allow get: if true;
-      allow list: if true;
+      allow read: if true;
       allow create: if isAdmin();
       allow update: if isExistingDocAdmin();
       allow delete: if isExistingDocAdmin();
@@ -107,14 +105,13 @@ service cloud.firestore {
      * @description Controls access to team member profiles. These profiles are
      * public to read but can only be managed by administrators.
      * @path /team_members/{teamMemberId}
-     * @allow (get) Any user can read a team member's profile.
+     * @allow (read) Any user can read team member profiles.
      * @allow (create) An administrator can add a new team member.
      * @deny (update) A regular signed-in user cannot modify a team member's profile.
      * @principle Public read with admin-only writes.
      */
     match /team_members/{teamMemberId} {
-      allow get: if true;
-      allow list: if true;
+      allow read: if true;
       allow create: if isAdmin();
       allow update: if isExistingDocAdmin();
       allow delete: if isExistingDocAdmin();
@@ -125,15 +122,14 @@ service cloud.firestore {
      * be created by any authenticated user, but can only be answered (updated)
      * or deleted by administrators.
      * @path /forum_posts/{forumPostId}
+     * @allow (read) Any user, signed in or not, can read forum posts.
      * @allow (create) Any signed-in user can create a new forum post (ask a question).
      * @allow (update) An administrator can update a post (to add an answer).
-     * @deny (update) A regular user who created the post cannot update it later.
      * @deny (delete) A regular user cannot delete a forum post.
      * @principle Allows public creation with admin-only modification.
      */
     match /forum_posts/{forumPostId} {
-      allow get: if true;
-      allow list: if true;
+      allow read: if true;
       allow create: if isSignedIn();
       allow update: if isExistingDocAdmin();
       allow delete: if isExistingDocAdmin();
