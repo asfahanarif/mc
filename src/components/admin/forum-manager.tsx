@@ -4,7 +4,7 @@ import { useCollection, setDocumentNonBlocking, useFirestore, useMemoFirebase } 
 import { collection, doc } from 'firebase/firestore';
 import { ForumPost } from '@/lib/schemas';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, HelpCircle, Send } from 'lucide-react';
