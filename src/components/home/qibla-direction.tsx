@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Compass, LocateFixed, Loader2, AlertTriangle, Check, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CompassIcon } from '../icons/compass';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { KaabaIcon } from '../icons/kaaba';
 
 export function QiblaDirection() {
     const [qiblaDirection, setQiblaDirection] = useState<number | null>(null);
@@ -14,8 +15,9 @@ export function QiblaDirection() {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [permissionState, setPermissionState] = useState<'prompt' | 'granted' | 'denied'>('prompt');
+    const [isOpen, setIsOpen] = useState(false);
 
-    const handleOrientation = (event: DeviceOrientationEvent) => {
+    const handleOrientation = useCallback((event: DeviceOrientationEvent) => {
         if (event.webkitCompassHeading) {
             // iOS
             setCompassHeading(event.webkitCompassHeading);
@@ -23,13 +25,12 @@ export function QiblaDirection() {
             // Android
             setCompassHeading(360 - event.alpha);
         }
-    };
+    }, []);
     
     const requestPermissions = async () => {
         setIsLoading(true);
         setError(null);
     
-        // Check for DeviceOrientationEvent support
         if (!('DeviceOrientationEvent' in window)) {
             setError("Device orientation not supported on this browser.");
             setIsLoading(false);
@@ -37,7 +38,6 @@ export function QiblaDirection() {
             return;
         }
     
-        // Check for Geolocation support
         if (!('geolocation' in navigator)) {
             setError("Geolocation is not supported by this browser.");
             setIsLoading(false);
@@ -45,9 +45,7 @@ export function QiblaDirection() {
             return;
         }
 
-        // Request Device Orientation permission
         try {
-            // Type assertion for non-standard permission API
             const doePermission = await (DeviceOrientationEvent as any).requestPermission();
             if (doePermission !== 'granted') {
                 setError("Permission for device orientation was denied. The compass cannot function.");
@@ -56,18 +54,14 @@ export function QiblaDirection() {
                 return;
             }
         } catch (e) {
-            // This will fail on browsers that don't require this permission (like Chrome on Android), which is fine.
             console.info("DeviceOrientationEvent.requestPermission() not needed or failed, proceeding.", e);
         }
 
-        // Add orientation listener
-        window.addEventListener('deviceorientation', handleOrientation);
-
-        // Request Geolocation permission
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const { latitude, longitude } = position.coords;
                 calculateQibla(latitude, longitude);
+                window.addEventListener('deviceorientation', handleOrientation);
                 setPermissionState('granted');
                 setIsLoading(false);
             },
@@ -75,13 +69,8 @@ export function QiblaDirection() {
                 setError("Location permission denied. Cannot calculate Qibla direction.");
                 setIsLoading(false);
                 setPermissionState('denied');
-                window.removeEventListener('deviceorientation', handleOrientation);
             },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
     };
 
@@ -99,11 +88,23 @@ export function QiblaDirection() {
     };
     
     useEffect(() => {
-        // Cleanup listener on component unmount
         return () => {
             window.removeEventListener('deviceorientation', handleOrientation);
         };
-    }, []);
+    }, [handleOrientation]);
+
+    const handleOpenChange = (open: boolean) => {
+        setIsOpen(open);
+        if (!open) {
+            // Reset state when closing the dialog
+            window.removeEventListener('deviceorientation', handleOrientation);
+            setQiblaDirection(null);
+            setCompassHeading(null);
+            setError(null);
+            setIsLoading(false);
+            setPermissionState('prompt');
+        }
+    }
 
     const compassStyle = {
         transform: `rotate(${-(compassHeading || 0)}deg)`,
@@ -115,66 +116,91 @@ export function QiblaDirection() {
     };
 
     const renderContent = () => {
-        if (permissionState === 'denied') {
-            return (
-                <Alert variant="destructive" className="max-w-md mx-auto">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle>Permission Denied</AlertTitle>
-                    <AlertDescription>{error || "Required permissions were denied. Please grant permissions in your browser settings and try again."}</AlertDescription>
-                </Alert>
+        if (permissionState === 'prompt' && !isLoading) {
+             return (
+                <div className="text-center space-y-4">
+                    <p>To find the Qibla direction, we need access to your device's location and orientation sensors. Your data is not stored.</p>
+                    <Button onClick={requestPermissions} size="lg">
+                        <LocateFixed className="mr-2 h-5 w-5" />
+                        Grant Permissions
+                    </Button>
+                </div>
             );
         }
 
         if (isLoading) {
             return (
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-2 h-64 justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <p className="text-muted-foreground">Waiting for permissions...</p>
+                    <p className="text-muted-foreground">Requesting permissions...</p>
                 </div>
-            )
+            );
+        }
+        
+        if (error) {
+             return (
+                <div className="h-64 flex items-center justify-center">
+                    <Alert variant="destructive" className="max-w-md mx-auto">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Permission Denied</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                </div>
+            );
         }
 
         if (permissionState === 'granted' && qiblaDirection !== null && compassHeading !== null) {
             return (
                 <div className="flex flex-col items-center gap-6">
                     <div className="relative w-64 h-64 rounded-full bg-background shadow-inner-lg border-4 border-primary/20 flex items-center justify-center" style={compassStyle}>
-                        {/* Cardinal directions */}
                         <span className="absolute top-2 text-xl font-bold text-primary">N</span>
                         <span className="absolute bottom-2 text-xl font-bold text-muted-foreground">S</span>
                         <span className="absolute left-2 text-xl font-bold text-muted-foreground">W</span>
                         <span className="absolute right-2 text-xl font-bold text-muted-foreground">E</span>
 
-                        {/* Qibla Needle */}
                         <div className="absolute inset-0 flex items-center justify-center" style={qiblaStyle}>
                             <div className="w-2/3 h-2 bg-transparent flex justify-center">
-                                <CompassIcon className="w-16 h-16 text-green-500 drop-shadow-lg" />
+                                <KaabaIcon className="w-12 h-12 text-green-500 drop-shadow-lg" />
                             </div>
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/50"></div>
                         </div>
                     </div>
                      <p className="text-lg font-semibold text-center">
-                        Align the <span className="text-green-500 font-bold">green icon</span> with the North mark (N).<br />The Kaaba icon will then point to the Qibla.
+                        Align your phone's top edge with the North mark (N).<br />The Kaaba icon will point to the Qibla.
                     </p>
                 </div>
             )
         }
+        
+        // Fallback for initial state while waiting for sensor data
+        if (permissionState === 'granted') {
+             return (
+                 <div className="flex flex-col items-center gap-2 h-64 justify-center">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-muted-foreground">Calibrating compass...</p>
+                </div>
+            )
+        }
 
-        return (
-            <div className="max-w-md mx-auto text-center space-y-4">
-                <p>To find the Qibla direction, we need access to your device's location and orientation sensors. Your data is not stored.</p>
-                <Button onClick={requestPermissions} size="lg">
-                    <LocateFixed className="mr-2 h-5 w-5" />
-                    Find Qibla
-                </Button>
-            </div>
-        );
+        return null;
     }
 
     return (
-        <Card className="max-w-2xl mx-auto">
-            <CardContent className="pt-6">
-                {renderContent()}
-            </CardContent>
-        </Card>
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+            <DialogTrigger asChild>
+                <Button size="lg">
+                    <Compass className="mr-2 h-5 w-5" />
+                    Find Qibla Direction
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle className="font-headline text-2xl text-center">Qibla Compass</DialogTitle>
+                </DialogHeader>
+                <div className="py-4">
+                    {renderContent()}
+                </div>
+            </DialogContent>
+        </Dialog>
     );
 }
-
