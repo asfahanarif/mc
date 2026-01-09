@@ -157,8 +157,8 @@ export default function QuranPage() {
   }
 
   const filteredSurahs = surahs.filter(surah => 
-    surah.englishName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    surah.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (surah.englishName && surah.englishName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (surah.name && surah.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
     surah.number.toString().includes(searchTerm)
   );
 
@@ -298,5 +298,7 @@ export default function QuranPage() {
     </div>
   );
 }
+
+    
 
     
