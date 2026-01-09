@@ -8,9 +8,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { useDialog } from "@/components/providers/dialog-provider";
-import { Heart } from "lucide-react";
+import { Heart, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 declare global {
@@ -65,7 +66,11 @@ export function DonationDialog() {
         "bg-transparent border-0 shadow-none",
         "sm:bg-background sm:border sm:shadow-lg"
       )}>
-        <div className="bg-background/90 backdrop-blur-lg rounded-lg p-6">
+        <div className="bg-background/90 backdrop-blur-lg rounded-lg p-6 relative">
+           <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+          </DialogClose>
           <DialogHeader>
             <DialogTitle className="font-headline text-3xl text-primary text-center">
               Support Our Mission
