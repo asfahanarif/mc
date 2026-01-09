@@ -136,28 +136,37 @@ export const duas: Dua[] = [
         "id": "m2",
         "category": "Morning",
         "title": "Master of Seeking Forgiveness",
-        "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْfِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+        "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
         "transliteration": "Allahumma anta Rabbi la ilaha illa anta, Khalaqtani wa ana 'abduka, wa ana 'ala 'ahdika wa wa'dika mastata'tu, A'udhu bika min sharri ma sana'tu, abu'u Laka bini'matika 'alayya, wa abu'u bidhanbi faghfirli fainnahu la yaghfiru-dh-dhunuba illa anta.",
         "translation": "O Allah, You are my Lord, none has the right to be worshipped except You. You created me and I am Your servant and I abide by Your covenant and promise as best I can. I take refuge in You from the evil of which I have committed. I acknowledge Your favor upon me and I acknowledge my sin, so forgive me, for verily none can forgive sins except You.",
         "reference": "Recite once in the morning. Whoever recites this with conviction in the morning and dies during that day will be among the people of Paradise. - Sahih al-Bukhari 8/6306"
     },
+     {
+        "id": "m3",
+        "category": "Morning",
+        "title": "Seeking Protection",
+        "arabic": "بِسْمِ اللهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ العَلِيمُ",
+        "transliteration": "Bismillahil-ladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama'i wa Huwas-Sami'ul-'Alim.",
+        "translation": "In the Name of Allah, with Whose Name nothing on the earth or in the heaven can cause harm, and He is the All-Hearing, the All-Knowing.",
+        "reference": "Recite three times in the morning. - Abu Dawud, At-Tirmidhi"
+    },
     {
         "id": "e1",
         "category": "Evening",
-        "title": "Surah Al-Ikhlas",
-        "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ ۞ اللَّهُ الصَّمَدُ ۞ لَمْ يَلِدْ وَلَمْ يُولَدْ ۞ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
-        "transliteration": "Qul huwa Allahu ahad. Allahu-samad. Lam yalid wa lam yulad. Wa lam yakun lahu kufuwan ahad.",
-        "translation": "Say, He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born. Nor is there to Him any equivalent.",
-        "reference": "Recite three times in the evening. It will suffice you in all respects. - Abu Dawud, At-Tirmidhi"
+        "title": "The Three Quls",
+        "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ... قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ... قُلْ أَعُوذُ بِرَبِّ النَّاسِ...",
+        "transliteration": "Qul huwa Allahu ahad... Qul a'udhu birabbi-l-falaq... Qul a'udhu birabbi-n-nas...",
+        "translation": "Say, He is Allah, the One... Say, I seek refuge in the Lord of daybreak... Say, I seek refuge in the Lord of mankind...",
+        "reference": "Recite Surahs Al-Ikhlas, Al-Falaq, and An-Nas three times each in the evening. It will suffice you in all respects. - Abu Dawud, At-Tirmidhi"
     },
     {
         "id": "e2",
         "category": "Evening",
-        "title": "Surah Al-Falaq",
-        "arabic": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۞ مِن شَرِّ مَا خَلَقَ ۞ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ۞ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۞ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
-        "transliteration": "Qul a'udhu birabbi-l-falaq. Min sharri ma khalaq. Wa min sharri ghasiqin idha waqab. Wa min sharri-n-naffathati fi-l-'uqad. Wa min sharri hasidin idha hasad.",
-        "translation": "Say, I seek refuge in the Lord of daybreak. From the evil of that which He created. And from the evil of darkness when it settles. And from the evil of the blowers in knots. And from the evil of an envier when he envies.",
-        "reference": "Recite three times in the evening. It will suffice you in all respects. - Abu Dawud, At-Tirmidhi"
+        "title": "A Dua for Evening",
+        "arabic": "أَمْسَيْنَا وَأَمْسَى المُلْكُ للهِ وَالحَمْدُ للهِ، لاَ إِلَهَ إِلاَّ اللهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ...",
+        "transliteration": "Amsayna wa amsal-mulku lillahi walhamdu lillah, la ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shay'in qadir...",
+        "translation": "We have reached the evening and at this very time unto Allah belongs all sovereignty, and all praise is for Allah. None has the right to be worshipped except Allah, alone, without partner, to Him belongs all sovereignty and praise and He is over all things omnipotent...",
+        "reference": "Recite once in the evening. - Sahih Muslim"
     },
     {
         "id": "g1",
@@ -176,6 +185,15 @@ export const duas: Dua[] = [
         "transliteration": "Bismillah.",
         "translation": "In the Name of Allah.",
         "reference": "If you forget, say 'Bismillahi awwalahu wa akhirahu' (In the Name of Allah at the beginning and at the end). - Abu Dawud, At-Tirmidhi"
+    },
+    {
+        "id": "g3",
+        "category": "General",
+        "title": "For Protection from Anxiety",
+        "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَالْعَجْزِ وَالْكَسَلِ، وَالْبُخْلِ وَالْجُبْنِ، وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ",
+        "transliteration": "Allahumma inni a'udhu bika minal-hammi wal-hazan, wal-'ajzi wal-kasal, wal-bukhli wal-jubn, wa dala'id-dayni wa ghalabatir-rijal.",
+        "translation": "O Allah, I take refuge in You from anxiety and sorrow, weakness and laziness, miserliness and cowardice, the burden of debts and from being overpowered by men.",
+        "reference": "Sahih al-Bukhari"
     }
 ];
 

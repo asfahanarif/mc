@@ -9,9 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { placeholderImages, articles, duas, hadithBooks, sampleHadith } from "@/lib/data";
-import { BookOpen, Newspaper, Search, ChevronsRight, ChevronsLeft, ExternalLink, BookMarked, Footprints } from 'lucide-react';
+import { BookOpen, Newspaper, Search, ChevronsRight, ChevronsLeft, ExternalLink, BookMarked, Footprints, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 const ARTICLES_PER_PAGE = 8;
 
@@ -42,7 +45,9 @@ function ArticlesTab() {
             }}
             className="max-w-sm mx-auto"
         />
-        <p className="text-xs text-primary text-center font-semibold">Source: Islamqa.info</p>
+        <div className="text-center">
+             <Badge variant="secondary">Source: Islamqa.info</Badge>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {paginatedArticles.map(article => (
                 <Card key={article.id} className="hover:shadow-lg transition-shadow flex flex-col">
@@ -96,39 +101,51 @@ function DuasTab() {
             <TabsContent key={category} value={category} className="mt-0">
                <div className="space-y-6">
                 {duas.filter(d => d.category === category).map(dua => (
-                  <Card key={dua.id} className="shadow-sm">
+                  <Card key={dua.id} className="shadow-sm overflow-hidden">
                     <CardHeader>
                       <CardTitle className="font-headline text-primary">{dua.title}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div>
-                        <p className="font-arabic text-2xl/relaxed text-right" dir="rtl">{dua.arabic}</p>
-                      </div>
-                      <Separator />
-                      <div className="space-y-2">
-                          <div className="flex items-start gap-2">
-                            <Footprints className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                            <div>
-                                <h4 className="font-semibold">Transliteration</h4>
-                                <p className="text-sm text-muted-foreground italic">{dua.transliteration}</p>
-                            </div>
-                          </div>
-                           <div className="flex items-start gap-2">
-                             <BookOpen className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                             <div>
-                                <h4 className="font-semibold">Translation</h4>
-                                <p className="text-sm text-muted-foreground">{dua.translation}</p>
-                             </div>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <BookMarked className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                            <div>
-                                <h4 className="font-semibold">Reference</h4>
-                                <p className="text-xs text-muted-foreground">{dua.reference}</p>
-                            </div>
-                          </div>
-                      </div>
+                      <p className="font-arabic text-3xl/relaxed text-right" dir="rtl">{dua.arabic}</p>
                     </CardContent>
+                    <Collapsible>
+                      <CollapsibleTrigger asChild>
+                          <div className="bg-muted/50 hover:bg-muted/80 transition-colors px-6 py-2 cursor-pointer">
+                              <div className="flex items-center justify-center text-sm font-medium text-muted-foreground">
+                                  <ChevronDown className="h-4 w-4 mr-2" />
+                                  <span>View Details</span>
+                              </div>
+                          </div>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="bg-muted/50">
+                        <div className="p-6 space-y-4">
+                          <Separator />
+                          <div className="space-y-2">
+                              <div className="flex items-start gap-3">
+                                <Footprints className="h-5 w-5 text-primary/70 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <h4 className="font-semibold">Transliteration</h4>
+                                    <p className="text-sm text-muted-foreground italic">{dua.transliteration}</p>
+                                </div>
+                              </div>
+                               <div className="flex items-start gap-3">
+                                 <BookOpen className="h-5 w-5 text-primary/70 flex-shrink-0 mt-0.5" />
+                                 <div>
+                                    <h4 className="font-semibold">Translation</h4>
+                                    <p className="text-sm text-muted-foreground">{dua.translation}</p>
+                                 </div>
+                              </div>
+                              <div className="flex items-start gap-3">
+                                <BookMarked className="h-5 w-5 text-primary/70 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <h4 className="font-semibold">Reference</h4>
+                                    <p className="text-xs text-muted-foreground">{dua.reference}</p>
+                                </div>
+                              </div>
+                          </div>
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </Card>
                 ))}
               </div>
