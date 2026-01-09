@@ -1,15 +1,19 @@
 
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, BookOpen, Calendar, Mail, Mic, Newspaper, Quote, Users, Globe, Video, Presentation } from "lucide-react";
+import { ArrowRight, BookOpen, Calendar, Mail, Mic, Newspaper, Quote, Users, Globe, Video, Presentation, BookHeart } from "lucide-react";
 import { PrayerTimings } from "@/components/home/prayer-timings";
 import { NewsletterForm } from "@/components/home/newsletter-form";
 import { Logo } from "@/components/shared/logo";
 import { TestimonialsCarousel } from "@/components/home/testimonials";
 import { placeholderImages } from "@/lib/data";
 import { QiblaDirection } from "@/components/home/qibla-direction";
+import { dailyHadith } from "@/lib/hadiths";
+import { useState, useEffect } from "react";
 
 const counters = [
     { icon: Users, label: "Sisters", value: "1200+", screen: "all" },
@@ -51,6 +55,14 @@ const featuredItems = [
 ];
 
 export default function Home() {
+    const [hadith, setHadith] = useState<{ text: string, reference: string } | null>(null);
+
+    useEffect(() => {
+        const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).valueOf()) / 1000 / 60 / 60 / 24);
+        setHadith(dailyHadith[dayOfYear % dailyHadith.length]);
+    }, []);
+
+
   return (
     <div className="flex flex-col items-center">
       <section className="w-full pt-10 pb-20 md:pt-16 md:pb-32 flex flex-col items-center justify-center text-center bg-background">
@@ -122,6 +134,23 @@ export default function Home() {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section id="hadith-of-the-day" className="w-full py-16 md:py-24 bg-primary/5">
+        <div className="container px-4 md:px-6">
+          <div className="text-center space-y-3 mb-12">
+            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">Hadith of the Day</h2>
+          </div>
+          {hadith && (
+            <Card className="max-w-3xl mx-auto shadow-lg">
+                <CardContent className="p-8 text-center space-y-4">
+                    <BookHeart className="mx-auto h-12 w-12 text-primary/70" />
+                    <p className="text-lg md:text-xl text-foreground/90 leading-relaxed">"{hadith.text}"</p>
+                    <p className="font-semibold text-muted-foreground">{hadith.reference}</p>
+                </CardContent>
+            </Card>
+          )}
         </div>
       </section>
 
