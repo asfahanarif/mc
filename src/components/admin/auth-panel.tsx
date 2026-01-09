@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -10,7 +11,7 @@ import { useAuth } from '@/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function AuthPanel() {
-  const [email, setEmail] = useState('admin@muslimahs.club');
+  const email = 'admin@muslimahs.club';
   const [password, setPassword] = useState('');
   const auth = useAuth();
   const { toast } = useToast();
@@ -36,17 +37,6 @@ export default function AuthPanel() {
           <CardDescription>Please sign in to manage your content.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="admin@muslimahs.club"
-              value={email}
-              readOnly
-              className="bg-muted"
-            />
-          </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
