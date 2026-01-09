@@ -197,7 +197,7 @@ export function QiblaDirection() {
                 <DialogHeader>
                     <DialogTitle className="font-headline text-2xl text-center">Qibla Compass</DialogTitle>
                 </DialogHeader>
-                <div className="py-4">
+                <div className="p-4">
                     {renderContent()}
                 </div>
             </DialogContent>
