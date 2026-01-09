@@ -36,21 +36,24 @@ export default function AboutPage() {
               </Card>
             ))}
             {teamMembers?.map((member) => (
-              <Card key={member.id} className="text-center hover:shadow-xl transition-shadow">
-                <CardContent className="pt-6">
-                  <Image
-                    src={member.imageUrl || `https://picsum.photos/seed/${member.id}/100/100`}
-                    alt={member.name}
-                    width={100}
-                    height={100}
-                    className="rounded-full mx-auto mb-4 border-4 border-primary/20"
-                    data-ai-hint="person portrait"
-                  />
-                </CardContent>
+              <Card key={member.id} className="text-center hover:shadow-xl transition-shadow flex flex-col">
                 <CardHeader>
-                  <CardTitle className="font-headline text-xl text-primary">{member.name}</CardTitle>
+                  <div className="relative h-24 w-24 mx-auto">
+                    <Image
+                      src={member.imageUrl || `https://picsum.photos/seed/${member.id}/100/100`}
+                      alt={member.name}
+                      width={100}
+                      height={100}
+                      className="rounded-full mx-auto border-4 border-primary/20"
+                      data-ai-hint="person portrait"
+                    />
+                  </div>
+                  <CardTitle className="font-headline text-xl text-primary pt-2">{member.name}</CardTitle>
                   <p className="text-muted-foreground">{member.title}</p>
                 </CardHeader>
+                <CardContent className="flex-grow">
+                  <p className="text-sm text-foreground/80">{member.bio}</p>
+                </CardContent>
               </Card>
             ))}
           </div>
