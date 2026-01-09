@@ -196,12 +196,12 @@ export default function QuranPage() {
 
       <Dialog open={!!activeSurah} onOpenChange={(isOpen) => !isOpen && handleDialogClose()}>
         <DialogContent className={cn(
-            "max-w-4xl w-[calc(100vw-2rem)] h-auto max-h-[80vh] p-0 flex flex-col",
+            "max-w-4xl w-[calc(100vw-2rem)] max-h-[80vh] p-0 flex flex-col",
             "bg-background/95 backdrop-blur-sm sm:rounded-lg"
         )}>
            {activeSurah && (
                 <>
-                    <DialogHeader className="p-4 border-b">
+                    <DialogHeader className="p-4 border-b flex-shrink-0">
                         <DialogTitle className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <span className="font-headline text-2xl text-primary">{activeSurah.number}. {activeSurah.englishName}</span>
@@ -213,7 +213,7 @@ export default function QuranPage() {
                             </DialogClose>
                         </DialogTitle>
                     </DialogHeader>
-                    <ScrollArea className="flex-grow">
+                    <ScrollArea className="flex-grow overflow-y-auto">
                         <div className="p-4">
                             {loadingDetails && (
                                 <div className="space-y-4">
