@@ -68,7 +68,7 @@ function PostQuestionForm({ onNewPost }: { onNewPost: () => void }) {
   return (
     <Card>
       <form onSubmit={handleSubmit}>
-        <CardHeader>
+        <CardHeader className="text-center">
           <CardTitle className="font-headline">Ask a Question</CardTitle>
           <CardDescription>Your question will be visible to the entire community. Anyone can reply.</CardDescription>
         </CardHeader>
