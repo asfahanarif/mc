@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -48,7 +49,7 @@ export default function AdminLayout({
   return (
     <SidebarProvider>
       <Sidebar>
-        <div className="h-[30%]" />
+        <div className="h-[20%]" />
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Logo className="!h-12 !w-12" />
