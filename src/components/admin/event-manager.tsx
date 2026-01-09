@@ -1,7 +1,7 @@
 
 'use client';
 import { useState } from 'react';
-import { useCollection, setDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
+import { useCollection, setDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore, useMemoFirebase, addDocumentNonBlocking } from '@/firebase';
 import { collection, doc, query, orderBy } from 'firebase/firestore';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown } from 'lucide-react';
+import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown, Copy } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
 import { getEventDescriptionSuggestion } from '@/ai/flows/suggest-event-description';
 import { Label } from '../ui/label';
@@ -356,6 +356,20 @@ export default function EventManager() {
       });
     }
   };
+
+  const handleDuplicate = (event: EventWithId) => {
+    const { id, ...eventData } = event;
+    const newEvent = {
+      ...eventData,
+      title: `Copy of ${event.title}`,
+      order: maxOrder + 1,
+    };
+    addDocumentNonBlocking(collection(firestore, 'events'), newEvent);
+    toast({
+      title: 'Event Duplicated',
+      description: `A copy of "${event.title}" has been created.`,
+    });
+  };
   
   return (
     <Card>
@@ -386,6 +400,9 @@ export default function EventManager() {
                 </div>
               </div>
               <div className="flex items-center">
+                <Button variant="ghost" size="icon" onClick={() => handleDuplicate(event)}>
+                  <Copy className="h-4 w-4" />
+                </Button>
                 <EventDialog event={event} maxOrder={maxOrder} />
                 <Button variant="ghost" size="icon" onClick={() => handleDelete(event.id, event.title)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
