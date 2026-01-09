@@ -45,36 +45,46 @@ export default function EventsPage() {
                                 </CardFooter>
                             </Card>
                         ))}
-                        {events?.map((event) => (
-                            <Card key={event.id} className="flex flex-col overflow-hidden group hover:shadow-xl transition-shadow">
-                                <div className="relative h-56 w-full">
-                                    <Image
-                                        src={event.imageUrl || `https://picsum.photos/seed/${event.id}/600/400`}
-                                        alt={event.title}
-                                        fill
-                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                        data-ai-hint="people seminar"
-                                    />
-                                </div>
-                                <CardHeader>
-                                    <Badge variant={event.type === 'Online' ? 'default' : 'secondary'} className="w-fit gap-1 mb-2">
-                                        {event.type === 'Online' ? <Video className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
-                                        {event.type}
-                                    </Badge>
-                                    <CardTitle className="font-headline text-xl">{event.title}</CardTitle>
-                                    <div className="flex items-center text-muted-foreground text-sm gap-2 pt-1">
-                                        <Calendar className="h-4 w-4" />
-                                        <span>{event.schedule}</span>
+                        {events?.map((event) => {
+                            const whatsAppNumber = "92319446854";
+                            const message = `As-salamu alaykum! I would like to register for the event: "${event.title}". My name is:`;
+                            const whatsappUrl = `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(message)}`;
+
+                            return (
+                                <Card key={event.id} className="flex flex-col overflow-hidden group hover:shadow-xl transition-shadow">
+                                    <div className="relative h-56 w-full">
+                                        <Image
+                                            src={event.imageUrl || `https://picsum.photos/seed/${event.id}/600/400`}
+                                            alt={event.title}
+                                            fill
+                                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                            data-ai-hint="people seminar"
+                                        />
                                     </div>
-                                </CardHeader>
-                                <CardContent className="flex-grow">
-                                    <CardDescription>{event.description}</CardDescription>
-                                </CardContent>
-                                <CardFooter>
-                                    <Button>Register Now</Button>
-                                </CardFooter>
-                            </Card>
-                        ))}
+                                    <CardHeader>
+                                        <Badge variant={event.type === 'Online' ? 'default' : 'secondary'} className="w-fit gap-1 mb-2">
+                                            {event.type === 'Online' ? <Video className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
+                                            {event.type}
+                                        </Badge>
+                                        <CardTitle className="font-headline text-xl">{event.title}</CardTitle>
+                                        <div className="flex items-center text-muted-foreground text-sm gap-2 pt-1">
+                                            <Calendar className="h-4 w-4" />
+                                            <span>{event.schedule}</span>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent className="flex-grow">
+                                        <CardDescription>{event.description}</CardDescription>
+                                    </CardContent>
+                                    <CardFooter>
+                                        <Button asChild>
+                                            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                                                Register on WhatsApp
+                                            </a>
+                                        </Button>
+                                    </CardFooter>
+                                </Card>
+                            );
+                        })}
                     </div>
                 </div>
             </section>
