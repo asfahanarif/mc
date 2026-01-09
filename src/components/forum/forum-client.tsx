@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 
 const POSTS_PER_PAGE = 5;
@@ -160,12 +161,21 @@ export default function ForumClient() {
     const forumQuery = useMemoFirebase(() => query(collection(firestore, 'forum_posts'), orderBy('timestamp', 'desc')), [firestore]);
     const { data: forumPosts, isLoading, error, refetch } = useCollection<ForumPost>(forumQuery);
     const [currentPage, setCurrentPage] = useState(1);
+    const [openThreads, setOpenThreads] = useState<string[]>([]);
 
     const totalPages = forumPosts ? Math.ceil(forumPosts.length / POSTS_PER_PAGE) : 0;
     const paginatedPosts = forumPosts?.slice(
         (currentPage - 1) * POSTS_PER_PAGE,
         currentPage * POSTS_PER_PAGE
     );
+
+    const toggleThread = (postId: string) => {
+        setOpenThreads(prev => 
+            prev.includes(postId) 
+                ? prev.filter(id => id !== postId) 
+                : [...prev, postId]
+        );
+    };
 
     return (
         <>
@@ -177,62 +187,77 @@ export default function ForumClient() {
                 {error && <p className="text-destructive text-center">Could not load forum posts. Please try again later.</p>}
 
                 {paginatedPosts?.map((post) => (
-                    <Card key={post.id} className={cn("shadow-md", post.isClosed && "bg-muted/20")}>
-                        <CardHeader>
-                            <div className="flex gap-4 items-start">
-                                <Avatar>
-                                    <AvatarFallback>{post.authorName.charAt(0)}</AvatarFallback>
-                                </Avatar>
-                                <div className="flex-grow">
-                                    <CardTitle className="text-lg font-headline">Question from {post.authorName}</CardTitle>
-                                    <p className="text-sm text-muted-foreground mt-1">
-                                        {post.timestamp?.toDate().toLocaleDateString()}
-                                    </p>
+                    <Collapsible key={post.id} open={openThreads.includes(post.id)} onOpenChange={() => toggleThread(post.id)}>
+                        <Card className={cn("shadow-md", post.isClosed && "bg-muted/20")}>
+                            <CardHeader>
+                                <div className="flex gap-4 items-start">
+                                    <Avatar>
+                                        <AvatarFallback>{post.authorName.charAt(0)}</AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex-grow">
+                                        <CardTitle className="text-lg font-headline">Question from {post.authorName}</CardTitle>
+                                        <p className="text-sm text-muted-foreground mt-1">
+                                            {post.timestamp?.toDate().toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                    {post.isClosed && (
+                                        <Badge variant="destructive" className="gap-1">
+                                            <Lock className="h-3 w-3" />
+                                            Closed
+                                        </Badge>
+                                    )}
                                 </div>
-                                {post.isClosed && (
-                                    <Badge variant="destructive" className="gap-1">
-                                        <Lock className="h-3 w-3" />
-                                        Closed
-                                    </Badge>
-                                )}
-                            </div>
-                            <p className="text-foreground/90 pt-4 text-base">{post.question}</p>
-                        </CardHeader>
-                        
-                        <CardContent>
-                            {post.replies?.length > 0 && (
-                                <div className="ml-8 mt-4 space-y-4 border-l-2 pl-8">
-                                    {post.replies.sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0)).map((reply) => (
-                                        <div key={reply.id} className="flex gap-4">
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarFallback className="text-xs">
-                                                    {reply.authorName.charAt(0)}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <div className="flex-grow">
-                                                <div className='flex items-center gap-2'>
-                                                    <p className="font-semibold text-sm">{reply.authorName}</p>
-                                                    {reply.isAdminReply && (
-                                                        <Badge variant="secondary" className="p-1 h-fit leading-none bg-transparent hover:bg-transparent">
-                                                            <CheckCircle2 className="h-4 w-4 text-blue-500" />
-                                                        </Badge>
-                                                    )}
+                                <p className="text-foreground/90 pt-4 text-base">{post.question}</p>
+                            </CardHeader>
+                            
+                            <CardFooter className="justify-between">
+                                <span className="text-sm text-muted-foreground">
+                                    {post.replies?.length || 0} replies
+                                </span>
+                                <CollapsibleTrigger asChild>
+                                    <Button variant="outline">
+                                        {openThreads.includes(post.id) ? 'Hide Thread' : 'View Thread'}
+                                    </Button>
+                                </CollapsibleTrigger>
+                            </CardFooter>
+                            
+                            <CollapsibleContent>
+                                <CardContent>
+                                    {post.replies?.length > 0 && (
+                                        <div className="ml-8 mt-4 space-y-4 border-l-2 pl-8">
+                                            {post.replies.sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0)).map((reply) => (
+                                                <div key={reply.id} className="flex gap-4">
+                                                    <Avatar className="h-8 w-8">
+                                                        <AvatarFallback className="text-xs">
+                                                            {reply.authorName.charAt(0)}
+                                                        </AvatarFallback>
+                                                    </Avatar>
+                                                    <div className="flex-grow">
+                                                        <div className='flex items-center gap-2'>
+                                                            <p className="font-semibold text-sm">{reply.authorName}</p>
+                                                            {reply.isAdminReply && (
+                                                                <Badge variant="secondary" className="p-1 h-fit leading-none bg-transparent hover:bg-transparent">
+                                                                    <CheckCircle2 className="h-4 w-4 text-blue-500" />
+                                                                </Badge>
+                                                            )}
+                                                        </div>
+                                                        <p className="text-foreground/80">{reply.reply}</p>
+                                                    </div>
                                                 </div>
-                                                <p className="text-foreground/80">{reply.reply}</p>
-                                            </div>
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
-                            )}
-                            {post.isClosed ? (
-                                <div className="mt-6 text-center text-sm text-muted-foreground p-4 bg-muted/30 rounded-md">
-                                    This thread has been closed by an administrator. No new replies can be added.
-                                </div>
-                            ) : (
-                                <ReplyForm postId={post.id} onReplied={refetch} />
-                            )}
-                        </CardContent>
-                    </Card>
+                                    )}
+                                    {post.isClosed ? (
+                                        <div className="mt-6 text-center text-sm text-muted-foreground p-4 bg-muted/30 rounded-md">
+                                            This thread has been closed by an administrator. No new replies can be added.
+                                        </div>
+                                    ) : (
+                                        <ReplyForm postId={post.id} onReplied={refetch} />
+                                    )}
+                                </CardContent>
+                            </CollapsibleContent>
+                        </Card>
+                    </Collapsible>
                 ))}
 
                  {!isLoading && forumPosts?.length === 0 && (
