@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { navLinks } from "@/lib/data";
 import { Logo } from "../shared/logo";
@@ -26,14 +27,14 @@ export default function Footer() {
             </div>
              <div className="md:col-span-2">
                 <h3 className="font-headline text-lg font-semibold text-primary mb-4 text-center md:text-left">Quick Links</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center md:text-left">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center justify-items-center md:text-left md:justify-items-start">
                     {footerLinks.map(link => (
                         <Link key={link.href} href={link.href} className="text-muted-foreground hover:text-primary transition-colors">{link.label}</Link>
                     ))}
                 </div>
             </div>
             <div>
-                <h3 className="font-headline text-lg font-semibold text-primary mb-4 text-center md:text-left">Follow Us</h3>
+                <h3 className="font-headline text-lg font-semibold text-primary mb-4 text-center md:text-left">Get in touch!</h3>
                 <div className="flex justify-center md:justify-start items-center gap-4">
                     {socialLinks.map(link => (
                         <a key={link.name} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.name} className="group">
