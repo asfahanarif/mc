@@ -123,9 +123,60 @@ export const articles: Article[] = [
 
 
 export const duas: Dua[] = [
-    { id: 'd1', category: 'Morning', title: 'Morning Remembrance', content: 'Asbahna wa asbahal-mulku lillah...', translation: 'We have entered a new day and with it all dominion is Allahs...' },
-    { id: 'd2', category: 'Evening', title: 'Evening Remembrance', content: 'Amsayna wa amsal-mulku lillah...', translation: 'We have reached the evening and with it all dominion is Allahs...' },
-    { id: 'd3', category: 'General', title: 'Dua for Guidance', content: 'Allahumma inni as\'alukal-huda wat-tuqa wal-\'afafa wal-ghina', translation: 'O Allah, I ask You for guidance, piety, abstinence and independence.' },
+    {
+        "id": "m1",
+        "category": "Morning",
+        "title": "Ayat al-Kursi",
+        "arabic": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
+        "transliteration": "Allahu la ilaha illa Huwa, Al-Hayyul-Qayyum. La ta'khudhuhu sinatun wa la nawm. Lahu ma fis-samawati wa ma fil-ardh. Man dhal-ladhi yashfa'u 'indahu illa bi-idhnihi. Ya'lamu ma bayna aydihim wa ma khalfahum. Wa la yuhituna bi shay'in min 'ilmihi illa bima sha'a. Wasi'a kursiyyuhus-samawati wal-ardha. Wa la ya'uduhu hifdhuhuma. Wa Huwal-'Aliyyul-'Adheem.",
+        "translation": "Allah! There is no god but He - the Living, The Self-subsisting, Eternal. No slumber can seize Him Nor sleep. His are all things In the heavens and on earth. Who is there can intercede In His presence except As he permitteth? He knoweth What (appeareth to His creatures As) Before or After or Behind them. Nor shall they compass Aught of his knowledge Except as He willeth. His throne doth extend Over the heavens And on earth, and He feeleth No fatigue in guarding And preserving them, For He is the Most High, The Supreme (in glory).",
+        "reference": "Al-Baqarah 2:255. Recite once in the morning. Whoever says this when he awakens will be protected from the jinn until he retires for the night. - Al-Hakim 1/562"
+    },
+    {
+        "id": "m2",
+        "category": "Morning",
+        "title": "Master of Seeking Forgiveness",
+        "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْfِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+        "transliteration": "Allahumma anta Rabbi la ilaha illa anta, Khalaqtani wa ana 'abduka, wa ana 'ala 'ahdika wa wa'dika mastata'tu, A'udhu bika min sharri ma sana'tu, abu'u Laka bini'matika 'alayya, wa abu'u bidhanbi faghfirli fainnahu la yaghfiru-dh-dhunuba illa anta.",
+        "translation": "O Allah, You are my Lord, none has the right to be worshipped except You. You created me and I am Your servant and I abide by Your covenant and promise as best I can. I take refuge in You from the evil of which I have committed. I acknowledge Your favor upon me and I acknowledge my sin, so forgive me, for verily none can forgive sins except You.",
+        "reference": "Recite once in the morning. Whoever recites this with conviction in the morning and dies during that day will be among the people of Paradise. - Sahih al-Bukhari 8/6306"
+    },
+    {
+        "id": "e1",
+        "category": "Evening",
+        "title": "Surah Al-Ikhlas",
+        "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ ۞ اللَّهُ الصَّمَدُ ۞ لَمْ يَلِدْ وَلَمْ يُولَدْ ۞ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
+        "transliteration": "Qul huwa Allahu ahad. Allahu-samad. Lam yalid wa lam yulad. Wa lam yakun lahu kufuwan ahad.",
+        "translation": "Say, He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born. Nor is there to Him any equivalent.",
+        "reference": "Recite three times in the evening. It will suffice you in all respects. - Abu Dawud, At-Tirmidhi"
+    },
+    {
+        "id": "e2",
+        "category": "Evening",
+        "title": "Surah Al-Falaq",
+        "arabic": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۞ مِن شَرِّ مَا خَلَقَ ۞ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ۞ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۞ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+        "transliteration": "Qul a'udhu birabbi-l-falaq. Min sharri ma khalaq. Wa min sharri ghasiqin idha waqab. Wa min sharri-n-naffathati fi-l-'uqad. Wa min sharri hasidin idha hasad.",
+        "translation": "Say, I seek refuge in the Lord of daybreak. From the evil of that which He created. And from the evil of darkness when it settles. And from the evil of the blowers in knots. And from the evil of an envier when he envies.",
+        "reference": "Recite three times in the evening. It will suffice you in all respects. - Abu Dawud, At-Tirmidhi"
+    },
+    {
+        "id": "g1",
+        "category": "General",
+        "title": "For seeking guidance in a matter (Istikharah)",
+        "arabic": "اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ، فَإِنَّكَ تَقْدِرُ وَلَا أَقْدِرُ، وَتَعْلَمُ وَلَا أَعْلَمُ، وَأَنْتَ عَلَّامُ الْغُيُوبِ...",
+        "transliteration": "Allahumma inni astakhiruka bi'ilmika, wa astaqdiruka biqudratika, wa as'aluka min fadlikal-'adhim. Fa'innaka taqdiru wa la aqdiru, wa ta'lamu wa la a'lamu, wa anta 'allamul-ghuyub...",
+        "translation": "O Allah, I seek Your guidance [in making a choice] by virtue of Your knowledge, and I seek ability by virtue of Your power, and I ask of Your great bounty. For you have power, I have none. And you know, I know not. You are the Knower of hidden things...",
+        "reference": "Sahih al-Bukhari 1166"
+    },
+    {
+        "id": "g2",
+        "category": "General",
+        "title": "Before eating",
+        "arabic": "بِسْمِ اللَّهِ",
+        "transliteration": "Bismillah.",
+        "translation": "In the Name of Allah.",
+        "reference": "If you forget, say 'Bismillahi awwalahu wa akhirahu' (In the Name of Allah at the beginning and at the end). - Abu Dawud, At-Tirmidhi"
+    }
 ];
 
 export const hadithBooks = [

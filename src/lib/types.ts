@@ -1,3 +1,4 @@
+
 export type NavLink = {
     href: string;
     label: string;
@@ -12,9 +13,15 @@ export type Article = {
     url: string;
 }
 
-// These types are now replaced by Zod schemas in `lib/schemas.ts`
-// Keeping the file for other potential shared types, but the main
-// data-related types should be inferred from schemas.
+export type Dua = {
+  id: string;
+  category: 'Morning' | 'Evening' | 'General';
+  title: string;
+  arabic: string;
+  transliteration: string;
+  translation: string;
+  reference: string;
+}
 
 export type PlaceholderImage = {
   id: string;

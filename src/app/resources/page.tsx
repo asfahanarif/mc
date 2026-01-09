@@ -5,13 +5,13 @@ import { useState } from 'react';
 import { PageHeader } from "@/components/shared/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { placeholderImages, articles, duas, hadithBooks, sampleHadith } from "@/lib/data";
-import { BookOpen, Newspaper, Search, ChevronsRight, ChevronsLeft, ExternalLink } from 'lucide-react';
+import { BookOpen, Newspaper, Search, ChevronsRight, ChevronsLeft, ExternalLink, BookMarked, Footprints } from 'lucide-react';
 import Link from 'next/link';
+import { Separator } from '@/components/ui/separator';
 
 const ARTICLES_PER_PAGE = 8;
 
@@ -79,59 +79,67 @@ function ArticlesTab() {
 }
 
 function DuasTab() {
+  const duaCategories = ['Morning', 'Evening', 'General'];
+  
   return (
-    <Accordion type="single" collapsible className="w-full max-w-2xl mx-auto">
-      <AccordionItem value="morning">
-        <AccordionTrigger className="text-xl font-headline">Morning Duas</AccordionTrigger>
-        <AccordionContent>
-          {duas.filter(d => d.category === 'Morning').map(dua => (
-            <Card key={dua.id} className="mb-4">
-              <CardHeader>
-                <CardTitle>{dua.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="font-arabic text-xl mb-2" dir="rtl">{dua.content}</p>
-                <p className="text-sm italic text-muted-foreground">{dua.translation}</p>
-              </CardContent>
-            </Card>
+    <Tabs defaultValue="Morning" orientation="vertical" className="w-full">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <TabsList className="flex-col h-auto justify-start p-2 gap-1">
+          {duaCategories.map(category => (
+             <TabsTrigger key={category} value={category} className="w-full justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none">
+              {category} Duas
+            </TabsTrigger>
           ))}
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="evening">
-        <AccordionTrigger className="text-xl font-headline">Evening Duas</AccordionTrigger>
-        <AccordionContent>
-          {duas.filter(d => d.category === 'Evening').map(dua => (
-            <Card key={dua.id} className="mb-4">
-              <CardHeader>
-                <CardTitle>{dua.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="font-arabic text-xl mb-2" dir="rtl">{dua.content}</p>
-                <p className="text-sm italic text-muted-foreground">{dua.translation}</p>
-              </CardContent>
-            </Card>
+        </TabsList>
+        <div className="md:col-span-3">
+          {duaCategories.map(category => (
+            <TabsContent key={category} value={category} className="mt-0">
+               <div className="space-y-6">
+                {duas.filter(d => d.category === category).map(dua => (
+                  <Card key={dua.id} className="shadow-sm">
+                    <CardHeader>
+                      <CardTitle className="font-headline text-primary">{dua.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <p className="font-arabic text-2xl/relaxed text-right" dir="rtl">{dua.arabic}</p>
+                      </div>
+                      <Separator />
+                      <div className="space-y-2">
+                          <div className="flex items-start gap-2">
+                            <Footprints className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                            <div>
+                                <h4 className="font-semibold">Transliteration</h4>
+                                <p className="text-sm text-muted-foreground italic">{dua.transliteration}</p>
+                            </div>
+                          </div>
+                           <div className="flex items-start gap-2">
+                             <BookOpen className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                             <div>
+                                <h4 className="font-semibold">Translation</h4>
+                                <p className="text-sm text-muted-foreground">{dua.translation}</p>
+                             </div>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <BookMarked className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                            <div>
+                                <h4 className="font-semibold">Reference</h4>
+                                <p className="text-xs text-muted-foreground">{dua.reference}</p>
+                            </div>
+                          </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
           ))}
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="general">
-        <AccordionTrigger className="text-xl font-headline">General Duas</AccordionTrigger>
-        <AccordionContent>
-          {duas.filter(d => d.category === 'General').map(dua => (
-            <Card key={dua.id} className="mb-4">
-              <CardHeader>
-                <CardTitle>{dua.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="font-arabic text-xl mb-2" dir="rtl">{dua.content}</p>
-                <p className="text-sm italic text-muted-foreground">{dua.translation}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+        </div>
+      </div>
+    </Tabs>
   );
 }
+
 
 function HadithTab() {
     return (
