@@ -1,9 +1,7 @@
+
 "use client";
 
-import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
-import { useEffect } from "react";
-import { submitContactForm } from "@/lib/actions";
+import { useState, useTransition } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,40 +10,43 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending} className="w-full">
-      {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
-      Send Message
-    </Button>
-  );
-}
-
 export function ContactForm() {
-  const initialState = { message: null, errors: {} };
-  const [state, dispatch] = useActionState(submitContactForm, initialState);
   const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (state.message) {
-      if (Object.keys(state.errors ?? {}).length > 0) {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const message = formData.get('message') as string;
+
+    startTransition(() => {
+        if (!name || !email || !message) {
+            toast({
+                title: "Please fill out all fields.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        const subject = `Message from ${name} via MuslimahsClub Website`;
+        const body = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
+        const mailtoLink = `mailto:muslimahsclubb@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+        window.location.href = mailtoLink;
+
         toast({
-          title: "Please fix the errors",
-          description: state.message,
-          variant: "destructive"
-        })
-      } else {
-        toast({
-          title: "Success!",
-          description: state.message,
-        })
-      }
-    }
-  }, [state, toast]);
+            title: "Redirecting to your email client...",
+            description: "Your message has been prepared.",
+        });
+
+        (e.target as HTMLFormElement).reset();
+    });
+  };
 
   return (
-    <form action={dispatch}>
+    <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader>
           <CardTitle className="font-headline">Get in Touch</CardTitle>
@@ -55,21 +56,21 @@ export function ContactForm() {
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input id="name" name="name" placeholder="Your Name" required />
-            {state.errors?.name && <p className="text-sm text-destructive">{state.errors.name[0]}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" name="email" type="email" placeholder="your@email.com" required />
-            {state.errors?.email && <p className="text-sm text-destructive">{state.errors.email[0]}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="message">Message</Label>
             <Textarea id="message" name="message" placeholder="Your message..." required />
-             {state.errors?.message && <p className="text-sm text-destructive">{state.errors.message[0]}</p>}
           </div>
         </CardContent>
         <CardFooter>
-          <SubmitButton />
+          <Button type="submit" disabled={isPending} className="w-full">
+            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+            Send Message
+          </Button>
         </CardFooter>
       </Card>
     </form>
