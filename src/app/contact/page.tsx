@@ -1,5 +1,7 @@
+
 import { PageHeader } from "@/components/shared/page-header";
 import { ContactForm } from "@/components/contact/contact-form";
+import { SocialCards } from "@/components/contact/social-cards";
 import { placeholderImages } from "@/lib/data";
 
 export default function ContactPage() {
@@ -13,8 +15,13 @@ export default function ContactPage() {
         image={contactImage}
       />
       <section className="py-16 md:py-24">
-        <div className="container max-w-xl">
+        <div className="container space-y-16">
+          <div className="max-w-xl mx-auto">
             <ContactForm />
+          </div>
+          <div className="max-w-4xl mx-auto">
+            <SocialCards />
+          </div>
         </div>
       </section>
     </div>
