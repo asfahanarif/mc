@@ -10,6 +10,7 @@ export const EventSchema = z.object({
   imageUrl: z.string().url().optional().or(z.literal('')),
   order: z.number().optional(),
   registrationUrl: z.string().url({ message: "Please enter a valid URL for registration." }).optional().or(z.literal('')),
+  directionsUrl: z.string().url({ message: "Please enter a valid URL for directions." }).optional().or(z.literal('')),
 });
 
 export type Event = z.infer<typeof EventSchema>;

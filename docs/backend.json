@@ -36,6 +36,11 @@
           "type": "string",
           "description": "The URL for event registration (e.g., WhatsApp link, Google Form).",
           "format": "uri"
+        },
+        "directionsUrl": {
+          "type": "string",
+          "description": "URL for event directions (e.g., Google Maps link).",
+          "format": "uri"
         }
       },
       "required": [

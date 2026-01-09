@@ -71,9 +71,12 @@ function EventForm({
       imageUrl: '',
       order: maxOrder + 1,
       registrationUrl: '',
+      directionsUrl: '',
     },
   });
   const { toast } = useToast();
+
+  const eventType = form.watch('type');
 
   const handleGetSuggestion = async () => {
     const title = form.getValues('title');
@@ -167,19 +170,7 @@ function EventForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="location"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Location</FormLabel>
-              <FormControl>
-                <Input placeholder="Online (Zoom)" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        
         <FormField
           control={form.control}
           name="type"
@@ -201,6 +192,36 @@ function EventForm({
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{eventType === 'Onsite' ? 'Venue Name / Address' : 'Location (e.g., Zoom)'}</FormLabel>
+              <FormControl>
+                <Input placeholder={eventType === 'Onsite' ? '123 Main St, City' : 'Online (Zoom)'} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {eventType === 'Onsite' && (
+             <FormField
+                control={form.control}
+                name="directionsUrl"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Directions URL (Optional)</FormLabel>
+                        <FormControl>
+                            <Input placeholder="https://maps.app.goo.gl/xyz" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        )}
         
         <div className="space-y-2">
             <Label>Registration Method</Label>

@@ -9,7 +9,7 @@ import { placeholderImages } from "@/lib/data";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection, query, orderBy } from "firebase/firestore";
 import type { Event } from "@/lib/schemas";
-import { Calendar, Video, MapPin } from "lucide-react";
+import { Calendar, Video, MapPin, ExternalLink } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function EventsPage() {
@@ -76,7 +76,16 @@ export default function EventsPage() {
                                                 {event.type}
                                             </Badge>
                                             {event.type === 'Onsite' && event.location && (
-                                                <span className="text-xs font-semibold text-muted-foreground">{event.location}</span>
+                                                <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+                                                    {event.directionsUrl ? (
+                                                        <a href={event.directionsUrl} target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
+                                                            {event.location}
+                                                            <ExternalLink className="h-3 w-3" />
+                                                        </a>
+                                                    ) : (
+                                                        event.location
+                                                    )}
+                                                </span>
                                             )}
                                         </div>
                                         <CardTitle className="font-headline text-xl">{event.title}</CardTitle>
