@@ -26,15 +26,15 @@
     },
     {
       "id": "about-team",
-      "description": "A diverse group of professional women posing for a team photo.",
-      "imageUrl": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkaXZlcnNlJTIwdGVhbXxlbnwwfHx8fDE3Njc4MDQ4NTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "diverse team"
+      "description": "A person writing in a notebook, representing planning and dedication.",
+      "imageUrl": "https://images.unsplash.com/photo-1551822620-ac3afd8acd1f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNXx8YWJvdXQlMjB1c3xlbnwwfHx8fDE3Njc5NTc0MDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "planning writing"
     },
     {
       "id": "forum-bg",
-      "description": "An abstract background with Islamic geometric patterns.",
-      "imageUrl": "https://images.unsplash.com/photo-1550537687-c91072c4792d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxpc2xhbWljJTIwcGF0dGVybnxlbnwwfHx8fDE3Njc3ODE5MDh8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "islamic pattern"
+      "description": "A field of question marks.",
+      "imageUrl": "https://images.unsplash.com/photo-1665789318391-6057c533005e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxxdWVzdGlvbnxlbnwwfHx8fDE3Njc4NTEyNzR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "questions answers"
     },
     {
       "id": "quran-explorer",
