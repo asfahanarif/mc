@@ -40,7 +40,7 @@ export default function Footer() {
                 <div className="flex justify-center md:justify-start items-center gap-4">
                     {socialLinks.map(link => (
                         <a key={link.name} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.name} className="group">
-                           <link.icon className={cn("h-8 w-8 text-muted-foreground transition-all duration-300 group-hover:scale-110 group-hover:text-primary")} />
+                           <link.icon className={cn("h-8 w-8 text-primary transition-all duration-300 group-hover:scale-110 group-hover:opacity-80")} />
                         </a>
                     ))}
                 </div>
