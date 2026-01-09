@@ -47,7 +47,7 @@ export default function Footer() {
       </div>
       <div className="bg-background/50 border-t">
         <div className="container py-4 text-center text-sm text-muted-foreground">
-            <p>&copy; {currentYear} Muslimahs Club | All rights reserved.</p>
+            <p>&copy; {currentYear} Muslimahs Club | All rights reserved</p>
             <p>
                 Powered by <a href="https://asfahanarif.vercel.app" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">AxN</a>
             </p>
