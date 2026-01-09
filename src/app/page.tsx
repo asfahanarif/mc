@@ -137,17 +137,19 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="hadith-of-the-day" className="w-full py-16 md:py-24 bg-primary/5">
+      <section id="hadith-of-the-day" className="w-full py-16 md:py-24 bg-secondary/50">
         <div className="container px-4 md:px-6">
           <div className="text-center space-y-3 mb-12">
             <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">Hadith of the Day</h2>
           </div>
           {hadith && (
-            <Card className="max-w-3xl mx-auto shadow-lg">
-                <CardContent className="p-8 text-center space-y-4">
-                    <BookHeart className="mx-auto h-12 w-12 text-primary/70" />
-                    <p className="text-lg md:text-xl text-foreground/90 leading-relaxed">"{hadith.text}"</p>
-                    <p className="font-semibold text-muted-foreground">{hadith.reference}</p>
+            <Card className="max-w-3xl mx-auto shadow-lg border-primary/20 bg-background/50 overflow-hidden">
+                <CardContent className="p-8 md:p-12 text-center space-y-6 relative">
+                    <Quote className="absolute top-6 left-6 h-16 w-16 text-primary/10 -rotate-12" />
+                    <p className="text-xl md:text-2xl font-body text-foreground/90 leading-relaxed z-10 relative">
+                        {hadith.text}
+                    </p>
+                    <p className="font-semibold text-muted-foreground z-10 relative">— {hadith.reference}</p>
                 </CardContent>
             </Card>
           )}
