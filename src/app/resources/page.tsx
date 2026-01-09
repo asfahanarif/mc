@@ -88,13 +88,15 @@ function DuasTab() {
   
   return (
     <Tabs defaultValue="Morning" className="w-full">
-      <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto">
-        {duaCategories.map(category => (
-            <TabsTrigger key={category} value={category}>
-            {category}
-            </TabsTrigger>
-        ))}
-      </TabsList>
+      <div className="flex justify-center">
+        <TabsList>
+          {duaCategories.map(category => (
+              <TabsTrigger key={category} value={category}>
+              {category}
+              </TabsTrigger>
+          ))}
+        </TabsList>
+      </div>
       {duaCategories.map(category => (
         <TabsContent key={category} value={category} className="mt-8">
             <div className="space-y-6 max-w-4xl mx-auto">
