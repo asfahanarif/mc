@@ -26,7 +26,7 @@ export default function Footer() {
             </div>
              <div className="md:col-span-2">
                 <h3 className="font-headline text-lg font-semibold text-primary mb-4 text-center md:text-left">Quick Links</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center md:text-left">
                     {footerLinks.map(link => (
                         <Link key={link.href} href={link.href} className="text-muted-foreground hover:text-primary transition-colors">{link.label}</Link>
                     ))}
