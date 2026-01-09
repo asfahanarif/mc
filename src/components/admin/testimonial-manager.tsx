@@ -1,7 +1,8 @@
+
 'use client';
 import { useState } from 'react';
-import { useCollection, setDocumentNonBlocking, deleteDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, doc } from 'firebase/firestore';
+import { useCollection, setDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, doc, query, orderBy } from 'firebase/firestore';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TestimonialSchema, type Testimonial } from '@/lib/schemas';
@@ -20,7 +21,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Pencil, PlusCircle, Trash2, Loader2 } from 'lucide-react';
+import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown } from 'lucide-react';
 import Image from 'next/image';
 import { Skeleton } from '../ui/skeleton';
 import { getTestimonialContentSuggestion } from '@/ai/flows/suggest-testimonial-content';
@@ -30,15 +31,23 @@ type TestimonialWithId = Testimonial & { id: string };
 function TestimonialForm({
   testimonial,
   onClose,
+  maxOrder = 0,
 }: {
   testimonial?: TestimonialWithId;
   onClose: () => void;
+  maxOrder?: number;
 }) {
   const firestore = useFirestore();
   const [isGettingSuggestion, setIsGettingSuggestion] = useState(false);
   const form = useForm<Testimonial>({
     resolver: zodResolver(TestimonialSchema),
-    defaultValues: testimonial || { authorName: '', authorTitle: '', content: '', imageUrl: '' },
+    defaultValues: testimonial || { 
+        authorName: '', 
+        authorTitle: '', 
+        content: '', 
+        imageUrl: '',
+        order: maxOrder + 1,
+    },
   });
   const { toast } = useToast();
 
@@ -61,8 +70,13 @@ function TestimonialForm({
   }
 
   const onSubmit = (data: Testimonial) => {
+    const testimonialData = { ...data };
+    if (!testimonialData.order) {
+        testimonialData.order = maxOrder + 1;
+    }
+
     const testimonialRef = testimonial ? doc(firestore, 'testimonials', testimonial.id) : doc(collection(firestore, 'testimonials'));
-    setDocumentNonBlocking(testimonialRef, data, { merge: true });
+    setDocumentNonBlocking(testimonialRef, testimonialData, { merge: true });
     toast({
       title: testimonial ? 'Testimonial Updated' : 'Testimonial Added',
       description: `The testimonial from ${data.authorName} has been saved.`,
@@ -139,7 +153,7 @@ function TestimonialForm({
   );
 }
 
-function TestimonialDialog({ testimonial }: { testimonial?: TestimonialWithId }) {
+function TestimonialDialog({ testimonial, maxOrder }: { testimonial?: TestimonialWithId, maxOrder?: number }) {
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -161,7 +175,7 @@ function TestimonialDialog({ testimonial }: { testimonial?: TestimonialWithId })
             {testimonial ? 'Update the testimonial details.' : 'Fill out the form to add a new testimonial.'}
           </DialogDescription>
         </DialogHeader>
-        <TestimonialForm testimonial={testimonial} onClose={() => setOpen(false)} />
+        <TestimonialForm testimonial={testimonial} onClose={() => setOpen(false)} maxOrder={maxOrder} />
       </DialogContent>
     </Dialog>
   );
@@ -169,9 +183,29 @@ function TestimonialDialog({ testimonial }: { testimonial?: TestimonialWithId })
 
 export default function TestimonialManager() {
   const firestore = useFirestore();
-  const testimonialsQuery = useMemoFirebase(() => collection(firestore, 'testimonials'), [firestore]);
+  const testimonialsQuery = useMemoFirebase(() => query(collection(firestore, 'testimonials'), orderBy('order', 'asc')), [firestore]);
   const { data: testimonials, isLoading } = useCollection<Testimonial>(testimonialsQuery);
   const { toast } = useToast();
+
+  const maxOrder = testimonials ? Math.max(0, ...testimonials.map(t => t.order || 0)) : 0;
+
+  const handleReorder = (currentIndex: number, direction: 'up' | 'down') => {
+    if (!testimonials) return;
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= testimonials.length) return;
+
+    const currentTestimonial = testimonials[currentIndex];
+    const swapTestimonial = testimonials[newIndex];
+    
+    const currentTestimonialRef = doc(firestore, 'testimonials', currentTestimonial.id);
+    const swapTestimonialRef = doc(firestore, 'testimonials', swapTestimonial.id);
+
+    // Swap order values
+    updateDocumentNonBlocking(currentTestimonialRef, { order: swapTestimonial.order });
+    updateDocumentNonBlocking(swapTestimonialRef, { order: currentTestimonial.order });
+
+    toast({ title: "Reordering testimonials..." });
+  };
 
   const handleDelete = (id: string, name: string) => {
     if (window.confirm(`Are you sure you want to delete the testimonial from ${name}?`)) {
@@ -192,14 +226,22 @@ export default function TestimonialManager() {
             <CardTitle>Testimonial Management</CardTitle>
             <CardDescription>Manage what your members are saying.</CardDescription>
         </div>
-        <TestimonialDialog />
+        <TestimonialDialog maxOrder={maxOrder} />
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {isLoading && [...Array(2)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
-          {testimonials?.map((testimonial) => (
+          {testimonials?.map((testimonial, index) => (
             <Card key={testimonial.id} className="flex items-center justify-between p-4">
                 <div className='flex items-center gap-4'>
+                    <div className="flex flex-col gap-1 mr-2">
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleReorder(index, 'up')} disabled={index === 0}>
+                            <ArrowUp className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleReorder(index, 'down')} disabled={index === testimonials.length - 1}>
+                            <ArrowDown className="h-4 w-4" />
+                        </Button>
+                    </div>
                     <Image src={testimonial.imageUrl || `https://picsum.photos/seed/${testimonial.id}/64/64`} alt={testimonial.authorName} width={48} height={48} className='rounded-full' />
                     <div>
                         <p className="italic">"{testimonial.content.substring(0,80)}..."</p>
@@ -207,7 +249,7 @@ export default function TestimonialManager() {
                     </div>
                 </div>
               <div className="flex items-center">
-                <TestimonialDialog testimonial={testimonial} />
+                <TestimonialDialog testimonial={testimonial} maxOrder={maxOrder} />
                 <Button variant="ghost" size="icon" onClick={() => handleDelete(testimonial.id, testimonial.authorName)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>

@@ -1,7 +1,8 @@
+
 'use client';
 import { useState } from 'react';
-import { useCollection, setDocumentNonBlocking, deleteDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, doc } from 'firebase/firestore';
+import { useCollection, setDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, doc, query, orderBy } from 'firebase/firestore';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EventSchema, type Event } from '@/lib/schemas';
@@ -21,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Pencil, PlusCircle, Trash2, Loader2 } from 'lucide-react';
+import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
 import { getEventDescriptionSuggestion } from '@/ai/flows/suggest-event-description';
 
@@ -30,9 +31,11 @@ type EventWithId = Event & { id: string };
 function EventForm({
   event,
   onClose,
+  maxOrder = 0,
 }: {
   event?: EventWithId;
   onClose: () => void;
+  maxOrder?: number;
 }) {
   const firestore = useFirestore();
   const [isGettingSuggestion, setIsGettingSuggestion] = useState(false);
@@ -45,6 +48,7 @@ function EventForm({
       location: '',
       type: 'Online',
       imageUrl: '',
+      order: maxOrder + 1,
     },
   });
   const { toast } = useToast();
@@ -68,8 +72,13 @@ function EventForm({
   }
 
   const onSubmit = (data: Event) => {
+    const eventData = { ...data };
+    if (!eventData.order) {
+        eventData.order = maxOrder + 1;
+    }
+
     const eventRef = event ? doc(firestore, 'events', event.id) : doc(collection(firestore, 'events'));
-    setDocumentNonBlocking(eventRef, data, { merge: true });
+    setDocumentNonBlocking(eventRef, eventData, { merge: true });
     toast({
       title: event ? 'Event Updated' : 'Event Created',
       description: `The event "${data.title}" has been saved.`,
@@ -180,7 +189,7 @@ function EventForm({
   );
 }
 
-function EventDialog({ event }: { event?: EventWithId }) {
+function EventDialog({ event, maxOrder }: { event?: EventWithId, maxOrder?: number }) {
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -202,7 +211,7 @@ function EventDialog({ event }: { event?: EventWithId }) {
             {event ? 'Update the details for this event.' : 'Fill out the form to create a new event.'}
           </DialogDescription>
         </DialogHeader>
-        <EventForm event={event} onClose={() => setOpen(false)} />
+        <EventForm event={event} onClose={() => setOpen(false)} maxOrder={maxOrder} />
       </DialogContent>
     </Dialog>
   );
@@ -210,9 +219,30 @@ function EventDialog({ event }: { event?: EventWithId }) {
 
 export default function EventManager() {
   const firestore = useFirestore();
-  const eventsQuery = useMemoFirebase(() => collection(firestore, 'events'), [firestore]);
+  const eventsQuery = useMemoFirebase(() => query(collection(firestore, 'events'), orderBy('order', 'asc')), [firestore]);
   const { data: events, isLoading } = useCollection<Event>(eventsQuery);
   const { toast } = useToast();
+
+  const maxOrder = events ? Math.max(0, ...events.map(e => e.order || 0)) : 0;
+
+  const handleReorder = (currentIndex: number, direction: 'up' | 'down') => {
+    if (!events) return;
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= events.length) return;
+
+    const currentEvent = events[currentIndex];
+    const swapEvent = events[newIndex];
+    
+    const currentEventRef = doc(firestore, 'events', currentEvent.id);
+    const swapEventRef = doc(firestore, 'events', swapEvent.id);
+
+    // Swap order values
+    updateDocumentNonBlocking(currentEventRef, { order: swapEvent.order });
+    updateDocumentNonBlocking(swapEventRef, { order: currentEvent.order });
+
+    toast({ title: "Reordering events..." });
+  };
+
 
   const handleDelete = (id: string, title: string) => {
     if (window.confirm(`Are you sure you want to delete the event "${title}"?`)) {
@@ -233,19 +263,29 @@ export default function EventManager() {
             <CardTitle>Event Management</CardTitle>
             <CardDescription>Add, edit, or delete community events.</CardDescription>
         </div>
-        <EventDialog />
+        <EventDialog maxOrder={maxOrder} />
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {isLoading && [...Array(3)].map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
-          {events?.map((event) => (
+          {events?.map((event, index) => (
             <Card key={event.id} className="flex items-center justify-between p-4">
-              <div>
-                <h3 className="font-semibold">{event.title}</h3>
-                <p className="text-sm text-muted-foreground">{new Date(event.date).toLocaleString()} - {event.location}</p>
+              <div className="flex items-center">
+                 <div className="flex flex-col gap-1 mr-4">
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleReorder(index, 'up')} disabled={index === 0}>
+                        <ArrowUp className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleReorder(index, 'down')} disabled={index === events.length - 1}>
+                        <ArrowDown className="h-4 w-4" />
+                    </Button>
+                </div>
+                <div>
+                  <h3 className="font-semibold">{event.title}</h3>
+                  <p className="text-sm text-muted-foreground">{new Date(event.date).toLocaleString()} - {event.location}</p>
+                </div>
               </div>
               <div className="flex items-center">
-                <EventDialog event={event} />
+                <EventDialog event={event} maxOrder={maxOrder} />
                 <Button variant="ghost" size="icon" onClick={() => handleDelete(event.id, event.title)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>

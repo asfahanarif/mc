@@ -1,3 +1,4 @@
+
 'use client';
 import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay";
@@ -8,13 +9,13 @@ import {
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { collection, query, orderBy } from "firebase/firestore";
 import type { Testimonial } from "@/lib/schemas";
 import { Skeleton } from "../ui/skeleton";
 
 export function TestimonialsCarousel() {
   const firestore = useFirestore();
-  const testimonialsQuery = useMemoFirebase(() => collection(firestore, 'testimonials'), [firestore]);
+  const testimonialsQuery = useMemoFirebase(() => query(collection(firestore, 'testimonials'), orderBy('order', 'asc')), [firestore]);
   const { data: testimonials, isLoading } = useCollection<Testimonial>(testimonialsQuery);
 
   return (

@@ -1,3 +1,4 @@
+
 import { z } from 'zod';
 
 export const EventSchema = z.object({
@@ -9,6 +10,7 @@ export const EventSchema = z.object({
   location: z.string().min(3, 'Location is required'),
   type: z.enum(['Online', 'Onsite']),
   imageUrl: z.string().url().optional().or(z.literal('')),
+  order: z.number().optional(),
 });
 
 export type Event = z.infer<typeof EventSchema>;
@@ -18,6 +20,7 @@ export const TestimonialSchema = z.object({
   authorTitle: z.string().min(2, 'Author title/location is required'),
   content: z.string().min(10, 'Testimonial content is required'),
   imageUrl: z.string().url().optional().or(z.literal('')),
+  order: z.number().optional(),
 });
 
 export type Testimonial = z.infer<typeof TestimonialSchema>;
@@ -27,6 +30,7 @@ export const TeamMemberSchema = z.object({
   title: z.string().min(2, 'Title is required'),
   bio: z.string().min(10, 'Bio is required'),
   imageUrl: z.string().url().optional().or(z.literal('')),
+  order: z.number().optional(),
 });
 
 export type TeamMember = z.infer<typeof TeamMemberSchema>;

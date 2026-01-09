@@ -105,7 +105,8 @@ service cloud.firestore {
 
     /**
      * @description Controls access to event data. Events are public to read but
-     * can only be created, modified, or deleted by an administrator.
+     * can only be created, modified, or deleted by an administrator. The order
+     * field can be updated by an admin.
      * @path /events/{eventId}
      */
     match /events/{eventId} {

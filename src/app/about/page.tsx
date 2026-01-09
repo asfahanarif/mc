@@ -1,17 +1,18 @@
+
 'use client';
 import Image from "next/image";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { placeholderImages } from "@/lib/data";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { collection, query, orderBy } from "firebase/firestore";
 import type { TeamMember } from "@/lib/schemas";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AboutPage() {
   const aboutImage = placeholderImages.find(p => p.id === 'about-team');
   const firestore = useFirestore();
-  const teamQuery = useMemoFirebase(() => collection(firestore, 'team_members'), [firestore]);
+  const teamQuery = useMemoFirebase(() => query(collection(firestore, 'team_members'), orderBy('order', 'asc')), [firestore]);
   const { data: teamMembers, isLoading } = useCollection<TeamMember>(teamQuery);
 
   return (
@@ -40,7 +41,7 @@ export default function AboutPage() {
                 <CardContent className="pt-8">
                   <div className="relative h-32 w-32 mx-auto">
                     <Image
-                      src={member.imageUrl || `https://picsum.photos/seed/${member.id}/128/128`}
+                      src={member.imageUrl || `https://i.pinimg.com/736x/51/bd/ec/51bdec9c6b1b42e993d540ec4c418bc7.jpg`}
                       alt={member.name}
                       width={128}
                       height={128}

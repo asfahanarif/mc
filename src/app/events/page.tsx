@@ -1,3 +1,4 @@
+
 'use client';
 import Image from "next/image";
 import { PageHeader } from "@/components/shared/page-header";
@@ -6,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { placeholderImages } from "@/lib/data";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { collection, query, orderBy } from "firebase/firestore";
 import type { Event } from "@/lib/schemas";
 import { Calendar, Video, MapPin } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function EventsPage() {
     const eventsImage = placeholderImages.find(p => p.id === 'event');
     const firestore = useFirestore();
-    const eventsQuery = useMemoFirebase(() => collection(firestore, 'events'), [firestore]);
+    const eventsQuery = useMemoFirebase(() => query(collection(firestore, 'events'), orderBy('order', 'asc')), [firestore]);
     const { data: events, isLoading } = useCollection<Event>(eventsQuery);
 
     return (
