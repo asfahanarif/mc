@@ -48,7 +48,7 @@ function ArticlesTab() {
             }}
             className="max-w-sm mx-auto"
         />
-        <div className="text-right">
+        <div className="text-center">
             <p className="text-sm text-muted-foreground">Source: Islamqa.info</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -82,9 +82,6 @@ function ArticlesTab() {
                 </Button>
             </div>
         )}
-         <div className="text-center mt-4">
-            <p className="text-sm text-muted-foreground">Source: Islamqa.info</p>
-        </div>
     </div>
   );
 }
@@ -169,8 +166,8 @@ function HadithTab() {
     const [error, setError] = useState<string | null>(null);
 
     const handleSearch = async () => {
-        if (!selectedBook && !keyword) {
-            setError("Please select a book or enter a keyword to search.");
+        if (!selectedBook || !hadithNumber) {
+            setError("Please select a book and enter a hadith number.");
             return;
         }
 
@@ -182,7 +179,11 @@ function HadithTab() {
             const searchParams = new URLSearchParams();
             if (selectedBook) searchParams.append('collection', selectedBook);
             if (hadithNumber) searchParams.append('hadithNumber', hadithNumber);
-            if (keyword) searchParams.append('q', keyword);
+            if (keyword) {
+                 setError("Keyword search is not supported. Please search by book and hadith number.");
+                 setIsLoading(false);
+                 return;
+            }
 
             const response = await fetch(`/api/hadith?${searchParams.toString()}`);
             
@@ -206,12 +207,12 @@ function HadithTab() {
             <Card>
                 <CardHeader>
                     <CardTitle className="font-headline">Search Hadith</CardTitle>
-                    <CardDescription>Search by book and number, or by keyword across collections.</CardDescription>
+                    <CardDescription>Search by book and number.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Select value={selectedBook} onValueChange={setSelectedBook}>
                         <SelectTrigger>
-                            <SelectValue placeholder="Select a book (optional)" />
+                            <SelectValue placeholder="Select a book" />
                         </SelectTrigger>
                         <SelectContent>
                             {hadithBooks.map(book => <SelectItem key={book.name} value={book.name}>{book.title}</SelectItem>)}
@@ -221,20 +222,11 @@ function HadithTab() {
                         placeholder="Hadith number (e.g., 1)" 
                         value={hadithNumber}
                         onChange={(e) => setHadithNumber(e.target.value)}
-                        disabled={!selectedBook || !!keyword}
-                    />
-                    <Input 
-                        placeholder="Or search by keyword..." 
-                        className="md:col-span-2" 
-                        value={keyword}
-                        onChange={(e) => {
-                            setKeyword(e.target.value);
-                            if (e.target.value) setHadithNumber('');
-                        }}
+                        disabled={!selectedBook}
                     />
                 </CardContent>
                 <CardFooter>
-                    <Button onClick={handleSearch} disabled={isLoading}>
+                    <Button onClick={handleSearch} disabled={isLoading || !selectedBook || !hadithNumber}>
                         {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
                         Search
                     </Button>
@@ -251,25 +243,24 @@ function HadithTab() {
             {isLoading && (
                 <div className="space-y-4">
                     <Skeleton className="h-32 w-full" />
-                    <Skeleton className="h-32 w-full" />
                 </div>
             )}
             
             {searchResults && searchResults.hadiths.length > 0 && (
                 <div className="space-y-4">
                     {searchResults.hadiths.map((hadith) => (
-                         <Card key={`${hadith.collection}-${hadith.hadithNumber}`} className="bg-secondary/30">
+                         <Card key={`${hadith.collection}-${hadith.hadithnumber}`} className="bg-secondary/30">
                             <CardHeader>
                                 <CardTitle className="text-lg font-headline">
-                                    {hadithBooks.find(b => b.name === hadith.collection)?.title}, Hadith {hadith.hadithNumber}
+                                    {hadithBooks.find(b => b.name === hadith.collection)?.title}, Hadith {hadith.hadithnumber}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-lg leading-relaxed font-arabic text-right mb-4" dir="rtl">{hadith.hadith.find(h => h.lang === 'ar')?.body}</p>
-                                <p className="text-foreground/90">{hadith.hadith.find(h => h.lang === 'en')?.body}</p>
+                                <p className="text-lg leading-relaxed font-arabic text-right mb-4" dir="rtl">{hadith.arabic.text}</p>
+                                <p className="text-foreground/90">{hadith.text}</p>
                             </CardContent>
                             <CardFooter>
-                                {hadith.hadith.find(h => h.lang === 'en')?.grades?.map((grade, index) => (
+                                {hadith.grades?.map((grade, index) => (
                                     <Badge key={index} variant="outline" className="mr-2">{grade.grade}</Badge>
                                 ))}
                             </CardFooter>
@@ -299,8 +290,8 @@ export default function ResourcesPage() {
         <div className="container">
           <Tabs defaultValue="hadith" className="w-full">
             <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto">
-              <TabsTrigger value="articles" disabled><Newspaper className="mr-2 h-4 w-4"/>Articles</TabsTrigger>
-              <TabsTrigger value="duas" disabled><BookOpen className="mr-2 h-4 w-4"/>Duas</TabsTrigger>
+              <TabsTrigger value="articles"><Newspaper className="mr-2 h-4 w-4"/>Articles</TabsTrigger>
+              <TabsTrigger value="duas"><BookOpen className="mr-2 h-4 w-4"/>Duas</TabsTrigger>
               <TabsTrigger value="hadith"><BookOpen className="mr-2 h-4 w-4"/>Hadith</TabsTrigger>
             </TabsList>
             <TabsContent value="articles" className="mt-8">
@@ -318,5 +309,3 @@ export default function ResourcesPage() {
     </div>
   );
 }
-
-    

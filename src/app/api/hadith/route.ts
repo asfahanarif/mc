@@ -1,8 +1,55 @@
 
 import { NextResponse } from 'next/server';
 
-// Note: The official API is at https://api.sunnah.com, but we'll use the base domain for this proxy.
-const API_BASE_URL = 'https://sunnah.com/api/v1/';
+// Using the free hadith-api by fawazahmed0
+// https://github.com/fawazahmed0/hadith-api
+const API_BASE_URL = 'https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions';
+
+// A mapping from the URL-friendly book names to the API's file naming convention.
+// Note: This only includes English translations for simplicity.
+const BOOK_TO_EDITION_MAP: { [key: string]: string } = {
+    bukhari: 'eng-bukhari',
+    muslim: 'eng-muslim',
+    abudawud: 'eng-abudawud',
+    tirmidhi: 'eng-tirmidhi',
+    nasai: 'eng-nasai',
+    ibnmajah: 'eng-ibnmajah',
+    malik: 'eng-malik',
+};
+
+async function fetchHadithByNumber(collection: string, hadithNumber: string) {
+    const edition = BOOK_TO_EDITION_MAP[collection];
+    if (!edition) {
+        return NextResponse.json({ error: `Collection '${collection}' is not supported.` }, { status: 400 });
+    }
+    
+    const url = `${API_BASE_URL}/${edition}/${hadithNumber}.json`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        return NextResponse.json({ error: `Hadith not found in ${collection}, number ${hadithNumber}.` }, { status: 404 });
+    }
+    
+    const data = await response.json();
+
+    // The API returns a single hadith object. We wrap it in an array to match the search result structure.
+    // We also need to add the collection name, which is not in the single hadith response.
+    const normalizedHadith = {
+        ...data.hadiths[0], // The API returns { hadiths: [...] }
+        collection,
+    };
+    
+    return NextResponse.json({ hadiths: [normalizedHadith] });
+}
+
+
+async function fetchHadithByKeyword(collection?: string, keyword?: string) {
+    // This API does not support keyword search directly.
+    // The intended use is to download the whole book and search locally, which is not feasible in this serverless environment.
+    // As a fallback, we will inform the user that keyword search is not supported with this API.
+    return NextResponse.json({ error: "Keyword search is not supported. Please search by book and hadith number." }, { status: 400 });
+}
+
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -10,58 +57,22 @@ export async function GET(request: Request) {
   const hadithNumber = searchParams.get('hadithNumber');
   const query = searchParams.get('q');
 
-  let apiUrl = '';
-  let isSingleHadith = false;
 
   if (collection && hadithNumber && !query) {
-    // Specific Hadith search by collection and number
-    apiUrl = `${API_BASE_URL}collections/${collection}/hadiths/${hadithNumber}`;
-    isSingleHadith = true;
-  } else if (query) {
-    // Keyword-based search
-    const params = new URLSearchParams({ q: query, limit: "20" }); // Add a limit
-    if (collection) {
-      params.append('collection', collection);
-    }
-    apiUrl = `${API_BASE_URL}hadiths/search?${params.toString()}`;
-  } else if (collection) {
-    // List hadiths from a collection
-    apiUrl = `${API_BASE_URL}collections/${collection}/hadiths?limit=20`;
-  } else {
-    return NextResponse.json({ error: 'Invalid search parameters. Please provide a collection, a keyword, or both.' }, { status: 400 });
+    return fetchHadithByNumber(collection, hadithNumber);
   }
 
-  try {
-    const apiResponse = await fetch(apiUrl, {
-        headers: {
-            'Accept': 'application/json',
-            // It's good practice to identify your app with a User-Agent
-            'User-Agent': 'MuslimahsClubApp/1.0',
-        },
-    });
-
-    if (!apiResponse.ok) {
-        const errorText = await apiResponse.text();
-        console.error(`API Error (${apiResponse.status}) from ${apiUrl}: ${errorText}`);
-        return NextResponse.json({ error: `Hadith not found or API error. Status: ${apiResponse.status}` }, { status: apiResponse.status });
-    }
-
-    const data = await apiResponse.json();
-    
-    // Normalize the response structure. 
-    // Single hadith requests and search requests have different structures.
-    if (isSingleHadith) {
-        return NextResponse.json({ hadiths: [data] });
-    } else if (data.data) { // Search results are under a 'data' key
-        return NextResponse.json({ hadiths: data.data });
-    } else {
-        return NextResponse.json(data);
-    }
-
-  } catch (error) {
-    console.error('Failed to fetch from Hadith API route:', error);
-    return NextResponse.json({ error: 'Internal Server Error while fetching Hadith data' }, { status: 500 });
+  if (query) {
+      // The new API doesn't support keyword search in the same way.
+      // We will return a helpful error message to the user.
+      return NextResponse.json({ error: "Keyword search is not supported with the current API. Please search by selecting a book and entering a hadith number." }, { status: 400 });
   }
+
+  // If only a collection is provided, it's not a valid request for a specific hadith.
+  if (collection && !hadithNumber && !query) {
+      return NextResponse.json({ error: "Please provide a hadith number to search within the selected book." }, { status: 400 });
+  }
+
+  return NextResponse.json({ error: 'Please select a book and enter a hadith number to search.' }, { status: 400 });
+
 }
-
-    

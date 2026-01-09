@@ -30,23 +30,23 @@ export type PlaceholderImage = {
   imageHint: string;
 };
 
-export type HadithContent = {
-    lang: 'ar' | 'en';
-    chapterNumber: string;
-    chapterTitle: string;
-    urn: number;
-    body: string;
-    grades: { name: string; grade: string }[];
-};
 
 export type Hadith = {
-    collection: string;
-    bookNumber: string;
-    hadithNumber: string;
-    hadith: HadithContent[];
+    hadithnumber: number;
+    arabic: {
+        text: string;
+        footnotes: any[];
+    };
+    text: string;
+    footnotes: any[];
+    grades: { name: string; grade: string }[];
+    reference: {
+        book: number;
+        hadith: number;
+    };
+    collection: string; // I'm adding this to track which book it's from
 };
 
 export type HadithResult = {
-    total: number;
     hadiths: Hadith[];
 };
