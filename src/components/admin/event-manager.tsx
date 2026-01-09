@@ -21,8 +21,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Pencil, PlusCircle, Trash2 } from 'lucide-react';
+import { Pencil, PlusCircle, Trash2, Loader2 } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
+import { getEventDescriptionSuggestion } from '@/ai/flows/suggest-event-description';
 
 type EventWithId = Event & { id: string };
 
@@ -34,6 +35,7 @@ function EventForm({
   onClose: () => void;
 }) {
   const firestore = useFirestore();
+  const [isGettingSuggestion, setIsGettingSuggestion] = useState(false);
   const form = useForm<Event>({
     resolver: zodResolver(EventSchema),
     defaultValues: event || {
@@ -46,6 +48,24 @@ function EventForm({
     },
   });
   const { toast } = useToast();
+
+  const handleGetSuggestion = async () => {
+    const title = form.getValues('title');
+    if (!title) {
+        toast({ title: "Please enter a title first.", variant: "destructive" });
+        return;
+    }
+    setIsGettingSuggestion(true);
+    try {
+        const result = await getEventDescriptionSuggestion({ title });
+        form.setValue('description', result.suggestedDescription, { shouldValidate: true });
+    } catch (error) {
+        console.error("Error getting AI suggestion:", error);
+        toast({ title: "Could not get suggestion.", variant: "destructive" });
+    } finally {
+        setIsGettingSuggestion(false);
+    }
+  }
 
   const onSubmit = (data: Event) => {
     const eventRef = event ? doc(firestore, 'events', event.id) : doc(collection(firestore, 'events'));
@@ -78,7 +98,13 @@ function EventForm({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+               <div className="flex justify-between items-center">
+                <FormLabel>Description</FormLabel>
+                <Button type="button" size="sm" variant="outline" onClick={handleGetSuggestion} disabled={isGettingSuggestion}>
+                    {isGettingSuggestion ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
+                    Get AI Suggestion
+                </Button>
+              </div>
               <FormControl>
                 <Textarea placeholder="A deep dive into Surah Al-Fatiha..." {...field} />
               </FormControl>

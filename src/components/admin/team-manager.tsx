@@ -20,9 +20,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Pencil, PlusCircle, Trash2 } from 'lucide-react';
+import { Pencil, PlusCircle, Trash2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { Skeleton } from '../ui/skeleton';
+import { getTeamMemberBioSuggestion } from '@/ai/flows/suggest-team-member-bio';
 
 type TeamMemberWithId = TeamMember & { id: string };
 
@@ -34,11 +35,31 @@ function TeamMemberForm({
   onClose: () => void;
 }) {
   const firestore = useFirestore();
+  const [isGettingSuggestion, setIsGettingSuggestion] = useState(false);
   const form = useForm<TeamMember>({
     resolver: zodResolver(TeamMemberSchema),
     defaultValues: member || { name: '', title: '', bio: '', imageUrl: '' },
   });
   const { toast } = useToast();
+
+  const handleGetSuggestion = async () => {
+      const name = form.getValues('name');
+      const title = form.getValues('title');
+      if (!name || !title) {
+          toast({ title: "Please enter a name and title first.", variant: "destructive" });
+          return;
+      }
+      setIsGettingSuggestion(true);
+      try {
+          const result = await getTeamMemberBioSuggestion({ name, title });
+          form.setValue('bio', result.suggestedBio, { shouldValidate: true });
+      } catch (error) {
+          console.error("Error getting AI suggestion:", error);
+          toast({ title: "Could not get suggestion.", variant: "destructive" });
+      } finally {
+          setIsGettingSuggestion(false);
+      }
+  }
 
   const onSubmit = (data: TeamMember) => {
     const memberRef = member ? doc(firestore, 'team_members', member.id) : doc(collection(firestore, 'team_members'));
@@ -84,7 +105,13 @@ function TeamMemberForm({
           name="bio"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Short Bio</FormLabel>
+               <div className="flex justify-between items-center">
+                <FormLabel>Short Bio</FormLabel>
+                 <Button type="button" size="sm" variant="outline" onClick={handleGetSuggestion} disabled={isGettingSuggestion}>
+                    {isGettingSuggestion ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
+                    Get AI Suggestion
+                </Button>
+              </div>
               <FormControl>
                 <Textarea placeholder="A short bio about the team member." {...field} />
               </FormControl>

@@ -20,9 +20,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Pencil, PlusCircle, Trash2 } from 'lucide-react';
+import { Pencil, PlusCircle, Trash2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { Skeleton } from '../ui/skeleton';
+import { getTestimonialContentSuggestion } from '@/ai/flows/suggest-testimonial-content';
 
 type TestimonialWithId = Testimonial & { id: string };
 
@@ -34,11 +35,30 @@ function TestimonialForm({
   onClose: () => void;
 }) {
   const firestore = useFirestore();
+  const [isGettingSuggestion, setIsGettingSuggestion] = useState(false);
   const form = useForm<Testimonial>({
     resolver: zodResolver(TestimonialSchema),
     defaultValues: testimonial || { authorName: '', authorTitle: '', content: '', imageUrl: '' },
   });
   const { toast } = useToast();
+
+  const handleGetSuggestion = async () => {
+    const authorName = form.getValues('authorName');
+    if (!authorName) {
+        toast({ title: "Please enter an author's name first.", variant: "destructive" });
+        return;
+    }
+    setIsGettingSuggestion(true);
+    try {
+        const result = await getTestimonialContentSuggestion({ authorName });
+        form.setValue('content', result.suggestedContent, { shouldValidate: true });
+    } catch (error) {
+        console.error("Error getting AI suggestion:", error);
+        toast({ title: "Could not get suggestion.", variant: "destructive" });
+    } finally {
+        setIsGettingSuggestion(false);
+    }
+  }
 
   const onSubmit = (data: Testimonial) => {
     const testimonialRef = testimonial ? doc(firestore, 'testimonials', testimonial.id) : doc(collection(firestore, 'testimonials'));
@@ -84,7 +104,13 @@ function TestimonialForm({
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Testimonial Content</FormLabel>
+              <div className="flex justify-between items-center">
+                <FormLabel>Testimonial Content</FormLabel>
+                <Button type="button" size="sm" variant="outline" onClick={handleGetSuggestion} disabled={isGettingSuggestion}>
+                    {isGettingSuggestion ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
+                    Get AI Suggestion
+                </Button>
+              </div>
               <FormControl>
                 <Textarea placeholder="Muslimahs Club has been a true blessing..." {...field} />
               </FormControl>
