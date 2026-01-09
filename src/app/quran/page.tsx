@@ -262,13 +262,13 @@ export default function QuranPage() {
                         </div>
                     </ScrollArea>
                     <DialogFooter className="p-2 flex-shrink-0 bg-background/90 justify-center gap-2">
-                        <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9" onClick={handlePrevSurah} disabled={activeSurah.number === 1}>
-                            <ChevronLeft className="mr-1 sm:mr-2 h-4 w-4" />
-                            Prev
-                        </Button>
                         <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9" variant="outline" onClick={() => setShowTranslation(!showTranslation)}>
                             <BookText className="mr-1 sm:mr-2 h-4 w-4" />
                             {showTranslation ? "Hide" : "Show"}
+                        </Button>
+                        <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9" onClick={handlePrevSurah} disabled={activeSurah.number === 1}>
+                            <ChevronLeft className="mr-1 sm:mr-2 h-4 w-4" />
+                            Prev
                         </Button>
                         <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9" onClick={handleNextSurah} disabled={activeSurah.number === 114}>
                             Next
@@ -283,6 +283,7 @@ export default function QuranPage() {
     </div>
   );
 }
+
 
 
 
