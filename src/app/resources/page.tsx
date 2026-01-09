@@ -179,38 +179,20 @@ function HadithTab() {
         setSearchResults(null);
 
         try {
-            let url = 'https://sunnah.com/api/v1/';
-            let isSingleHadith = false;
+            const searchParams = new URLSearchParams();
+            if (selectedBook) searchParams.append('collection', selectedBook);
+            if (hadithNumber) searchParams.append('hadithNumber', hadithNumber);
+            if (keyword) searchParams.append('q', keyword);
 
-            if (selectedBook && hadithNumber) {
-                url += `collections/${selectedBook}/hadiths/${hadithNumber}`;
-                isSingleHadith = true;
-            } else if (keyword) {
-                const searchParams = new URLSearchParams({ q: keyword });
-                if (selectedBook) {
-                    searchParams.append('collection', selectedBook);
-                }
-                url += `hadiths?${searchParams.toString()}`;
-            } else if (selectedBook) {
-                url += `collections/${selectedBook}/hadiths?limit=20`; 
-            } else {
-                 setError("Please provide a valid search combination.");
-                 setIsLoading(false);
-                 return;
-            }
+            const response = await fetch(`/api/hadith?${searchParams.toString()}`);
             
-            const response = await fetch(url);
             if (!response.ok) {
-                throw new Error('Hadith not found or API error. Please check your input.');
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Hadith not found or API error. Please check your input.');
             }
             
             const data = await response.json();
-            
-            if (isSingleHadith) {
-                setSearchResults({ hadiths: [data] });
-            } else {
-                setSearchResults(data);
-            }
+            setSearchResults(data);
 
         } catch (err: any) {
             setError(err.message);
@@ -239,13 +221,16 @@ function HadithTab() {
                         placeholder="Hadith number (e.g., 1)" 
                         value={hadithNumber}
                         onChange={(e) => setHadithNumber(e.target.value)}
-                        disabled={!selectedBook}
+                        disabled={!selectedBook || !!keyword}
                     />
                     <Input 
                         placeholder="Or search by keyword..." 
                         className="md:col-span-2" 
                         value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
+                        onChange={(e) => {
+                            setKeyword(e.target.value);
+                            if (e.target.value) setHadithNumber('');
+                        }}
                     />
                 </CardContent>
                 <CardFooter>
@@ -333,3 +318,5 @@ export default function ResourcesPage() {
     </div>
   );
 }
+
+    
