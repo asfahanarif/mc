@@ -203,10 +203,10 @@ export default function ResourcesPage() {
       />
       <section className="py-16 md:py-24">
         <div className="container">
-          <Tabs defaultValue="articles" className="w-full">
+          <Tabs defaultValue="hadith" className="w-full">
             <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto">
-              <TabsTrigger value="articles"><Newspaper className="mr-2 h-4 w-4"/>Articles</TabsTrigger>
-              <TabsTrigger value="duas"><BookOpen className="mr-2 h-4 w-4"/>Duas</TabsTrigger>
+              <TabsTrigger value="articles" disabled><Newspaper className="mr-2 h-4 w-4"/>Articles</TabsTrigger>
+              <TabsTrigger value="duas" disabled><BookOpen className="mr-2 h-4 w-4"/>Duas</TabsTrigger>
               <TabsTrigger value="hadith"><BookOpen className="mr-2 h-4 w-4"/>Hadith</TabsTrigger>
             </TabsList>
             <TabsContent value="articles" className="mt-8">
