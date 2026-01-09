@@ -159,9 +159,6 @@ export function QiblaDirection() {
                         </div>
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/50"></div>
                     </div>
-                     <p className="text-lg font-semibold text-center">
-                        Align the North mark (N) with your phone's top. The Kaaba icon points to the Qibla.
-                    </p>
                 </div>
             )
         }
