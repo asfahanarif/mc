@@ -1,5 +1,6 @@
 
-import type { Metadata } from "next";
+'use client';
+
 import { FirebaseClientProvider } from "@/firebase";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,20 +10,21 @@ import { ScrollToTop } from "@/components/shared/scroll-to-top";
 import { FloatingDonateButton } from "@/components/shared/floating-donate-button";
 import "./globals.css";
 import { DialogProvider } from "@/components/providers/dialog-provider";
-
-export const metadata: Metadata = {
-  title: "Muslimahs Club",
-  description: "Empowering Women Through Qur'an & Sunnah!",
-};
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const isAdminPage = pathname.startsWith('/admin');
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <title>Muslimahs Club</title>
+        <meta name="description" content="Empowering Women Through Qur'an & Sunnah!" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=WindSong:wght@400&display=swap" rel="stylesheet" />
@@ -39,7 +41,7 @@ export default function RootLayout({
               <div id="root-container" className="flex flex-col min-h-screen">
                 <Header />
                 <main className="flex-grow">{children}</main>
-                <Footer />
+                {!isAdminPage && <Footer />}
               </div>
               <Toaster />
               <ScrollToTop />
