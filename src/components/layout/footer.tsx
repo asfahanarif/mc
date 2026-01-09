@@ -23,7 +23,7 @@ export default function Footer() {
                 <Link href="/" className="mb-4">
                     <Logo className="!h-24 !w-24" />
                 </Link>
-                <p className="text-muted-foreground text-sm">Empowering Muslimahs Through</p>
+                <p className="text-muted-foreground text-sm">Empowering Women Through</p>
                 <p className="text-muted-foreground text-sm">Qur'an & Sunnah!</p>
             </div>
              <div className="md:col-span-2">
