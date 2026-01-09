@@ -5,7 +5,9 @@ import { collection, query, orderBy } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '../ui/skeleton';
-import { Mail } from 'lucide-react';
+import { Mail, Copy } from 'lucide-react';
+import { Button } from '../ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 interface NewsletterSubscription {
     email: string;
@@ -19,12 +21,35 @@ export default function NewsletterManager() {
   const firestore = useFirestore();
   const subscriptionsQuery = useMemoFirebase(() => query(collection(firestore, 'newsletter_subscriptions'), orderBy('subscribedAt', 'desc')), [firestore]);
   const { data: subscriptions, isLoading } = useCollection<NewsletterSubscription>(subscriptionsQuery);
+  const { toast } = useToast();
+
+  const handleCopyEmails = () => {
+    if (!subscriptions || subscriptions.length === 0) {
+      toast({
+        title: 'No emails to copy',
+        variant: 'destructive',
+      });
+      return;
+    }
+    const emailList = subscriptions.map(sub => sub.email).join(', ');
+    navigator.clipboard.writeText(emailList);
+    toast({
+      title: 'Emails Copied!',
+      description: `${subscriptions.length} subscriber emails have been copied to your clipboard.`,
+    });
+  };
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Newsletter Subscribers</CardTitle>
-        <CardDescription>View and manage your newsletter subscriber list.</CardDescription>
+      <CardHeader className="flex-row items-center justify-between">
+        <div>
+            <CardTitle>Newsletter Subscribers</CardTitle>
+            <CardDescription>View and manage your newsletter subscriber list.</CardDescription>
+        </div>
+        <Button onClick={handleCopyEmails} disabled={isLoading || !subscriptions || subscriptions.length === 0}>
+            <Copy className="mr-2 h-4 w-4" />
+            Copy All Emails
+        </Button>
       </CardHeader>
       <CardContent>
         <Table>
