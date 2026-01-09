@@ -48,7 +48,7 @@ export function ContactForm() {
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        <CardHeader>
+        <CardHeader className="text-center">
           <CardTitle className="font-headline">Get in Touch</CardTitle>
           <CardDescription>Fill out the form below and we'll get back to you as soon as possible.</CardDescription>
         </CardHeader>
