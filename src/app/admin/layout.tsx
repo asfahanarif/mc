@@ -26,9 +26,11 @@ import {
   LogOut,
   ChevronLeft,
   MessageSquare,
+  Database,
 } from 'lucide-react';
 import { useAuth } from '@/firebase';
 import { Button } from '@/components/ui/button';
+import { firebaseConfig } from '@/firebase/config';
 
 const menuItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutGrid },
@@ -45,6 +47,7 @@ export default function AdminLayout({
 }) {
   const auth = useAuth();
   const pathname = usePathname();
+  const firestoreUrl = `https://console.firebase.google.com/project/${firebaseConfig.projectId}/firestore/data`;
 
   return (
     <SidebarProvider>
@@ -75,6 +78,11 @@ export default function AdminLayout({
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
+             <SidebarMenuItem>
+                <a href={firestoreUrl} target="_blank" rel="noopener noreferrer">
+                    <SidebarMenuButton icon={Database}>Firestore</SidebarMenuButton>
+                </a>
+            </SidebarMenuItem>
              <SidebarMenuItem>
                 <Link href="/">
                     <SidebarMenuButton icon={ChevronLeft}>Back to Site</SidebarMenuButton>
