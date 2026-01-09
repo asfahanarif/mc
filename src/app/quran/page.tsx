@@ -214,7 +214,7 @@ export default function QuranPage() {
 
       <Dialog open={!!activeSurah} onOpenChange={(isOpen) => !isOpen && handleDialogClose()}>
         <DialogContent className={cn(
-            "max-w-4xl w-[calc(100vw-2rem)] max-h-[90vh] p-0 flex flex-col overflow-hidden",
+            "max-w-4xl w-[calc(100vw-2rem)] max-h-[85vh] sm:max-h-[90vh] p-0 flex flex-col overflow-hidden",
             "bg-background/95 backdrop-blur-sm sm:rounded-lg"
         )}>
            {activeSurah && (
