@@ -3,14 +3,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { placeholderImages } from "@/lib/data";
-import { Volume2, Loader2, PlayCircle, BookOpen } from "lucide-react";
+import { Volume2, Loader2, PlayCircle, BookOpen, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 type Surah = {
   number: number;
@@ -43,7 +45,7 @@ export default function QuranPage() {
   const [loadingSurahs, setLoadingSurahs] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [activeSurah, setActiveSurah] = useState<number | null>(null);
+  const [activeSurah, setActiveSurah] = useState<Surah | null>(null);
   const [surahDetails, setSurahDetails] = useState<SurahDetails | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
@@ -60,8 +62,10 @@ export default function QuranPage() {
     audio.addEventListener('ended', onEnded);
     
     return () => {
-      audio.removeEventListener('ended', onEnded);
-      audio.pause();
+      if (audio) {
+        audio.removeEventListener('ended', onEnded);
+        audio.pause();
+      }
     };
   }, []);
   
@@ -81,19 +85,14 @@ export default function QuranPage() {
     fetchSurahs();
   }, []);
 
-  const fetchSurahDetails = async (surahNumber: number) => {
-    if (activeSurah === surahNumber) {
-        setActiveSurah(null); // Collapse if already open
-        setSurahDetails(null);
-        return;
-    }
-    setActiveSurah(surahNumber);
+  const fetchSurahDetails = async (surah: Surah) => {
+    setActiveSurah(surah);
     setLoadingDetails(true);
     setSurahDetails(null);
     try {
         const [ayahsRes, translationRes] = await Promise.all([
-            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`),
-            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`)
+            fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/ar.alafasy`),
+            fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/en.sahih`)
         ]);
 
         if (!ayahsRes.ok || !translationRes.ok) throw new Error("Failed to fetch surah details.");
@@ -128,6 +127,15 @@ export default function QuranPage() {
     }
   };
 
+  const handleDialogClose = () => {
+    setActiveSurah(null);
+    setSurahDetails(null);
+    if(audioRef.current) {
+        audioRef.current.pause();
+    }
+    setPlayingAudio(null);
+  }
+
 
   return (
     <div>
@@ -137,7 +145,7 @@ export default function QuranPage() {
         image={quranImage}
       />
       <section className="py-16 md:py-24">
-        <div className="container max-w-4xl">
+        <div className="container max-w-7xl">
           {loadingSurahs ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[...Array(6)].map((_,i) => <Skeleton key={i} className="h-40 w-full" />)}
@@ -148,77 +156,93 @@ export default function QuranPage() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {surahs.map((surah) => (
-                <Collapsible asChild key={surah.number} open={activeSurah === surah.number} onOpenChange={() => fetchSurahDetails(surah.number)}>
-                    <Card className="flex flex-col">
-                        <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-                                        {surah.number}
-                                    </div>
-                                    <div>
-                                        <CardTitle className="text-lg font-headline">{surah.englishName}</CardTitle>
-                                        <p className="text-xs text-muted-foreground">{surah.englishNameTranslation}</p>
-                                    </div>
+                <Card key={surah.number} className="flex flex-col">
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
+                                    {surah.number}
                                 </div>
-                                <div className="text-right">
-                                    <p className="font-arabic text-xl font-bold">{surah.name}</p>
+                                <div>
+                                    <CardTitle className="text-lg font-headline">{surah.englishName}</CardTitle>
+                                    <p className="text-xs text-muted-foreground">{surah.englishNameTranslation}</p>
                                 </div>
                             </div>
-                        </CardHeader>
-                        <CardContent className="flex-grow">
-                             <div className="flex justify-between items-center text-sm text-muted-foreground">
-                                <Badge variant="outline">{surah.revelationType}</Badge>
-                                <span>{surah.numberOfAyahs} Ayahs</span>
+                            <div className="text-right">
+                                <p className="font-arabic text-xl font-bold">{surah.name}</p>
                             </div>
-                        </CardContent>
-                        <CardFooter>
-                            <CollapsibleTrigger asChild>
-                                <Button className="w-full">
-                                    <BookOpen className="mr-2 h-4 w-4" />
-                                    {activeSurah === surah.number ? 'Close Surah' : 'Read Surah'}
-                                </Button>
-                            </CollapsibleTrigger>
-                        </CardFooter>
-
-                        <CollapsibleContent className="md:col-span-2 lg:col-span-3 w-full">
-                            <div className="p-4 border-t">
-                                {loadingDetails && activeSurah === surah.number && (
-                                    <div className="space-y-4">
-                                        <Skeleton className="h-20 w-full" />
-                                        <Skeleton className="h-20 w-full" />
-                                        <Skeleton className="h-20 w-full" />
-                                    </div>
-                                )}
-                                {surahDetails && activeSurah === surah.number && (
-                                    <div className="space-y-2">
-                                        {surahDetails.ayahs.map(ayah => (
-                                            <Card key={ayah.number} className="p-4">
-                                                <div className="flex justify-between items-start">
-                                                    <div className="w-8 h-8 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
-                                                    <p className="text-xl md:text-2xl font-arabic text-right flex-grow px-4" dir="rtl">{ayah.text}</p>
-                                                    <Button size="icon" variant="ghost" onClick={() => playAudio(ayah.audio)}>
-                                                        {playingAudio === ayah.audio ? <Loader2 className="h-5 w-5 animate-spin"/> : <PlayCircle className="h-5 w-5"/>}
-                                                    </Button>
-                                                </div>
-                                                <p className="mt-4 text-foreground/80 pl-12 text-sm">{ayah.translationText}</p>
-                                            </Card>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </CollapsibleContent>
-                    </Card>
-                </Collapsible>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                         <div className="flex justify-between items-center text-sm text-muted-foreground">
+                            <Badge variant="outline">{surah.revelationType}</Badge>
+                            <span>{surah.numberOfAyahs} Ayahs</span>
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <Button className="w-full" onClick={() => fetchSurahDetails(surah)}>
+                            <BookOpen className="mr-2 h-4 w-4" />
+                            Read Surah
+                        </Button>
+                    </CardFooter>
+                </Card>
               ))}
             </div>
           )}
         </div>
       </section>
+
+      <Dialog open={!!activeSurah} onOpenChange={(isOpen) => !isOpen && handleDialogClose()}>
+        <DialogContent className={cn(
+            "max-w-4xl w-[calc(100vw-2rem)] h-[calc(100vh-4rem)] p-0 flex flex-col",
+            "bg-background/95 backdrop-blur-sm"
+        )}>
+           {activeSurah && (
+                <>
+                    <DialogHeader className="p-4 border-b">
+                        <DialogTitle className="flex items-center justify-between">
+                            <span className="font-headline text-2xl text-primary">{activeSurah.number}. {activeSurah.englishName}</span>
+                            <span className="font-arabic text-3xl">{activeSurah.name}</span>
+                        </DialogTitle>
+                         <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+                            <X className="h-4 w-4" />
+                            <span className="sr-only">Close</span>
+                        </DialogClose>
+                    </DialogHeader>
+                    <ScrollArea className="flex-grow">
+                        <div className="p-4">
+                            {loadingDetails && (
+                                <div className="space-y-4">
+                                    <Skeleton className="h-20 w-full" />
+                                    <Skeleton className="h-20 w-full" />
+                                    <Skeleton className="h-20 w-full" />
+                                </div>
+                            )}
+                            {surahDetails && (
+                                <div className="space-y-2">
+                                    {surahDetails.ayahs.map(ayah => (
+                                        <Card key={ayah.number} className="p-4">
+                                            <div className="flex justify-between items-start">
+                                                <div className="w-8 h-8 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
+                                                <p className="text-xl md:text-2xl font-arabic text-right flex-grow px-4" dir="rtl">{ayah.text}</p>
+                                                <Button size="icon" variant="ghost" onClick={() => playAudio(ayah.audio)}>
+                                                    {playingAudio === ayah.audio ? <Loader2 className="h-5 w-5 animate-spin"/> : <PlayCircle className="h-5 w-5"/>}
+                                                </Button>
+                                            </div>
+                                            <p className="mt-4 text-foreground/80 pl-12 text-sm">{ayah.translationText}</p>
+                                        </Card>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </ScrollArea>
+                </>
+           )}
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }
-
-    
