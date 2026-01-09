@@ -46,7 +46,7 @@ function ArticlesTab() {
             className="max-w-sm mx-auto"
         />
         <div className="text-center">
-             <Badge variant="secondary">Source: Islamqa.info</Badge>
+             <Badge variant="outline" className="transition-colors hover:bg-primary/10 hover:text-primary">Source: Islamqa.info</Badge>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {paginatedArticles.map(article => (
