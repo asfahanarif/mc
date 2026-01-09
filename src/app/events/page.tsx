@@ -46,9 +46,17 @@ export default function EventsPage() {
                             </Card>
                         ))}
                         {events?.map((event) => {
-                            const whatsAppNumber = event.whatsAppNumber || "92319446854";
-                            const message = `As-salamu alaykum! I would like to register for the event: "${event.title}". My name is:`;
-                            const whatsappUrl = `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(message)}`;
+                            let registrationHref = "#";
+                            if (event.registrationUrl) {
+                                if (event.registrationUrl.startsWith("https://wa.me/")) {
+                                    const message = `As-salamu alaykum! I would like to register for the event: "${event.title}". My name is:`;
+                                    const url = new URL(event.registrationUrl);
+                                    url.searchParams.set('text', message);
+                                    registrationHref = url.toString();
+                                } else {
+                                    registrationHref = event.registrationUrl;
+                                }
+                            }
 
                             return (
                                 <Card key={event.id} className="flex flex-col overflow-hidden group hover:shadow-xl transition-shadow">
@@ -76,11 +84,13 @@ export default function EventsPage() {
                                         <CardDescription>{event.description}</CardDescription>
                                     </CardContent>
                                     <CardFooter>
-                                        <Button asChild>
-                                            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                                                Register Now!
-                                            </a>
-                                        </Button>
+                                        {event.registrationUrl && (
+                                            <Button asChild>
+                                                <a href={registrationHref} target="_blank" rel="noopener noreferrer">
+                                                    Register Now!
+                                                </a>
+                                            </Button>
+                                        )}
                                     </CardFooter>
                                 </Card>
                             );

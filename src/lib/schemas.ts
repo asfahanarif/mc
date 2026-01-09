@@ -9,7 +9,7 @@ export const EventSchema = z.object({
   type: z.enum(['Online', 'Onsite']),
   imageUrl: z.string().url().optional().or(z.literal('')),
   order: z.number().optional(),
-  whatsAppNumber: z.string().min(10, 'A valid WhatsApp number is required.').optional().or(z.literal('')),
+  registrationUrl: z.string().url({ message: "Please enter a valid URL for registration." }).optional().or(z.literal('')),
 });
 
 export type Event = z.infer<typeof EventSchema>;
