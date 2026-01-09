@@ -214,11 +214,11 @@ export default function QuranPage() {
 
       <Dialog open={!!activeSurah} onOpenChange={(isOpen) => !isOpen && handleDialogClose()}>
         <DialogContent className={cn(
-            "max-w-4xl w-[calc(100vw-2rem)] max-h-[80vh] sm:max-h-[90vh] p-0 flex flex-col overflow-hidden",
-            "bg-background/95 backdrop-blur-sm sm:rounded-lg"
+            "sm:max-w-md w-[calc(100vw-2rem)] max-h-[80vh] sm:max-h-[90vh] p-0 flex flex-col",
+            "bg-transparent border-0 shadow-none"
         )}>
            {activeSurah && (
-                <>
+                <div className="bg-background/90 backdrop-blur-lg rounded-lg flex flex-col h-full overflow-hidden">
                     <DialogHeader className="p-4 border-b flex-shrink-0">
                         <DialogTitle className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
@@ -262,20 +262,20 @@ export default function QuranPage() {
                         </div>
                     </ScrollArea>
                     <DialogFooter className="p-2 flex-shrink-0 bg-background/90 justify-between">
-                        <Button onClick={handlePrevSurah} disabled={activeSurah.number === 1}>
+                        <Button size="sm" onClick={handlePrevSurah} disabled={activeSurah.number === 1}>
                             <ChevronLeft className="mr-2 h-4 w-4" />
-                            Previous
+                            Prev
                         </Button>
-                        <Button variant="outline" onClick={() => setShowTranslation(!showTranslation)}>
+                        <Button size="sm" variant="outline" onClick={() => setShowTranslation(!showTranslation)}>
                             <BookText className="mr-2 h-4 w-4" />
-                            {showTranslation ? "Hide" : "Show"} Translation
+                            {showTranslation ? "Hide" : "Show"}
                         </Button>
-                        <Button onClick={handleNextSurah} disabled={activeSurah.number === 114}>
+                        <Button size="sm" onClick={handleNextSurah} disabled={activeSurah.number === 114}>
                             Next
                             <ChevronRight className="ml-2 h-4 w-4" />
                         </Button>
                     </DialogFooter>
-                </>
+                </div>
            )}
         </DialogContent>
       </Dialog>
@@ -283,5 +283,3 @@ export default function QuranPage() {
     </div>
   );
 }
-
-    
