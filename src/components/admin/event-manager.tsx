@@ -344,19 +344,6 @@ export default function EventManager() {
     toast({ title: "Reordering events..." });
   };
 
-
-  const handleDelete = (id: string, title: string) => {
-    if (window.confirm(`Are you sure you want to delete the event "${title}"?`)) {
-      const eventRef = doc(firestore, 'events', id);
-      deleteDocumentNonBlocking(eventRef);
-      toast({
-        title: 'Event Deleted',
-        description: `The event "${title}" has been deleted.`,
-        variant: 'destructive',
-      });
-    }
-  };
-
   const handleDuplicate = (event: EventWithId) => {
     const { id, ...eventData } = event;
     const newEvent = {
@@ -404,9 +391,6 @@ export default function EventManager() {
                   <Copy className="h-4 w-4" />
                 </Button>
                 <EventDialog event={event} maxOrder={maxOrder} />
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(event.id, event.title)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
               </div>
             </Card>
           ))}
@@ -416,3 +400,5 @@ export default function EventManager() {
     </Card>
   );
 }
+
+    

@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import { useCollection, updateDocumentNonBlocking, deleteDocumentNonBlocking, useFirestore, useMemoFirebase, addDocumentNonBlocking } from '@/firebase';
@@ -163,18 +164,6 @@ export default function ForumManager() {
   const { data: posts, isLoading, refetch } = useCollection<ForumPost>(forumPostsQuery);
   const { toast } = useToast();
 
-  const handleDeletePost = (post: ForumPostWithId) => {
-    if (window.confirm(`Are you sure you want to delete the question from ${post.authorName}? This will delete all replies and is permanent.`)) {
-        const postRef = doc(firestore, 'forum_posts', post.id);
-        deleteDocumentNonBlocking(postRef);
-        toast({
-            title: 'Post Deleted',
-            description: 'The question has been permanently removed.',
-            variant: 'destructive',
-        })
-    }
-  }
-
   const handleEditQuestion = (post: ForumPostWithId, newQuestion: string) => {
       const postRef = doc(firestore, 'forum_posts', post.id);
       updateDocumentNonBlocking(postRef, { question: newQuestion });
@@ -194,19 +183,6 @@ export default function ForumManager() {
     });
 
     toast({ title: "Reply updated successfully." });
-  }
-
-  const handleDeleteReply = (post: ForumPostWithId, reply: ForumReply) => {
-     if (window.confirm(`Are you sure you want to delete this reply from ${reply.authorName}? This is permanent.`)) {
-        const postRef = doc(firestore, 'forum_posts', post.id);
-        updateDocumentNonBlocking(postRef, {
-            replies: arrayRemove(reply)
-        });
-        toast({
-            title: 'Reply Deleted',
-            variant: 'destructive'
-        })
-     }
   }
 
   const handleToggleCloseThread = (post: ForumPostWithId) => {
@@ -250,9 +226,6 @@ export default function ForumManager() {
                         initialValue={post.question}
                         onSave={(newValue) => handleEditQuestion(post, newValue)}
                     />
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleDeletePost(post)}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
                 </div>
               </div>
             </CardHeader>
@@ -284,9 +257,6 @@ export default function ForumManager() {
                                     initialValue={reply.reply}
                                     onSave={(newValue) => handleEditReply(post, reply, newValue)}
                                 />
-                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleDeleteReply(post, reply)}>
-                                    <Trash2 className="h-4 w-4 text-destructive" />
-                                </Button>
                             </div>
                         </div>
                         <p className="text-foreground/90 mt-1">{reply.reply}</p>
@@ -313,3 +283,5 @@ export default function ForumManager() {
     </Card>
   );
 }
+
+    

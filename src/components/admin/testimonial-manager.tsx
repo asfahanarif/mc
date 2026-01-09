@@ -206,18 +206,6 @@ export default function TestimonialManager() {
 
     toast({ title: "Reordering testimonials..." });
   };
-
-  const handleDelete = (id: string, name: string) => {
-    if (window.confirm(`Are you sure you want to delete the testimonial from ${name}?`)) {
-      const testimonialRef = doc(firestore, 'testimonials', id);
-      deleteDocumentNonBlocking(testimonialRef);
-      toast({
-        title: 'Testimonial Deleted',
-        description: `The testimonial from ${name} has been deleted.`,
-        variant: 'destructive',
-      });
-    }
-  };
   
   return (
     <Card>
@@ -250,9 +238,6 @@ export default function TestimonialManager() {
                 </div>
               <div className="flex items-center">
                 <TestimonialDialog testimonial={testimonial} maxOrder={maxOrder} />
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(testimonial.id, testimonial.authorName)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
               </div>
             </Card>
           ))}
@@ -262,3 +247,5 @@ export default function TestimonialManager() {
     </Card>
   );
 }
+
+    

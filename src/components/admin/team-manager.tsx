@@ -207,18 +207,6 @@ export default function TeamManager() {
 
     toast({ title: "Reordering team members..." });
   };
-
-  const handleDelete = (id: string, name: string) => {
-    if (window.confirm(`Are you sure you want to delete the profile for ${name}?`)) {
-      const memberRef = doc(firestore, 'team_members', id);
-      deleteDocumentNonBlocking(memberRef);
-      toast({
-        title: 'Team Member Deleted',
-        description: `The profile for ${name} has been deleted.`,
-        variant: 'destructive',
-      });
-    }
-  };
   
   return (
     <Card>
@@ -251,9 +239,6 @@ export default function TeamManager() {
                 </div>
               <div className="flex items-center">
                 <TeamMemberDialog member={member} maxOrder={maxOrder}/>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(member.id, member.name)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
               </div>
             </Card>
           ))}
@@ -263,3 +248,5 @@ export default function TeamManager() {
     </Card>
   );
 }
+
+    
