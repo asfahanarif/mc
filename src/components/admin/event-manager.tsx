@@ -305,7 +305,7 @@ function EventDialog({ event, maxOrder }: { event?: EventWithId, maxOrder?: numb
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{event ? 'Edit Event' : 'Add New Event'}</DialogTitle>
           <DialogDescription>
@@ -400,5 +400,3 @@ export default function EventManager() {
     </Card>
   );
 }
-
-    
