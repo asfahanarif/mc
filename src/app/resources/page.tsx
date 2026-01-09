@@ -256,7 +256,7 @@ function HadithTab() {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-lg leading-relaxed font-arabic text-right mb-4" dir="rtl">{hadith.arabic.text}</p>
+                                {hadith.arabic && <p className="text-lg leading-relaxed font-arabic text-right mb-4" dir="rtl">{hadith.arabic.text}</p>}
                                 <p className="text-foreground/90">{hadith.text}</p>
                             </CardContent>
                             <CardFooter>
@@ -309,3 +309,4 @@ export default function ResourcesPage() {
     </div>
   );
 }
+
