@@ -40,7 +40,7 @@ export function SocialCards() {
                         <CardContent className="pt-8">
                            <link.icon className="h-16 w-16 mx-auto text-primary transition-transform duration-300 group-hover:scale-110" />
                             <h3 className="mt-4 text-2xl font-headline font-semibold text-primary">{link.name}</h3>
-                            <p className="mt-1 text-muted-foreground">{link.handle}</p>
+                            
                             <p className="mt-4 font-semibold text-foreground/80 flex items-center justify-center gap-1 group-hover:text-primary">
                                 {link.cta} <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
                             </p>
