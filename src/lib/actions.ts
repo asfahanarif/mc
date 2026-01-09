@@ -2,8 +2,9 @@
 "use server";
 
 import { z } from "zod";
-import { initializeFirebase } from "@/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { getApps, initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { firebaseConfig } from "@/firebase/config";
 
 const emailSchema = z.string().email({ message: "Invalid email address." });
 const contactSchema = z.object({
@@ -23,7 +24,12 @@ export async function subscribeToNewsletter(prevState: any, formData: FormData) 
   }
   
   try {
-    const { firestore } = initializeFirebase();
+    // Ensure Firebase is initialized on the server for this action
+    if (!getApps().length) {
+      initializeApp(firebaseConfig);
+    }
+    const firestore = getFirestore();
+    
     const subscriptionsCollection = collection(firestore, 'newsletter_subscriptions');
     await addDoc(subscriptionsCollection, {
       email: validatedEmail.data,
