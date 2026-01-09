@@ -123,77 +123,220 @@ export const articles: Article[] = [
 
 
 export const duas: Dua[] = [
+    // Morning Duas
     {
-        "id": "m1",
-        "category": "Morning",
-        "title": "Ayat al-Kursi",
-        "arabic": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
+        "id": "m1", "category": "Morning", "title": "Ayat al-Kursi",
+        "arabic": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُhُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
         "transliteration": "Allahu la ilaha illa Huwa, Al-Hayyul-Qayyum. La ta'khudhuhu sinatun wa la nawm. Lahu ma fis-samawati wa ma fil-ardh. Man dhal-ladhi yashfa'u 'indahu illa bi-idhnihi. Ya'lamu ma bayna aydihim wa ma khalfahum. Wa la yuhituna bi shay'in min 'ilmihi illa bima sha'a. Wasi'a kursiyyuhus-samawati wal-ardha. Wa la ya'uduhu hifdhuhuma. Wa Huwal-'Aliyyul-'Adheem.",
-        "translation": "Allah! There is no god but He - the Living, The Self-subsisting, Eternal. No slumber can seize Him Nor sleep. His are all things In the heavens and on earth. Who is there can intercede In His presence except As he permitteth? He knoweth What (appeareth to His creatures As) Before or After or Behind them. Nor shall they compass Aught of his knowledge Except as He willeth. His throne doth extend Over the heavens And on earth, and He feeleth No fatigue in guarding And preserving them, For He is the Most High, The Supreme (in glory).",
+        "translation": "Allah! There is no god but He - the Living, The Self-subsisting, Eternal. No slumber can seize Him Nor sleep. His are all things In the heavens and on earth...",
         "reference": "Al-Baqarah 2:255. Recite once in the morning. Whoever says this when he awakens will be protected from the jinn until he retires for the night. - Al-Hakim 1/562"
     },
     {
-        "id": "m2",
-        "category": "Morning",
-        "title": "Master of Seeking Forgiveness",
+        "id": "m2", "category": "Morning", "title": "Master of Seeking Forgiveness",
         "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
         "transliteration": "Allahumma anta Rabbi la ilaha illa anta, Khalaqtani wa ana 'abduka, wa ana 'ala 'ahdika wa wa'dika mastata'tu, A'udhu bika min sharri ma sana'tu, abu'u Laka bini'matika 'alayya, wa abu'u bidhanbi faghfirli fainnahu la yaghfiru-dh-dhunuba illa anta.",
-        "translation": "O Allah, You are my Lord, none has the right to be worshipped except You. You created me and I am Your servant and I abide by Your covenant and promise as best I can. I take refuge in You from the evil of which I have committed. I acknowledge Your favor upon me and I acknowledge my sin, so forgive me, for verily none can forgive sins except You.",
-        "reference": "Recite once in the morning. Whoever recites this with conviction in the morning and dies during that day will be among the people of Paradise. - Sahih al-Bukhari 8/6306"
+        "translation": "O Allah, You are my Lord... I take refuge in You from the evil of which I have committed. I acknowledge Your favor upon me and I acknowledge my sin, so forgive me, for verily none can forgive sins except You.",
+        "reference": "Recite once in the morning. Whoever recites this...will be among the people of Paradise. - Sahih al-Bukhari 8/6306"
     },
-     {
-        "id": "m3",
-        "category": "Morning",
-        "title": "Seeking Protection",
+    {
+        "id": "m3", "category": "Morning", "title": "Seeking Protection",
         "arabic": "بِسْمِ اللهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ العَلِيمُ",
         "transliteration": "Bismillahil-ladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama'i wa Huwas-Sami'ul-'Alim.",
         "translation": "In the Name of Allah, with Whose Name nothing on the earth or in the heaven can cause harm, and He is the All-Hearing, the All-Knowing.",
         "reference": "Recite three times in the morning. - Abu Dawud, At-Tirmidhi"
     },
     {
-        "id": "e1",
-        "category": "Evening",
-        "title": "The Three Quls",
+        "id": "m4", "category": "Morning", "title": "Praise and Sovereignty",
+        "arabic": "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ للهِ وَالحَمْدُ للهِ، لاَ إِلَهَ إِلاَّ اللهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ. رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذَا اليَوْمِ وَخَيْرَ مَا بَعْدَهُ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذَا اليَوْمِ وَشَرِّ مَا بَعْدَهُ، رَبِّ أَعُوذُ بِكَ مِنَ الكَسَلِ وَسُوءِ الكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي القَبْرِ",
+        "transliteration": "Asbahna wa asbahal-mulku lillahi walhamdu lillah, la ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shay'in qadir. Rabbi as'aluka khayra ma fi hadhal-yawmi wa khayra ma ba'dahu, wa a'udhu bika min sharri ma fi hadhal-yawmi wa sharri ma ba'dahu, Rabbi a'udhu bika minal-kasali wa su'il-kibar, Rabbi a'udhu bika min 'adhabin fin-nari wa 'adhabin fil-qabr.",
+        "translation": "We have reached the morning and at this very time unto Allah belongs all sovereignty, and all praise is for Allah...",
+        "reference": "Recite once in the morning. - Sahih Muslim 4/2088"
+    },
+    {
+        "id": "m5", "category": "Morning", "title": "Affirmation of Faith",
+        "arabic": "أَصْبَحْنَا عَلَى فِطْرَةِ الْإِسْلَامِ، وَعَلَى كَلِمَةِ الْإِخْلَاصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِينَا إِبْرَاهِيمَ، حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ",
+        "transliteration": "Asbahna 'ala fitratil-Islam, wa 'ala kalimatil-ikhlas, wa 'ala dini nabiyyina Muhammadin sallallahu 'alayhi wa sallam, wa 'ala millati abina Ibrahim, hanifan musliman wa ma kana minal-mushrikin.",
+        "translation": "We have entered a new day upon the natural religion of Islam, the word of sincere devotion, the religion of our Prophet Muhammad (peace and blessings be upon him), and the faith of our father Ibrahim. He was upright (in worshiping Allah) and a Muslim. He was not of those who worship others besides Allah.",
+        "reference": "Recite once in the morning. - Musnad Ahmad 3/406-407, 5/123"
+    },
+    {
+        "id": "m6", "category": "Morning", "title": "Seeking Wellbeing",
+        "arabic": "اللَّهُمَّ عَافِنِي فِي بَدَنِي، اللَّهُمَّ عَافِنِي فِي سَمْعِي، اللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَهَ إِلَّا أَنْتَ. اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ، وَالْفَقْرِ، وَأَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ، لَا إِلَهَ إِلَّا أَنْتَ",
+        "transliteration": "Allahumma 'afini fi badani, Allahumma 'afini fi sam'i, Allahumma 'afini fi basari, la ilaha illa Anta. Allahumma inni a'udhu bika minal-kufri, wal-faqri, wa a'udhu bika min 'adhabil-qabr, la ilaha illa Anta.",
+        "translation": "O Allah, make me healthy in my body. O Allah, preserve for me my hearing. O Allah, preserve for me my sight. There is none worthy of worship but You...",
+        "reference": "Recite three times in the morning. - Abu Dawud 4/324"
+    },
+    {
+        "id": "m7", "category": "Morning", "title": "For Gratitude",
+        "arabic": "اللَّهُمَّ مَا أَصْبَحَ بِي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ",
+        "transliteration": "Allahumma ma asbaha bi min ni'matin aw bi'ahadin min khalqika faminka wahdaka la sharika lak, falakal-hamdu walakash-shukr.",
+        "translation": "O Allah, whatever blessing has been received by me or anyone of Your creation is from You alone, You have no partner. For You is all praise and unto You all thanks.",
+        "reference": "Whoever recites this in the morning has completed his obligation to thank Allah for that day. - Abu Dawud 4/318"
+    },
+    {
+        "id": "m8", "category": "Morning", "title": "The Three Quls (Morning)",
+        "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ... قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ... قُلْ أَعُوذُ بِرَبِّ النَّاسِ...",
+        "transliteration": "Qul huwa Allahu ahad... Qul a'udhu birabbi-l-falaq... Qul a'udhu birabbi-n-nas...",
+        "translation": "Say, He is Allah, the One... Say, I seek refuge in the Lord of daybreak... Say, I seek refuge in the Lord of mankind...",
+        "reference": "Recite Surahs Al-Ikhlas, Al-Falaq, and An-Nas three times each in the morning. It will suffice you in all respects. - Abu Dawud, At-Tirmidhi"
+    },
+    {
+        "id": "m9", "category": "Morning", "title": "Praise to Allah",
+        "arabic": "يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ أَصْلِحْ لِي شَأْنِي كُلَّهُ وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ",
+        "transliteration": "Ya Hayyu ya Qayyum, birahmatika astaghith, aslih li sha'ni kullahu, wa la takilni ila nafsi tarfata 'ayn.",
+        "translation": "O Ever-Living, O Self-Subsisting and Supporter of all, by Your mercy I seek assistance, rectify for me all of my affairs and do not leave me to myself, even for the blink of an eye.",
+        "reference": "Recite once in the morning. - Al-Hakim, An-Nasa'i"
+    },
+    {
+        "id": "m10", "category": "Morning", "title": "For Sufficient Provision",
+        "arabic": "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+        "transliteration": "HasbiyAllahu la ilaha illa Huwa, 'alayhi tawakkaltu wa Huwa Rabbul-'Arshil-'Adheem.",
+        "translation": "Allah is sufficient for me. There is none worthy of worship but Him. I have placed my trust in Him, He is Lord of the Majestic Throne.",
+        "reference": "Recite seven times in the morning. Allah will grant whoever recites this whatever he desires from this world or the next. - Abu Dawud"
+    },
+
+    // Evening Duas
+    {
+        "id": "e1", "category": "Evening", "title": "Ayat al-Kursi (Evening)",
+        "arabic": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ...",
+        "transliteration": "Allahu la ilaha illa Huwa, Al-Hayyul-Qayyum...",
+        "translation": "Allah! There is no god but He - the Living, The Self-subsisting, Eternal...",
+        "reference": "Al-Baqarah 2:255. Recite once in the evening. Whoever says this when he retires for the night, a guardian from Allah will be with him and satan will not be able to approach him until he awakens. - Al-Hakim 1/562"
+    },
+    {
+        "id": "e2", "category": "Evening", "title": "The Three Quls (Evening)",
         "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ... قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ... قُلْ أَعُوذُ بِرَبِّ النَّاسِ...",
         "transliteration": "Qul huwa Allahu ahad... Qul a'udhu birabbi-l-falaq... Qul a'udhu birabbi-n-nas...",
         "translation": "Say, He is Allah, the One... Say, I seek refuge in the Lord of daybreak... Say, I seek refuge in the Lord of mankind...",
         "reference": "Recite Surahs Al-Ikhlas, Al-Falaq, and An-Nas three times each in the evening. It will suffice you in all respects. - Abu Dawud, At-Tirmidhi"
     },
     {
-        "id": "e2",
-        "category": "Evening",
-        "title": "A Dua for Evening",
-        "arabic": "أَمْسَيْنَا وَأَمْسَى المُلْكُ للهِ وَالحَمْدُ للهِ، لاَ إِلَهَ إِلاَّ اللهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ...",
+        "id": "e3", "category": "Evening", "title": "A Dua for Evening",
+        "arabic": "أَمْسَيْنَا وَأَمْسَى المُلْكُ للهِ وَالحَمْدُ للهِ، لاَ إِلَهَ إِلاَّ اللهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ. رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا...",
         "transliteration": "Amsayna wa amsal-mulku lillahi walhamdu lillah, la ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shay'in qadir...",
-        "translation": "We have reached the evening and at this very time unto Allah belongs all sovereignty, and all praise is for Allah. None has the right to be worshipped except Allah, alone, without partner, to Him belongs all sovereignty and praise and He is over all things omnipotent...",
-        "reference": "Recite once in the evening. - Sahih Muslim"
+        "translation": "We have reached the evening and at this very time unto Allah belongs all sovereignty, and all praise is for Allah...",
+        "reference": "Recite once in the evening. - Sahih Muslim 4/2088"
     },
     {
-        "id": "g1",
-        "category": "General",
-        "title": "For seeking guidance in a matter (Istikharah)",
-        "arabic": "اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ، فَإِنَّكَ تَقْدِرُ وَلَا أَقْدِرُ، وَتَعْلَمُ وَلَا أَعْلَمُ، وَأَنْتَ عَلَّامُ الْغُيُوبِ...",
-        "transliteration": "Allahumma inni astakhiruka bi'ilmika, wa astaqdiruka biqudratika, wa as'aluka min fadlikal-'adhim. Fa'innaka taqdiru wa la aqdiru, wa ta'lamu wa la a'lamu, wa anta 'allamul-ghuyub...",
-        "translation": "O Allah, I seek Your guidance [in making a choice] by virtue of Your knowledge, and I seek ability by virtue of Your power, and I ask of Your great bounty. For you have power, I have none. And you know, I know not. You are the Knower of hidden things...",
+        "id": "e4", "category": "Evening", "title": "Protection from Evil",
+        "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+        "transliteration": "A'udhu bikalimatillahit-tammati min sharri ma khalaq.",
+        "translation": "I seek refuge in the perfect words of Allah from the evil of that which He has created.",
+        "reference": "Recite three times in the evening. - Ahmad, An-Nasa'i, At-Tirmidhi"
+    },
+    {
+        "id": "e5", "category": "Evening", "title": "Master of Seeking Forgiveness (Evening)",
+        "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ...",
+        "transliteration": "Allahumma anta Rabbi la ilaha illa anta...",
+        "translation": "O Allah, You are my Lord, none has the right to be worshipped except You...",
+        "reference": "Whoever recites this with conviction in the evening and dies during that night will be among the people of Paradise. - Sahih al-Bukhari 8/6306"
+    },
+    {
+        "id": "e6", "category": "Evening", "title": "Seeking Wellbeing (Evening)",
+        "arabic": "اللَّهُمَّ عَافِنِي فِي بَدَنِي، اللَّهُمَّ عَافِنِي فِي سَمْعِي، اللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَهَ إِلَّا أَنْتَ...",
+        "transliteration": "Allahumma 'afini fi badani, Allahumma 'afini fi sam'i...",
+        "translation": "O Allah, make me healthy in my body. O Allah, preserve for me my hearing...",
+        "reference": "Recite three times in the evening. - Abu Dawud 4/324"
+    },
+    {
+        "id": "e7", "category": "Evening", "title": "Protection with Allah's Name (Evening)",
+        "arabic": "بِسْمِ اللهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ العَلِيمُ",
+        "transliteration": "Bismillahil-ladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama'i wa Huwas-Sami'ul-'Alim.",
+        "translation": "In the Name of Allah, with Whose Name nothing on the earth or in the heaven can cause harm, and He is the All-Hearing, the All-Knowing.",
+        "reference": "Recite three times in the evening. - Abu Dawud, At-Tirmidhi"
+    },
+    {
+        "id": "e8", "category": "Evening", "title": "For Sufficient Provision (Evening)",
+        "arabic": "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+        "transliteration": "HasbiyAllahu la ilaha illa Huwa, 'alayhi tawakkaltu wa Huwa Rabbul-'Arshil-'Adheem.",
+        "translation": "Allah is sufficient for me. There is none worthy of worship but Him. I have placed my trust in Him, He is Lord of the Majestic Throne.",
+        "reference": "Recite seven times in the evening. Allah will grant whoever recites this whatever he desires from this world or the next. - Abu Dawud"
+    },
+    {
+        "id": "e9", "category": "Evening", "title": "Praise to Allah (Evening)",
+        "arabic": "يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ أَصْلِحْ لِي شَأْنِي كُلَّهُ وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ",
+        "transliteration": "Ya Hayyu ya Qayyum, birahmatika astaghith, aslih li sha'ni kullahu, wa la takilni ila nafsi tarfata 'ayn.",
+        "translation": "O Ever-Living, O Self-Subsisting and Supporter of all, by Your mercy I seek assistance, rectify for me all of my affairs and do not leave me to myself, even for the blink of an eye.",
+        "reference": "Recite once in the evening. - Al-Hakim, An-Nasa'i"
+    },
+    {
+        "id": "e10", "category": "Evening", "title": "Evening on the Fitrah",
+        "arabic": "أَمْسَيْنَا عَلَى فِطْرَةِ الْإِسْلَامِ...",
+        "transliteration": "Amsayna 'ala fitratil-Islam...",
+        "translation": "We end this day upon the natural religion of Islam...",
+        "reference": "Recite once in the evening. - Musnad Ahmad 3/406-407, 5/123"
+    },
+    
+    // General Duas
+    {
+        "id": "g1", "category": "General", "title": "For seeking guidance (Istikharah)",
+        "arabic": "اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ...",
+        "transliteration": "Allahumma inni astakhiruka bi'ilmika, wa astaqdiruka biqudratika, wa as'aluka min fadlikal-'adhim...",
+        "translation": "O Allah, I seek Your guidance [in making a choice] by virtue of Your knowledge, and I seek ability by virtue of Your power...",
         "reference": "Sahih al-Bukhari 1166"
     },
     {
-        "id": "g2",
-        "category": "General",
-        "title": "Before eating",
+        "id": "g2", "category": "General", "title": "Before eating",
         "arabic": "بِسْمِ اللَّهِ",
         "transliteration": "Bismillah.",
         "translation": "In the Name of Allah.",
         "reference": "If you forget, say 'Bismillahi awwalahu wa akhirahu' (In the Name of Allah at the beginning and at the end). - Abu Dawud, At-Tirmidhi"
     },
     {
-        "id": "g3",
-        "category": "General",
-        "title": "For Protection from Anxiety",
+        "id": "g3", "category": "General", "title": "For Protection from Anxiety",
         "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَالْعَجْزِ وَالْكَسَلِ، وَالْبُخْلِ وَالْجُبْنِ، وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ",
         "transliteration": "Allahumma inni a'udhu bika minal-hammi wal-hazan, wal-'ajzi wal-kasal, wal-bukhli wal-jubn, wa dala'id-dayni wa ghalabatir-rijal.",
         "translation": "O Allah, I take refuge in You from anxiety and sorrow, weakness and laziness, miserliness and cowardice, the burden of debts and from being overpowered by men.",
         "reference": "Sahih al-Bukhari"
+    },
+    {
+        "id": "g4", "category": "General", "title": "When wearing a new garment",
+        "arabic": "اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ كَسَوْتَنِيهِ، أَسْأَلُكَ مِنْ خَيْرِهِ وَخَيْرِ مَا صُنِعَ لَهُ، وَأَعُوذُ بِكَ مِنْ شَرِّهِ وَشَرِّ مَا صُنِعَ لَهُ",
+        "transliteration": "Allahumma lakal-hamdu 'Anta kasawtanihi, 'as'aluka min khayrihi wa khayri ma suni'a lahu, wa 'a'udhu bika min sharrihi wa sharri ma suni'a lahu.",
+        "translation": "O Allah, praise is to You. You have clothed me. I ask You for its goodness and the goodness of what it has been made for, and I seek Your protection from the evil of it and the evil of what it has been made for.",
+        "reference": "Abu Dawud and At-Tirmidhi."
+    },
+    {
+        "id": "g5", "category": "General", "title": "When entering the toilet",
+        "arabic": "[بِسْمِ اللهِ] اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ",
+        "transliteration": "[Bismil-lah] Allahumma inni a'udhu bika minal-khubuthi wal-khaba'ith.",
+        "translation": "[In the name of Allah]. O Allah, I take refuge in you from all evil and evil-doers.",
+        "reference": "Al-Bukhari and Muslim."
+    },
+    {
+        "id": "g6", "category": "General", "title": "After leaving the toilet",
+        "arabic": "غُفْرَانَكَ",
+        "transliteration": "Ghufranak.",
+        "translation": "I seek your forgiveness.",
+        "reference": "Abu Dawud, Ibn Majah, and At-Tirmidhi."
+    },
+    {
+        "id": "g7", "category": "General", "title": "When visiting the sick",
+        "arabic": "لَا بَأْسَ طَهُورٌ إِنْ شَاءَ اللَّهُ",
+        "transliteration": "La ba'sa tahurun in sha' Allah.",
+        "translation": "Do not worry, it will be a purification (for you), God willing.",
+        "reference": "Al-Bukhari."
+    },
+    {
+        "id": "g8", "category": "General", "title": "For seeking knowledge",
+        "arabic": "اللَّهُمَّ انْفَعْنِي بِمَا عَلَّمْتَنِي، وَعَلِّمْنِي مَا يَنْفَعُنِي، وَزِدْنِي عِلْمًا",
+        "transliteration": "Allahumma-nfa'ni bima 'allamtani, wa 'allimni ma yanfa'uni, wa zidni 'ilma.",
+        "translation": "O Allah, benefit me with what You have taught me, teach me that which will benefit me, and increase me in knowledge.",
+        "reference": "At-Tirmidhi, Ibn Majah."
+    },
+    {
+        "id": "g9", "category": "General", "title": "Dua for parents",
+        "arabic": "رَّبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",
+        "transliteration": "Rabbi-rhamhuma kama rabbayani saghira.",
+        "translation": "My Lord, have mercy upon them as they brought me up [when I was] small.",
+        "reference": "Qur'an 17:24"
+    },
+    {
+        "id": "g10", "category": "General", "title": "For beneficial knowledge, goodly provision, and accepted deeds",
+        "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا",
+        "transliteration": "Allahumma inni as'aluka 'ilman nafi'an, wa rizqan tayyiban, wa 'amalan mutaqabbalan.",
+        "translation": "O Allah, I ask You for knowledge that is of benefit, a good provision, and deeds that will be accepted.",
+        "reference": "Ibn Majah"
     }
 ];
 

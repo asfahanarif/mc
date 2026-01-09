@@ -9,10 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { placeholderImages, articles, duas, hadithBooks, sampleHadith } from "@/lib/data";
-import { BookOpen, Newspaper, Search, ChevronsRight, ChevronsLeft, ExternalLink, BookMarked, Footprints, ChevronDown } from 'lucide-react';
+import { BookOpen, Newspaper, Search, ChevronsRight, ChevronsLeft, ExternalLink, BookMarked, Footprints } from 'lucide-react';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
@@ -100,31 +99,21 @@ function DuasTab() {
             <div className="space-y-6 max-w-4xl mx-auto">
             {duas.filter(d => d.category === category).map(dua => (
                 <Card key={dua.id} className="shadow-sm overflow-hidden">
-                <CardHeader>
-                    <CardTitle className="font-headline text-primary">{dua.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <p className="font-arabic text-3xl/relaxed text-right" dir="rtl">{dua.arabic}</p>
-                </CardContent>
-                <Collapsible>
-                    <CollapsibleTrigger asChild>
-                        <div className="bg-muted/50 hover:bg-muted/80 transition-colors px-6 py-2 cursor-pointer">
-                            <div className="flex items-center justify-center text-sm font-medium text-muted-foreground">
-                                <ChevronDown className="h-4 w-4 mr-2" />
-                                <span>View Details</span>
-                            </div>
-                        </div>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="bg-muted/50">
-                    <div className="p-6 space-y-4">
+                    <CardHeader>
+                        <CardTitle className="font-headline text-primary">{dua.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <p className="font-arabic text-3xl/relaxed text-right" dir="rtl">{dua.arabic}</p>
+                        
                         <Separator />
-                        <div className="space-y-2">
+
+                        <div className="space-y-4">
                             <div className="flex items-start gap-3">
-                            <Footprints className="h-5 w-5 text-primary/70 flex-shrink-0 mt-0.5" />
-                            <div>
-                                <h4 className="font-semibold">Transliteration</h4>
-                                <p className="text-sm text-muted-foreground italic">{dua.transliteration}</p>
-                            </div>
+                                <Footprints className="h-5 w-5 text-primary/70 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <h4 className="font-semibold">Transliteration</h4>
+                                    <p className="text-sm text-muted-foreground italic">{dua.transliteration}</p>
+                                </div>
                             </div>
                             <div className="flex items-start gap-3">
                                 <BookOpen className="h-5 w-5 text-primary/70 flex-shrink-0 mt-0.5" />
@@ -141,9 +130,7 @@ function DuasTab() {
                             </div>
                             </div>
                         </div>
-                    </div>
-                    </CollapsibleContent>
-                </Collapsible>
+                    </CardContent>
                 </Card>
             ))}
             </div>
