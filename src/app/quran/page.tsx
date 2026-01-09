@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 type Surah = {
   number: number;
@@ -214,7 +215,7 @@ export default function QuranPage() {
                         </DialogTitle>
                     </DialogHeader>
                     <ScrollArea className="flex-grow overflow-y-auto">
-                        <div className="p-4">
+                        <div className="p-4 md:p-6">
                             {loadingDetails && (
                                 <div className="space-y-4">
                                     <Skeleton className="h-20 w-full" />
@@ -223,18 +224,19 @@ export default function QuranPage() {
                                 </div>
                             )}
                             {surahDetails && (
-                                <div className="space-y-2">
+                                <div className="space-y-6">
                                     {surahDetails.ayahs.map(ayah => (
-                                        <Card key={ayah.number} className="p-4">
-                                            <div className="flex justify-between items-start">
+                                        <div key={ayah.number} className="flex flex-col gap-4">
+                                            <div className="flex items-start gap-4">
                                                 <div className="w-8 h-8 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
-                                                <p className="text-xl md:text-2xl font-arabic text-right flex-grow px-4" dir="rtl">{ayah.text}</p>
+                                                <p className="text-xl md:text-2xl font-arabic text-right flex-grow" dir="rtl">{ayah.text}</p>
                                                 <Button size="icon" variant="ghost" onClick={() => playAudio(ayah.audio)}>
                                                     {playingAudio === ayah.audio ? <Loader2 className="h-5 w-5 animate-spin"/> : <PlayCircle className="h-5 w-5"/>}
                                                 </Button>
                                             </div>
-                                            <p className="mt-4 text-foreground/80 pl-12 text-sm">{ayah.translationText}</p>
-                                        </Card>
+                                            <p className="text-foreground/80 pl-12 text-sm">{ayah.translationText}</p>
+                                            {ayah.numberInSurah < activeSurah.numberOfAyahs && <Separator className="mt-4" />}
+                                        </div>
                                     ))}
                                 </div>
                             )}
