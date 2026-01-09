@@ -72,7 +72,8 @@ export const articles: Article[] = Array.from({ length: 50 }, (_, i) => ({
     title: `The Ruling on Celebrating the Middle of Sha’baan - IslamQA #${i+1}`,
     source: 'islamqa.info',
     category: i % 5 === 0 ? 'Fiqh' : (i % 5 === 1 ? 'Aqeedah' : (i % 5 === 2 ? 'Family' : (i % 5 === 3 ? 'Character' : 'History'))),
-    content: 'Celebrating the middle of Sha’baan (Laylat al-Nusf min Sha’baan) is a controversial issue. There is no sound evidence from the Prophet (peace and blessings of Allaah be upon him) or his Companions to suggest that it should be singled out for celebration...'
+    content: 'Celebrating the middle of Sha’baan (Laylat al-Nusf min Sha’baan) is a controversial issue. There is no sound evidence from the Prophet (peace and blessings of Allaah be upon him) or his Companions to suggest that it should be singled out for celebration...',
+    url: `https://islamqa.info/en/search?q=Ruling+on+Celebrating+the+Middle+of+Sha’baan`
 }));
 
 export const duas: Dua[] = [

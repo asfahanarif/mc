@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { placeholderImages, articles, duas, hadithBooks, sampleHadith } from "@/lib/data";
-import { BookOpen, Newspaper, Search, ChevronsRight, ChevronsLeft } from 'lucide-react';
+import { BookOpen, Newspaper, Search, ChevronsRight, ChevronsLeft, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
 const ARTICLES_PER_PAGE = 8;
 
@@ -42,14 +43,21 @@ function ArticlesTab() {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {paginatedArticles.map(article => (
-                <Card key={article.id} className="hover:shadow-lg transition-shadow">
+                <Card key={article.id} className="hover:shadow-lg transition-shadow flex flex-col">
                     <CardHeader>
                         <CardTitle className="text-lg font-headline">{article.title}</CardTitle>
                         <CardDescription>{article.category} - {article.source}</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="flex-grow">
                         <p className="text-sm text-muted-foreground line-clamp-3">{article.content}</p>
                     </CardContent>
+                    <CardFooter>
+                        <Button asChild variant="outline" size="sm">
+                            <Link href={article.url} target="_blank" rel="noopener noreferrer">
+                                View More <ExternalLink className="ml-2 h-4 w-4" />
+                            </Link>
+                        </Button>
+                    </CardFooter>
                 </Card>
             ))}
         </div>
