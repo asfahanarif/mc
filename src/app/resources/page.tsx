@@ -63,7 +63,7 @@ function ArticlesTab() {
             ))}
         </div>
         {totalPages > 1 && (
-            <div className="flex items-center justify-center space-x-2">
+            <div className="flex items-center justify-center space-x-2 relative">
                 <Button variant="outline" size="icon" onClick={() => setCurrentPage(p => Math.max(1, p-1))} disabled={currentPage === 1}>
                     <ChevronsLeft className="h-4 w-4" />
                 </Button>
@@ -71,6 +71,7 @@ function ArticlesTab() {
                 <Button variant="outline" size="icon" onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} disabled={currentPage === totalPages}>
                     <ChevronsRight className="h-4 w-4" />
                 </Button>
+                 <p className="text-xs text-muted-foreground absolute right-0 bottom-0">Source: Islamqa.info</p>
             </div>
         )}
     </div>
