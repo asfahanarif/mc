@@ -29,3 +29,24 @@ export type PlaceholderImage = {
   imageUrl: string;
   imageHint: string;
 };
+
+export type HadithContent = {
+    lang: 'ar' | 'en';
+    chapterNumber: string;
+    chapterTitle: string;
+    urn: number;
+    body: string;
+    grades: { name: string; grade: string }[];
+};
+
+export type Hadith = {
+    collection: string;
+    bookNumber: string;
+    hadithNumber: string;
+    hadith: HadithContent[];
+};
+
+export type HadithResult = {
+    total: number;
+    hadiths: Hadith[];
+};

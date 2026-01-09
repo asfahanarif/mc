@@ -1,6 +1,5 @@
 
-import type { Testimonial, ForumPost, Article, Dua, Hadith, TeamMember, EventPost, PlaceholderImage } from "./types";
-import { countries } from "./countries";
+import type { Testimonial, Article, Dua, PlaceholderImage } from "./types";
 
 export const navLinks = [
   { href: "/", label: "Home" },
@@ -40,30 +39,6 @@ export const testimonials: Testimonial[] = [
         location: "Kuala Lumpur, Malaysia",
         comment: "As a new Muslim, this platform has been my go-to for authentic knowledge. The articles are easy to understand and the community has been so welcoming.",
         avatar: "https://picsum.photos/seed/4/40/40"
-    }
-];
-
-export const forumPosts: ForumPost[] = [
-    {
-        id: 'q1',
-        author: 'Amina',
-        question: 'What is the best way to start learning Arabic to understand the Quran?',
-        answer: 'Starting with the Arabic alphabet and basic grammar is a great first step. We recommend finding a structured course, like the ones in our resources section, and practicing daily. Consistency is key!',
-        isAnswered: true
-    },
-    {
-        id: 'q2',
-        author: 'Layla',
-        question: 'How can I balance my work/studies with my daily prayers and Islamic learning?',
-        answer: 'Balancing responsibilities can be challenging. Creating a schedule and prioritizing your prayers is essential. Try dedicating even 15-20 minutes daily for Islamic learning. Small, consistent efforts make a big difference. May Allah make it easy for you.',
-        isAnswered: true
-    },
-    {
-        id: 'q3',
-        author: 'Noor',
-        question: 'I struggle with staying motivated to pray all my sunnah prayers. Any advice?',
-        answer: null,
-        isAnswered: false
     }
 ];
 
@@ -341,29 +316,14 @@ export const duas: Dua[] = [
 ];
 
 export const hadithBooks = [
-  "Bukhari", "Muslim", "Abu Dawood", "Tirmidhi", "Nasai", "Ibn Majah", "Muwatta Malik"
-];
-
-export const sampleHadith: Hadith = {
-  book: 'Bukhari',
-  number: 1,
-  topic: 'Revelation',
-  text: 'Actions are but by intention and every man shall have but that which he intended...',
-};
-
-export const teamMembers: TeamMember[] = [
-    { id: 'tm1', name: 'Dr. Fatima Ahmed', role: 'Founder & Director', avatar: 'https://picsum.photos/seed/t1/100/100' },
-    { id: 'tm2', name: 'Aisha Khan', role: 'Head of Education', avatar: 'https://picsum.photos/seed/t2/100/100' },
-    { id: 'tm3', name: 'Zainab Yusuf', role: 'Community Manager', avatar: 'https://picsum.photos/seed/t3/100/100' },
-    { id: 'tm4', name: 'Hafsa Ali', role: 'Events Coordinator', avatar: 'https://picsum.photos/seed/t4/100/100' },
-];
-
-export const events: EventPost[] = [
-    { id: 'ev1', title: 'Weekly Qur\'an Tafsir Circle', type: 'Online', date: 'Every Saturday', description: 'Join us for a deep dive into the meanings of the Qur\'an.', image: 'https://picsum.photos/seed/ev1/600/400' },
-    { id: 'ev2', title: 'Sisters\' Annual Conference', type: 'Onsite', date: '2024-12-15', description: 'Our flagship annual event with renowned speakers, workshops, and sisterhood.', image: 'https://picsum.photos/seed/ev2/600/400' },
-    { id: 'ev3', title: 'Fiqh of Menstruation Workshop', type: 'Online', date: '2024-11-20', description: 'An essential workshop covering the Islamic rulings related to menstruation.', image: 'https://picsum.photos/seed/ev3/600/400' },
+  { name: "bukhari", title: "Sahih al-Bukhari" },
+  { name: "muslim", title: "Sahih Muslim" },
+  { name: "abudawud", title: "Sunan Abi Dawud" },
+  { name: "tirmidhi", title: "Jami at-Tirmidhi" },
+  { name: "nasai", title: "Sunan an-Nasa'i" },
+  { name: "ibnmajah", title: "Sunan Ibn Majah" },
+  { name: "malik", title: "Muwatta Malik" },
 ];
 
 import placeholderData from './placeholder-images.json';
 export const placeholderImages: PlaceholderImage[] = placeholderData.placeholderImages;
-

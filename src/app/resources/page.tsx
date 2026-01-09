@@ -8,13 +8,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { placeholderImages, articles, duas, hadithBooks, sampleHadith } from "@/lib/data";
-import { BookOpen, Newspaper, Search, ChevronsRight, ChevronsLeft, ExternalLink, BookMarked, Footprints, ChevronDown } from 'lucide-react';
+import { placeholderImages, articles, duas, hadithBooks } from "@/lib/data";
+import { BookOpen, Newspaper, Search, ChevronsRight, ChevronsLeft, ExternalLink, BookMarked, Footprints, ChevronDown, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import type { Hadith, HadithResult } from '@/lib/types';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const ARTICLES_PER_PAGE = 8;
 
@@ -45,7 +47,7 @@ function ArticlesTab() {
             }}
             className="max-w-sm mx-auto"
         />
-        <div className="text-center">
+        <div className="text-right">
             <p className="text-sm text-muted-foreground">Source: Islamqa.info</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -79,6 +81,9 @@ function ArticlesTab() {
                 </Button>
             </div>
         )}
+         <div className="text-center mt-4">
+            <p className="text-sm text-muted-foreground">Source: Islamqa.info</p>
+        </div>
     </div>
   );
 }
@@ -155,38 +160,141 @@ function DuasTab() {
 
 
 function HadithTab() {
+    const [selectedBook, setSelectedBook] = useState('');
+    const [hadithNumber, setHadithNumber] = useState('');
+    const [keyword, setKeyword] = useState('');
+    const [searchResults, setSearchResults] = useState<HadithResult | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleSearch = async () => {
+        if (!selectedBook && !keyword) {
+            setError("Please select a book or enter a keyword to search.");
+            return;
+        }
+
+        setIsLoading(true);
+        setError(null);
+        setSearchResults(null);
+
+        try {
+            let url = 'https://sunnah.com/api/v1/';
+            let isSingleHadith = false;
+
+            if (selectedBook && hadithNumber) {
+                url += `collections/${selectedBook}/hadiths/${hadithNumber}`;
+                isSingleHadith = true;
+            } else if (keyword) {
+                const searchParams = new URLSearchParams({ q: keyword });
+                if (selectedBook) {
+                    searchParams.append('collection', selectedBook);
+                }
+                url += `hadiths?${searchParams.toString()}`;
+            } else if (selectedBook) {
+                url += `collections/${selectedBook}/hadiths?limit=20`; 
+            } else {
+                 setError("Please provide a valid search combination.");
+                 setIsLoading(false);
+                 return;
+            }
+            
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Hadith not found or API error. Please check your input.');
+            }
+            
+            const data = await response.json();
+            
+            if (isSingleHadith) {
+                setSearchResults({ hadiths: [data] });
+            } else {
+                setSearchResults(data);
+            }
+
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             <Card>
                 <CardHeader>
                     <CardTitle className="font-headline">Search Hadith</CardTitle>
-                    <CardDescription>Search by book, number, keyword or topic.</CardDescription>
+                    <CardDescription>Search by book and number, or by keyword across collections.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Select>
+                    <Select value={selectedBook} onValueChange={setSelectedBook}>
                         <SelectTrigger>
-                            <SelectValue placeholder="Select a book" />
+                            <SelectValue placeholder="Select a book (optional)" />
                         </SelectTrigger>
                         <SelectContent>
-                            {hadithBooks.map(book => <SelectItem key={book} value={book.toLowerCase()}>{book}</SelectItem>)}
+                            {hadithBooks.map(book => <SelectItem key={book.name} value={book.name}>{book.title}</SelectItem>)}
                         </SelectContent>
                     </Select>
-                    <Input placeholder="Hadith number (e.g., 1)" />
-                    <Input placeholder="Keyword or Topic" className="md:col-span-2" />
+                    <Input 
+                        placeholder="Hadith number (e.g., 1)" 
+                        value={hadithNumber}
+                        onChange={(e) => setHadithNumber(e.target.value)}
+                        disabled={!selectedBook}
+                    />
+                    <Input 
+                        placeholder="Or search by keyword..." 
+                        className="md:col-span-2" 
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                    />
                 </CardContent>
                 <CardFooter>
-                    <Button><Search className="mr-2 h-4 w-4" />Search</Button>
+                    <Button onClick={handleSearch} disabled={isLoading}>
+                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
+                        Search
+                    </Button>
                 </CardFooter>
             </Card>
-            <Card className="bg-secondary/50">
-                <CardHeader>
-                    <CardTitle className="text-lg font-headline">Sahih al-Bukhari, Hadith 1</CardTitle>
-                    <CardDescription>Topic: {sampleHadith.topic}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-lg">{sampleHadith.text}</p>
-                </CardContent>
-            </Card>
+
+            {error && (
+                 <Alert variant="destructive">
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            )}
+
+            {isLoading && (
+                <div className="space-y-4">
+                    <Skeleton className="h-32 w-full" />
+                    <Skeleton className="h-32 w-full" />
+                </div>
+            )}
+            
+            {searchResults && searchResults.hadiths.length > 0 && (
+                <div className="space-y-4">
+                    {searchResults.hadiths.map((hadith) => (
+                         <Card key={`${hadith.collection}-${hadith.hadithNumber}`} className="bg-secondary/30">
+                            <CardHeader>
+                                <CardTitle className="text-lg font-headline">
+                                    {hadithBooks.find(b => b.name === hadith.collection)?.title}, Hadith {hadith.hadithNumber}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-lg leading-relaxed font-arabic text-right mb-4" dir="rtl">{hadith.hadith.find(h => h.lang === 'ar')?.body}</p>
+                                <p className="text-foreground/90">{hadith.hadith.find(h => h.lang === 'en')?.body}</p>
+                            </CardContent>
+                            <CardFooter>
+                                {hadith.hadith.find(h => h.lang === 'en')?.grades?.map((grade, index) => (
+                                    <Badge key={index} variant="outline" className="mr-2">{grade.grade}</Badge>
+                                ))}
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </div>
+            )}
+            
+            {searchResults && searchResults.hadiths.length === 0 && (
+                <p className="text-center text-muted-foreground">No hadith found matching your search criteria.</p>
+            )}
         </div>
     );
 }
