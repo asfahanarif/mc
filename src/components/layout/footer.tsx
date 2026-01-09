@@ -11,9 +11,9 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   const footerLinks = navLinks.filter(l => !['Home', 'Donate'].includes(l.label));
   const socialLinks = [
-    { name: "WhatsApp", href: "https://wa.me/923194468547", icon: WhatsAppIcon, color: "text-[#25D366]" },
-    { name: "Instagram", href: "https://www.instagram.com/muslimahsclub", icon: InstagramIcon, color: "text-[#E1306C]" },
-    { name: "YouTube", href: "https://www.youtube.com/@muslimahsclub", icon: YoutubeIcon, color: "text-[#FF0000]" },
+    { name: "WhatsApp", href: "https://wa.me/923194468547", icon: WhatsAppIcon },
+    { name: "Instagram", href: "https://www.instagram.com/muslimahsclub", icon: InstagramIcon },
+    { name: "YouTube", href: "https://www.youtube.com/@muslimahsclub", icon: YoutubeIcon },
   ]
 
   return (
@@ -40,7 +40,7 @@ export default function Footer() {
                 <div className="flex justify-center md:justify-start items-center gap-4">
                     {socialLinks.map(link => (
                         <a key={link.name} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.name} className="group">
-                           <link.icon className={cn("h-8 w-8 transition-all duration-300 group-hover:scale-110", link.color)} />
+                           <link.icon className={cn("h-8 w-8 text-muted-foreground transition-all duration-300 group-hover:scale-110 group-hover:text-primary")} />
                         </a>
                     ))}
                 </div>
