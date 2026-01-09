@@ -44,9 +44,9 @@
     },
     {
       "id": "resources-library",
-      "description": "A vast library with shelves full of books.",
-      "imageUrl": "https://images.unsplash.com/photo-1529148482759-b35b25c5f217?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMXx8bGlicmFyeXxlbnwwfHx8fDE3Njc5NTcyMjl8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "library shelves"
+      "description": "A stack of old books.",
+      "imageUrl": "https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxyZXNvdXJjZXN8ZW58MHx8fHwxNzY3OTU3Njc1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "books stack"
     },
     {
       "id": "contact-us",
