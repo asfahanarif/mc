@@ -99,6 +99,17 @@ service cloud.firestore {
              reply.isAdminReply is bool;
     }
 
+    /**
+     * Validates a new newsletter subscription.
+     * Ensures the email is a string and the subscribedAt timestamp is set.
+     */
+     function isValidNewSubscription() {
+        let sub = request.resource.data;
+        return sub.email is string &&
+               sub.email.matches('^[^@]+@[^@]+\\.[^@]+$') &&
+               sub.subscribedAt == request.time;
+     }
+
     // ----------------------------------------------------------------------
     // Collection Rules
     // ----------------------------------------------------------------------
@@ -145,6 +156,16 @@ service cloud.firestore {
       allow create: if isValidNewForumPost();
       allow update: if isValidNewPublicReply() || isValidAdminUpdate();
       allow delete: if isAdmin();
+    }
+    
+    /**
+     * @description Controls access to newsletter subscriptions.
+     * Anyone can subscribe (create). Only admins can view or manage subscriptions.
+     * @path /newsletter_subscriptions/{subscriptionId}
+     */
+    match /newsletter_subscriptions/{subscriptionId} {
+      allow create: if isValidNewSubscription();
+      allow read, list, update, delete: if isAdmin();
     }
 
     /**

@@ -196,6 +196,25 @@
         "reply",
         "timestamp"
       ]
+    },
+    "NewsletterSubscription": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "NewsletterSubscription",
+        "type": "object",
+        "description": "Represents a single newsletter email subscription.",
+        "properties": {
+            "email": {
+                "type": "string",
+                "format": "email",
+                "description": "The email address of the subscriber."
+            },
+            "subscribedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The timestamp when the user subscribed."
+            }
+        },
+        "required": ["email", "subscribedAt"]
     }
   },
   "auth": {
@@ -284,6 +303,22 @@
               "description": "The unique identifier for the user who is an admin."
             }
           ]
+        }
+      },
+      {
+        "path": "/newsletter_subscriptions/{subscriptionId}",
+        "definition": {
+            "entityName": "NewsletterSubscription",
+            "schema": {
+                "$ref": "#/backend/entities/NewsletterSubscription"
+            },
+            "description": "Stores newsletter email subscriptions. Public users can create new subscriptions. Only administrators can read or delete them.",
+            "params": [
+                {
+                    "name": "subscriptionId",
+                    "description": "The unique identifier for the subscription."
+                }
+            ]
         }
       }
     ],

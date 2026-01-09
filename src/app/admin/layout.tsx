@@ -28,6 +28,7 @@ import {
   MessageSquare,
   Database,
   Loader2,
+  Mail,
 } from 'lucide-react';
 import { useAuth, useFirebase } from '@/firebase';
 import { Button } from '@/components/ui/button';
@@ -40,6 +41,7 @@ const menuItems = [
   { href: '/admin/testimonials', label: 'Testimonials', icon: MessageSquareQuote },
   { href: '/admin/team', label: 'Team', icon: Users },
   { href: '/admin/forum', label: 'Forum', icon: MessageSquare },
+  { href: '/admin/newsletter', label: 'Newsletter', icon: Mail },
 ];
 
 export default function AdminLayout({

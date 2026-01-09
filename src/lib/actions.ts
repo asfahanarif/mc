@@ -1,6 +1,9 @@
+
 "use server";
 
 import { z } from "zod";
+import { initializeFirebase } from "@/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const emailSchema = z.string().email({ message: "Invalid email address." });
 const contactSchema = z.object({
@@ -19,12 +22,23 @@ export async function subscribeToNewsletter(prevState: any, formData: FormData) 
     };
   }
   
-  // In a real app, you would add the email to your mailing list (e.g., via Google Sheets API)
-  console.log("New newsletter subscription:", validatedEmail.data);
-
-  return {
-    message: "Thank you for subscribing!",
-  };
+  try {
+    const { firestore } = initializeFirebase();
+    const subscriptionsCollection = collection(firestore, 'newsletter_subscriptions');
+    await addDoc(subscriptionsCollection, {
+      email: validatedEmail.data,
+      subscribedAt: serverTimestamp(),
+    });
+    
+    return {
+      message: "Thank you for subscribing!",
+    };
+  } catch (error) {
+    console.error("Newsletter subscription error:", error);
+    return {
+        message: "An error occurred. Please try again later."
+    }
+  }
 }
 
 export async function submitContactForm(prevState: any, formData: FormData) {

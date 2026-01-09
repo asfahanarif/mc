@@ -1,7 +1,7 @@
 
 'use client';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { LayoutGrid, Calendar, Users, MessageSquareQuote, MessageSquare } from 'lucide-react';
+import { LayoutGrid, Calendar, Users, MessageSquareQuote, MessageSquare, Mail } from 'lucide-react';
 import Link from 'next/link';
 
 function AdminDashboard() {
@@ -10,6 +10,7 @@ function AdminDashboard() {
     { title: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote },
     { title: 'Team Members', href: '/admin/team', icon: Users },
     { title: 'Forum Q&A', href: '/admin/forum', icon: MessageSquare },
+    { title: 'Newsletter', href: '/admin/newsletter', icon: Mail },
   ];
 
   return (
