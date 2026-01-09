@@ -46,7 +46,7 @@ export default function EventsPage() {
                             </Card>
                         ))}
                         {events?.map((event) => {
-                            const whatsAppNumber = "92319446854";
+                            const whatsAppNumber = event.whatsAppNumber || "92319446854";
                             const message = `As-salamu alaykum! I would like to register for the event: "${event.title}". My name is:`;
                             const whatsappUrl = `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(message)}`;
 
@@ -78,7 +78,7 @@ export default function EventsPage() {
                                     <CardFooter>
                                         <Button asChild>
                                             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                                                Register on WhatsApp
+                                                Register Now!
                                             </a>
                                         </Button>
                                     </CardFooter>

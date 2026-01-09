@@ -49,6 +49,7 @@ function EventForm({
       type: 'Online',
       imageUrl: '',
       order: maxOrder + 1,
+      whatsAppNumber: '92319446854',
     },
   });
   const { toast } = useToast();
@@ -164,6 +165,19 @@ function EventForm({
                   <SelectItem value="Onsite">Onsite</SelectItem>
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="whatsAppNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>WhatsApp Number for Registration</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g., 92319446854" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

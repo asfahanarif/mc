@@ -30,6 +30,10 @@
           "type": "string",
           "description": "URL of the image associated with the event.",
           "format": "uri"
+        },
+        "whatsAppNumber": {
+          "type": "string",
+          "description": "The WhatsApp number for event registration."
         }
       },
       "required": [
