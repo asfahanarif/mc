@@ -193,7 +193,7 @@ export function QiblaDirection() {
                     Find Qibla Direction
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="w-[90vw] sm:max-w-md p-6">
                 <DialogHeader>
                     <DialogTitle className="font-headline text-2xl text-center">Qibla Compass</DialogTitle>
                 </DialogHeader>
