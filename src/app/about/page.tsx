@@ -27,7 +27,7 @@ export default function AboutPage() {
             {isLoading && [...Array(4)].map((_, i) => (
               <Card key={i}>
                 <CardContent className="pt-6">
-                  <Skeleton className="h-[100px] w-[100px] rounded-full mx-auto mb-4" />
+                  <Skeleton className="h-[128px] w-[128px] rounded-full mx-auto mb-4" />
                 </CardContent>
                 <CardHeader>
                   <Skeleton className="h-6 w-3/4 mx-auto mb-2" />
@@ -36,23 +36,25 @@ export default function AboutPage() {
               </Card>
             ))}
             {teamMembers?.map((member) => (
-              <Card key={member.id} className="text-center hover:shadow-xl transition-shadow flex flex-col">
-                <CardHeader>
-                  <div className="relative h-24 w-24 mx-auto">
+              <Card key={member.id} className="text-center group transition-all duration-300 hover:shadow-xl hover:-translate-y-2 flex flex-col">
+                <CardContent className="pt-8">
+                  <div className="relative h-32 w-32 mx-auto">
                     <Image
-                      src={member.imageUrl || `https://picsum.photos/seed/${member.id}/100/100`}
+                      src={member.imageUrl || `https://picsum.photos/seed/${member.id}/128/128`}
                       alt={member.name}
-                      width={100}
-                      height={100}
-                      className="rounded-full mx-auto border-4 border-primary/20"
+                      width={128}
+                      height={128}
+                      className="rounded-full mx-auto border-4 border-background outline outline-4 outline-primary/10 group-hover:outline-primary/20 transition-all"
                       data-ai-hint="person portrait"
                     />
                   </div>
-                  <CardTitle className="font-headline text-xl text-primary pt-2">{member.name}</CardTitle>
-                  <p className="text-muted-foreground">{member.title}</p>
+                </CardContent>
+                <CardHeader className="pt-2">
+                  <CardTitle className="font-headline text-2xl text-primary">{member.name}</CardTitle>
+                  <p className="font-semibold text-muted-foreground">{member.title}</p>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  <p className="text-sm text-foreground/80">{member.bio}</p>
+                  <p className="text-sm text-foreground/70">{member.bio}</p>
                 </CardContent>
               </Card>
             ))}
