@@ -4,9 +4,7 @@ import { z } from 'zod';
 export const EventSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
-  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: 'Invalid date format',
-  }),
+  schedule: z.string().min(3, 'Schedule is required'),
   location: z.string().min(3, 'Location is required'),
   type: z.enum(['Online', 'Onsite']),
   imageUrl: z.string().url().optional().or(z.literal('')),

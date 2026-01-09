@@ -18,10 +18,9 @@
           "type": "string",
           "description": "Detailed description of the event."
         },
-        "date": {
+        "schedule": {
           "type": "string",
-          "description": "Date and time of the event.",
-          "format": "date-time"
+          "description": "Date, time, or recurring schedule of the event (e.g., 'Every Saturday' or '2024-12-15 10:00 AM')."
         },
         "location": {
           "type": "string",
@@ -37,7 +36,7 @@
         "id",
         "title",
         "description",
-        "date",
+        "schedule",
         "location"
       ]
     },

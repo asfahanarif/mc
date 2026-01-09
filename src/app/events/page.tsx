@@ -64,7 +64,7 @@ export default function EventsPage() {
                                     <CardTitle className="font-headline text-xl">{event.title}</CardTitle>
                                     <div className="flex items-center text-muted-foreground text-sm gap-2 pt-1">
                                         <Calendar className="h-4 w-4" />
-                                        <span>{new Date(event.date).toLocaleString()}</span>
+                                        <span>{event.schedule}</span>
                                     </div>
                                 </CardHeader>
                                 <CardContent className="flex-grow">

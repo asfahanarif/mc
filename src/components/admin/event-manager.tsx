@@ -44,7 +44,7 @@ function EventForm({
     defaultValues: event || {
       title: '',
       description: '',
-      date: '',
+      schedule: '',
       location: '',
       type: 'Online',
       imageUrl: '',
@@ -123,12 +123,12 @@ function EventForm({
         />
         <FormField
           control={form.control}
-          name="date"
+          name="schedule"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date</FormLabel>
+              <FormLabel>Schedule / Days</FormLabel>
               <FormControl>
-                <Input type="datetime-local" {...field} />
+                <Input placeholder="e.g., Every Saturday or 2024-12-25" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -281,7 +281,7 @@ export default function EventManager() {
                 </div>
                 <div>
                   <h3 className="font-semibold">{event.title}</h3>
-                  <p className="text-sm text-muted-foreground">{new Date(event.date).toLocaleString()} - {event.location}</p>
+                  <p className="text-sm text-muted-foreground">{event.schedule} - {event.location}</p>
                 </div>
               </div>
               <div className="flex items-center">
