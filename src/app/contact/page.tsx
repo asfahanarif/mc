@@ -16,11 +16,11 @@ export default function ContactPage() {
       />
       <section className="py-16 md:py-24">
         <div className="container space-y-16">
-          <div className="max-w-xl mx-auto">
-            <ContactForm />
-          </div>
           <div className="max-w-4xl mx-auto">
             <SocialCards />
+          </div>
+          <div className="max-w-xl mx-auto">
+            <ContactForm />
           </div>
         </div>
       </section>
