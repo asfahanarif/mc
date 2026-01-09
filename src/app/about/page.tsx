@@ -8,6 +8,30 @@ import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection, query, orderBy } from "firebase/firestore";
 import type { TeamMember } from "@/lib/schemas";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Heart, BookOpen, Globe, Users } from "lucide-react";
+
+const values = [
+    {
+      icon: BookOpen,
+      title: "Authentic Knowledge",
+      description: "We are committed to providing information rooted in the Qur'an and the Sunnah as understood by the righteous predecessors.",
+    },
+    {
+      icon: Users,
+      title: "Sisterhood",
+      description: "We strive to foster a supportive, non-judgmental, and nurturing environment for Muslim women to connect and grow together.",
+    },
+    {
+      icon: Heart,
+      title: "Compassion",
+      description: "We believe in interacting with empathy, kindness, and respect, reflecting the beautiful character of our Prophet (PBUH).",
+    },
+    {
+      icon: Globe,
+      title: "Global Community",
+      description: "We aim to unite sisters from diverse backgrounds, creating a global network of support and shared learning.",
+    },
+];
 
 export default function AboutPage() {
   const aboutImage = placeholderImages.find(p => p.id === 'about-team');
@@ -22,8 +46,36 @@ export default function AboutPage() {
         subtitle="Meet the dedicated team behind Muslimahs Club, committed to empowering our community."
         image={aboutImage}
       />
+       <section className="py-16 md:py-24 bg-secondary/30">
+        <div className="container">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl font-headline font-bold text-primary">Our Values</h2>
+            <p className="mt-2 text-lg text-muted-foreground">
+              The principles that guide our sisterhood.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {values.map((value) => (
+              <div key={value.title} className="text-center p-6 bg-background rounded-lg shadow-sm hover:shadow-lg transition-shadow">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mx-auto mb-4">
+                  <value.icon className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-headline font-semibold text-foreground">{value.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{value.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="py-16 md:py-24">
         <div className="container">
+           <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl font-headline font-bold text-primary">Our Team</h2>
+            <p className="mt-2 text-lg text-muted-foreground">
+              Meet the dedicated sisters working behind the scenes.
+            </p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {isLoading && [...Array(4)].map((_, i) => (
               <Card key={i}>
