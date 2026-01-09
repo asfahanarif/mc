@@ -34,15 +34,15 @@ const socialLinks = [
 
 export function SocialCards() {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
             {socialLinks.map((link) => (
                 <a key={link.name} href={link.href} target="_blank" rel="noopener noreferrer" className="group">
                     <Card className="h-full text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-                        <CardContent className="pt-8">
-                           <link.icon className={cn("h-16 w-16 mx-auto transition-transform duration-300 group-hover:scale-110", link.color)} />
-                            <h3 className="mt-4 text-2xl font-headline font-semibold text-primary">{link.name}</h3>
+                        <CardContent className="pt-6 md:pt-8">
+                           <link.icon className={cn("h-12 w-12 md:h-16 md:w-16 mx-auto transition-transform duration-300 group-hover:scale-110", link.color)} />
+                            <h3 className="mt-3 md:mt-4 text-xl md:text-2xl font-headline font-semibold text-primary">{link.name}</h3>
                             
-                            <p className="mt-4 font-semibold text-foreground/80 flex items-center justify-center gap-1 group-hover:text-primary">
+                            <p className="mt-2 md:mt-4 font-semibold text-foreground/80 flex items-center justify-center gap-1 group-hover:text-primary">
                                 {link.cta} <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
                             </p>
                         </CardContent>
