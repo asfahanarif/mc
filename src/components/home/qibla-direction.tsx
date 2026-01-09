@@ -3,10 +3,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Compass, LocateFixed, Loader2, AlertTriangle, Check, X, ArrowUp } from 'lucide-react';
+import { Compass, LocateFixed, Loader2, AlertTriangle, ArrowUp, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { KaabaIcon } from '../icons/kaaba';
 import { cn } from '@/lib/utils';
 
@@ -47,12 +47,16 @@ export function QiblaDirection() {
         }
 
         try {
-            const doePermission = await (DeviceOrientationEvent as any).requestPermission();
-            if (doePermission !== 'granted') {
-                setError("Permission for device orientation was denied. The compass cannot function.");
-                setIsLoading(false);
-                setPermissionState('denied');
-                return;
+            // Type assertion for iOS-specific permission API
+            const doe = DeviceOrientationEvent as any;
+            if (typeof doe.requestPermission === 'function') {
+                 const permission = await doe.requestPermission();
+                if (permission !== 'granted') {
+                    setError("Permission for device orientation was denied. The compass cannot function.");
+                    setIsLoading(false);
+                    setPermissionState('denied');
+                    return;
+                }
             }
         } catch (e) {
             console.info("DeviceOrientationEvent.requestPermission() not needed or failed, proceeding.", e);
@@ -150,9 +154,9 @@ export function QiblaDirection() {
                         <span className="absolute right-3 text-xl font-bold text-muted-foreground">E</span>
 
                         <div className="absolute inset-0 flex items-center justify-center" style={qiblaStyle}>
-                            <div className="w-0.5 h-full">
+                             <div className="w-0.5 h-full">
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 flex items-center justify-center">
-                                    <KaabaIcon className="w-6 h-6 text-green-500 drop-shadow-lg" />
+                                     <KaabaIcon className="w-6 h-6 text-green-500 drop-shadow-lg" />
                                 </div>
                                 <div className="absolute top-8 left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-8 border-l-transparent border-r-transparent border-b-green-500"></div>
                             </div>
@@ -185,11 +189,14 @@ export function QiblaDirection() {
                 </Button>
             </DialogTrigger>
             <DialogContent className={cn(
-                "sm:max-w-md w-[calc(100vw-2rem)] rounded-lg",
+                "sm:max-w-md w-[calc(100vw-2rem)] rounded-lg p-0",
                 "bg-transparent border-0 shadow-none",
-                "sm:bg-background sm:border sm:shadow-lg"
               )}>
-                <div className="bg-background/90 backdrop-blur-lg rounded-lg p-6">
+                <div className="bg-background/90 backdrop-blur-lg rounded-lg p-6 relative">
+                    <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
+                        <X className="h-4 w-4" />
+                        <span className="sr-only">Close</span>
+                    </DialogClose>
                     <div className="p-4">
                         {renderContent()}
                     </div>
