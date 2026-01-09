@@ -30,7 +30,7 @@ export default function AuthPanel() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10">
+    <div className="max-w-md mx-auto" style={{ marginTop: '5vh' }}>
       <Card>
         <CardHeader>
           <CardTitle>Admin Login</CardTitle>
