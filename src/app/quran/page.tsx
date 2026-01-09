@@ -8,9 +8,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { placeholderImages } from "@/lib/data";
-import { Volume2, Loader2, PlayCircle, BookOpen, X } from "lucide-react";
+import { Volume2, Loader2, PlayCircle, BookOpen, X, ChevronLeft, ChevronRight, BookText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -50,6 +50,7 @@ export default function QuranPage() {
   const [surahDetails, setSurahDetails] = useState<SurahDetails | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
+  const [showTranslation, setShowTranslation] = useState(true);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -135,6 +136,22 @@ export default function QuranPage() {
         audioRef.current.pause();
     }
     setPlayingAudio(null);
+  }
+
+  const handleNextSurah = () => {
+    if (!activeSurah || surahs.length === 0) return;
+    const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
+    if (currentIndex > -1 && currentIndex < surahs.length - 1) {
+        fetchSurahDetails(surahs[currentIndex + 1]);
+    }
+  }
+
+  const handlePrevSurah = () => {
+    if (!activeSurah || surahs.length === 0) return;
+    const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
+    if (currentIndex > 0) {
+        fetchSurahDetails(surahs[currentIndex - 1]);
+    }
   }
 
 
@@ -234,7 +251,9 @@ export default function QuranPage() {
                                                     {playingAudio === ayah.audio ? <Loader2 className="h-5 w-5 animate-spin"/> : <PlayCircle className="h-5 w-5"/>}
                                                 </Button>
                                             </div>
-                                            <p className="text-foreground/80 pl-12 text-sm">{ayah.translationText}</p>
+                                            {showTranslation && (
+                                                <p className="text-foreground/80 pl-12 text-sm">{ayah.translationText}</p>
+                                            )}
                                             {ayah.numberInSurah < activeSurah.numberOfAyahs && <Separator className="mt-4" />}
                                         </div>
                                     ))}
@@ -242,6 +261,20 @@ export default function QuranPage() {
                             )}
                         </div>
                     </ScrollArea>
+                    <DialogFooter className="p-2 border-t flex-shrink-0 bg-background/90 justify-between">
+                        <Button onClick={handlePrevSurah} disabled={activeSurah.number === 1}>
+                            <ChevronLeft className="mr-2 h-4 w-4" />
+                            Previous
+                        </Button>
+                        <Button variant="outline" onClick={() => setShowTranslation(!showTranslation)}>
+                            <BookText className="mr-2 h-4 w-4" />
+                            {showTranslation ? "Hide" : "Show"} Translation
+                        </Button>
+                        <Button onClick={handleNextSurah} disabled={activeSurah.number === 114}>
+                            Next
+                            <ChevronRight className="ml-2 h-4 w-4" />
+                        </Button>
+                    </DialogFooter>
                 </>
            )}
         </DialogContent>
