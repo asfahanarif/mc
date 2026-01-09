@@ -47,7 +47,7 @@ function ArticlesTab() {
                 <Card key={article.id} className="hover:shadow-lg transition-shadow flex flex-col">
                     <CardHeader>
                         <CardTitle className="text-lg font-headline">{article.title}</CardTitle>
-                        <CardDescription>{article.category} - {article.source}</CardDescription>
+                        <CardDescription>{article.category}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow">
                         <p className="text-sm text-muted-foreground line-clamp-3">{article.content}</p>
