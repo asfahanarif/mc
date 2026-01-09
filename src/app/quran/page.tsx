@@ -214,7 +214,7 @@ export default function QuranPage() {
 
       <Dialog open={!!activeSurah} onOpenChange={(isOpen) => !isOpen && handleDialogClose()}>
         <DialogContent className={cn(
-            "sm:max-w-5xl w-[calc(100vw-2rem)] max-h-[80vh] sm:max-h-[90vh] p-0 flex flex-col",
+            "w-[calc(100vw-2rem)] max-h-[80vh] p-0 flex flex-col sm:max-w-5xl sm:max-h-[90vh]",
             "bg-transparent border-0 shadow-none"
         )}>
            {activeSurah && (
@@ -261,7 +261,7 @@ export default function QuranPage() {
                             )}
                         </div>
                     </ScrollArea>
-                    <DialogFooter className="p-2 flex-shrink-0 bg-background/90 justify-between">
+                    <DialogFooter className="p-2 flex-shrink-0 bg-background/90 justify-center gap-2">
                         <Button size="sm" onClick={handlePrevSurah} disabled={activeSurah.number === 1}>
                             <ChevronLeft className="mr-2 h-4 w-4" />
                             Prev
@@ -283,4 +283,5 @@ export default function QuranPage() {
     </div>
   );
 }
+
 
