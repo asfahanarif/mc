@@ -70,22 +70,21 @@ export default function EventsPage() {
                                         />
                                     </div>
                                     <CardHeader>
-                                        <Badge variant={event.type === 'Online' ? 'default' : 'secondary'} className="w-fit gap-1 mb-2">
-                                            {event.type === 'Online' ? <Video className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
-                                            {event.type}
-                                        </Badge>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <Badge variant={event.type === 'Online' ? 'default' : 'secondary'} className="w-fit gap-1">
+                                                {event.type === 'Online' ? <Video className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
+                                                {event.type}
+                                            </Badge>
+                                            {event.type === 'Onsite' && event.location && (
+                                                <span className="text-xs font-semibold text-muted-foreground">{event.location}</span>
+                                            )}
+                                        </div>
                                         <CardTitle className="font-headline text-xl">{event.title}</CardTitle>
                                         <div className="flex flex-col gap-2 pt-1 text-sm text-muted-foreground">
                                             <div className="flex items-center gap-2">
                                                 <Calendar className="h-4 w-4" />
                                                 <span>{event.schedule}</span>
                                             </div>
-                                            {event.type === 'Onsite' && event.location && (
-                                                 <div className="flex items-center gap-2">
-                                                    <MapPin className="h-4 w-4" />
-                                                    <span>{event.location}</span>
-                                                </div>
-                                            )}
                                         </div>
                                     </CardHeader>
                                     <CardContent className="flex-grow">
