@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogFo
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 
 type Surah = {
   number: number;
@@ -45,6 +46,7 @@ export default function QuranPage() {
   const [surahs, setSurahs] = useState<Surah[]>([]);
   const [loadingSurahs, setLoadingSurahs] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [activeSurah, setActiveSurah] = useState<Surah | null>(null);
   const [surahDetails, setSurahDetails] = useState<SurahDetails | null>(null);
@@ -154,6 +156,11 @@ export default function QuranPage() {
     }
   }
 
+  const filteredSurahs = surahs.filter(surah => 
+    surah.englishName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    surah.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    surah.number.toString().includes(searchTerm)
+  );
 
   return (
     <div>
@@ -164,9 +171,17 @@ export default function QuranPage() {
       />
       <section className="py-16 md:py-24">
         <div className="container max-w-7xl">
+          <div className="max-w-xl mx-auto mb-12">
+            <Input 
+                placeholder="Search for a Surah by name or number..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full"
+            />
+          </div>
           {loadingSurahs ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[...Array(6)].map((_,i) => <Skeleton key={i} className="h-40 w-full" />)}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {[...Array(8)].map((_,i) => <Skeleton key={i} className="h-40 w-full" />)}
             </div>
           ) : error ? (
             <Alert variant="destructive">
@@ -175,7 +190,7 @@ export default function QuranPage() {
             </Alert>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {surahs.map((surah) => (
+              {filteredSurahs.map((surah) => (
                 <Card key={surah.number} className="flex flex-col">
                     <CardHeader>
                         <div className="flex items-center justify-between">
@@ -262,7 +277,7 @@ export default function QuranPage() {
                         </div>
                     </ScrollArea>
                     <DialogFooter className="p-2 flex-shrink-0 bg-background/90 justify-center gap-2">
-                        <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9 order-last sm:order-first" variant="outline" onClick={() => setShowTranslation(!showTranslation)}>
+                        <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9 order-last sm:order-first" onClick={() => setShowTranslation(!showTranslation)}>
                             <BookText className="mr-1 sm:mr-2 h-4 w-4" />
                             {showTranslation ? "Hide" : "Show"}
                         </Button>
@@ -284,9 +299,4 @@ export default function QuranPage() {
   );
 }
 
-
-
-
-
-
-
+    
