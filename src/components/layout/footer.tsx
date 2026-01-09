@@ -10,7 +10,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   const footerLinks = navLinks.filter(l => !['Home', 'Donate'].includes(l.label));
   const socialLinks = [
-    { name: "WhatsApp", href: "https://chat.whatsapp.com/ErUV6XUaWyq6xml6k6eKfE", icon: WhatsAppIcon },
+    { name: "WhatsApp", href: "https://wa.me/923194468547", icon: WhatsAppIcon },
     { name: "Instagram", href: "https://www.instagram.com/muslimahsclub", icon: InstagramIcon },
     { name: "YouTube", href: "https://www.youtube.com/@muslimahsclub", icon: YoutubeIcon },
   ]
