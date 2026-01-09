@@ -9,6 +9,7 @@ import { NewsletterForm } from "@/components/home/newsletter-form";
 import { Logo } from "@/components/shared/logo";
 import { TestimonialsCarousel } from "@/components/home/testimonials";
 import { placeholderImages } from "@/lib/data";
+import { QiblaDirection } from "@/components/home/qibla-direction";
 
 const counters = [
     { icon: Users, label: "Sisters", value: "1200+", screen: "all" },
@@ -135,8 +136,20 @@ export default function Home() {
           <PrayerTimings />
         </div>
       </section>
+
+      <section id="qibla" className="w-full py-16 md:py-24 bg-secondary/50">
+        <div className="container px-4 md:px-6">
+          <div className="text-center space-y-3 mb-12">
+            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">Qibla Direction</h2>
+            <p className="max-w-[600px] mx-auto text-foreground/80 md:text-lg">
+              Find the direction of the Kaaba from your current location.
+            </p>
+          </div>
+          <QiblaDirection />
+        </div>
+      </section>
       
-      <section className="w-full py-16 md:py-24 bg-secondary/50">
+      <section className="w-full py-16 md:py-24 bg-background">
         <div className="container px-4 md:px-6">
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {featuredItems.map((item) => (
@@ -164,7 +177,7 @@ export default function Home() {
         </div>
       </section>
       
-      <section className="w-full py-16 md:py-24 bg-background">
+      <section className="w-full py-16 md:py-24 bg-secondary/50">
         <div className="container px-4 md:px-6">
           <div className="text-center space-y-3 mb-12">
             <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">What Our Sisters Say</h2>
@@ -191,17 +204,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
-
-
-
-    
-
-    
-
-    
-
-    
