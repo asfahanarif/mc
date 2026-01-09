@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { KaabaIcon } from '../icons/kaaba';
+import { cn } from '@/lib/utils';
 
 export function QiblaDirection() {
     const [qiblaDirection, setQiblaDirection] = useState<number | null>(null);
@@ -193,12 +194,18 @@ export function QiblaDirection() {
                     Find Qibla Direction
                 </Button>
             </DialogTrigger>
-            <DialogContent className="w-[90vw] sm:max-w-md p-6">
-                <DialogHeader>
-                    <DialogTitle className="font-headline text-2xl text-center">Qibla Compass</DialogTitle>
-                </DialogHeader>
-                <div className="p-4">
-                    {renderContent()}
+            <DialogContent className={cn(
+                "sm:max-w-md",
+                "bg-transparent border-0 shadow-none",
+                "sm:bg-background sm:border sm:shadow-lg"
+              )}>
+                <div className="bg-background/90 backdrop-blur-lg rounded-lg p-6">
+                    <DialogHeader>
+                        <DialogTitle className="font-headline text-2xl text-center">Qibla Compass</DialogTitle>
+                    </DialogHeader>
+                    <div className="p-4">
+                        {renderContent()}
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>
