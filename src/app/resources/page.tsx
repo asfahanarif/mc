@@ -40,7 +40,7 @@ function ArticlesTab() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
             }}
-            className="max-w-sm"
+            className="max-w-sm mx-auto"
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {paginatedArticles.map(article => (
