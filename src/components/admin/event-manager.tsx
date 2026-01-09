@@ -25,8 +25,11 @@ import { useToast } from '@/hooks/use-toast';
 import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
 import { getEventDescriptionSuggestion } from '@/ai/flows/suggest-event-description';
+import { Label } from '../ui/label';
 
 type EventWithId = Event & { id: string };
+
+type RegistrationType = 'url' | 'whatsapp';
 
 function EventForm({
   event,
@@ -39,6 +42,24 @@ function EventForm({
 }) {
   const firestore = useFirestore();
   const [isGettingSuggestion, setIsGettingSuggestion] = useState(false);
+  
+  const isWhatsAppUrl = (url?: string) => url?.startsWith('https://wa.me/') || false;
+
+  const getWhatsAppNumber = (url?: string) => {
+    if (!url || !isWhatsAppUrl(url)) return '';
+    return url.split('/')[3]?.split('?')[0] || '';
+  };
+
+  const getWhatsAppMessage = (url?: string) => {
+    if (!url || !isWhatsAppUrl(url)) return '';
+    const params = new URLSearchParams(url.split('?')[1]);
+    return params.get('text') || '';
+  };
+
+  const [registrationType, setRegistrationType] = useState<RegistrationType>(isWhatsAppUrl(event?.registrationUrl) ? 'whatsapp' : 'url');
+  const [whatsAppNumber, setWhatsAppNumber] = useState(getWhatsAppNumber(event?.registrationUrl));
+  const [whatsAppMessage, setWhatsAppMessage] = useState(getWhatsAppMessage(event?.registrationUrl));
+
   const form = useForm<Event>({
     resolver: zodResolver(EventSchema),
     defaultValues: event || {
@@ -73,7 +94,18 @@ function EventForm({
   }
 
   const onSubmit = (data: Event) => {
-    const eventData = { ...data };
+    let finalRegistrationUrl = '';
+    if (registrationType === 'whatsapp') {
+      if (whatsAppNumber) {
+        const message = whatsAppMessage || `As-salamu alaykum! I would like to register for the event: "${data.title}". My name is:`;
+        finalRegistrationUrl = `https://wa.me/${whatsAppNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+      }
+    } else {
+      finalRegistrationUrl = data.registrationUrl || '';
+    }
+    
+    const eventData = { ...data, registrationUrl: finalRegistrationUrl };
+
     if (!eventData.order) {
         eventData.order = maxOrder + 1;
     }
@@ -169,19 +201,53 @@ function EventForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="registrationUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Registration URL</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., https://forms.gle/xyz or https://wa.me/..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        
+        <div className="space-y-2">
+            <Label>Registration Method</Label>
+            <Select onValueChange={(value: RegistrationType) => setRegistrationType(value)} defaultValue={registrationType}>
+                <SelectTrigger>
+                    <SelectValue placeholder="Select registration method" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="url">URL (e.g., Google Form)</SelectItem>
+                    <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
+
+        {registrationType === 'url' && (
+            <FormField
+                control={form.control}
+                name="registrationUrl"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Registration URL</FormLabel>
+                    <FormControl>
+                        <Input placeholder="https://forms.gle/xyz" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
+        )}
+        
+        {registrationType === 'whatsapp' && (
+            <div className='space-y-4 p-4 border rounded-md'>
+                <div className='space-y-2'>
+                    <Label>WhatsApp Number</Label>
+                    <Input placeholder="+1234567890" value={whatsAppNumber} onChange={(e) => setWhatsAppNumber(e.target.value)} />
+                </div>
+                 <div className='space-y-2'>
+                    <Label>Pre-filled Message (Optional)</Label>
+                    <Textarea 
+                        placeholder={`I want to register for '${form.watch('title') || 'this event'}'.`}
+                        value={whatsAppMessage}
+                        onChange={(e) => setWhatsAppMessage(e.target.value)}
+                    />
+                </div>
+            </div>
+        )}
+
         <FormField
           control={form.control}
           name="imageUrl"

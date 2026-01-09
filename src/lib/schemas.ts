@@ -35,7 +35,7 @@ export const TeamMemberSchema = z.object({
 export type TeamMember = z.infer<typeof TeamMemberSchema>;
 
 export const ForumReplySchema = z.object({
-  id: z.string().uuid(),
+  id: z.string(),
   authorName: z.string(),
   reply: z.string(),
   timestamp: z.any(),
