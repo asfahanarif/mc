@@ -26,7 +26,7 @@ import {
   ChevronLeft,
   MessageSquare,
 } from 'lucide-react';
-import { useFirebase } from '@/firebase';
+import { useAuth } from '@/firebase';
 import { Button } from '@/components/ui/button';
 
 const menuItems = [
@@ -42,7 +42,7 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { auth } = useFirebase();
+  const auth = useAuth();
   const pathname = usePathname();
 
   return (
