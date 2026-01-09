@@ -27,10 +27,12 @@ import {
   ChevronLeft,
   MessageSquare,
   Database,
+  Loader2,
 } from 'lucide-react';
-import { useAuth } from '@/firebase';
+import { useAuth, useFirebase } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { firebaseConfig } from '@/firebase/config';
+import AuthPanel from '@/components/admin/auth-panel';
 
 const menuItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutGrid },
@@ -46,8 +48,21 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const auth = useAuth();
+  const { user, isUserLoading } = useFirebase();
   const pathname = usePathname();
   const firestoreUrl = `https://console.firebase.google.com/project/${firebaseConfig.projectId}/firestore/data`;
+
+  if (isUserLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AuthPanel />;
+  }
 
   return (
     <SidebarProvider>
