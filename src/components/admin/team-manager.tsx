@@ -1,7 +1,7 @@
 
 'use client';
 import { useState } from 'react';
-import { useCollection, setDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
+import { useCollection, setDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore, useMemoFirebase, addDocumentNonBlocking } from '@/firebase';
 import { collection, doc, query, orderBy } from 'firebase/firestore';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,7 +21,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown } from 'lucide-react';
+import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown, Copy } from 'lucide-react';
 import Image from 'next/image';
 import { Skeleton } from '../ui/skeleton';
 import { getTeamMemberBioSuggestion } from '@/ai/flows/suggest-team-member-bio';
@@ -208,6 +208,20 @@ export default function TeamManager() {
     toast({ title: "Reordering team members..." });
   };
   
+  const handleDuplicate = (member: TeamMemberWithId) => {
+    const { id, ...memberData } = member;
+    const newMember = {
+      ...memberData,
+      name: `Copy of ${member.name}`,
+      order: maxOrder + 1,
+    };
+    addDocumentNonBlocking(collection(firestore, 'team_members'), newMember);
+    toast({
+      title: 'Team Member Duplicated',
+      description: `A copy of "${member.name}" has been created.`,
+    });
+  };
+
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between">
@@ -238,6 +252,9 @@ export default function TeamManager() {
                     </div>
                 </div>
               <div className="flex items-center">
+                <Button variant="ghost" size="icon" onClick={() => handleDuplicate(member)}>
+                  <Copy className="h-4 w-4" />
+                </Button>
                 <TeamMemberDialog member={member} maxOrder={maxOrder}/>
               </div>
             </Card>
@@ -248,5 +265,7 @@ export default function TeamManager() {
     </Card>
   );
 }
+
+    
 
     

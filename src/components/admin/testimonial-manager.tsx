@@ -1,7 +1,7 @@
 
 'use client';
 import { useState } from 'react';
-import { useCollection, setDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore, useMemoFirebase } from '@/firebase';
+import { useCollection, setDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore, useMemoFirebase, addDocumentNonBlocking } from '@/firebase';
 import { collection, doc, query, orderBy } from 'firebase/firestore';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,7 +21,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown } from 'lucide-react';
+import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown, Copy } from 'lucide-react';
 import Image from 'next/image';
 import { Skeleton } from '../ui/skeleton';
 import { getTestimonialContentSuggestion } from '@/ai/flows/suggest-testimonial-content';
@@ -206,6 +206,20 @@ export default function TestimonialManager() {
 
     toast({ title: "Reordering testimonials..." });
   };
+
+  const handleDuplicate = (testimonial: TestimonialWithId) => {
+    const { id, ...testimonialData } = testimonial;
+    const newTestimonial = {
+      ...testimonialData,
+      authorName: `Copy of ${testimonial.authorName}`,
+      order: maxOrder + 1,
+    };
+    addDocumentNonBlocking(collection(firestore, 'testimonials'), newTestimonial);
+    toast({
+      title: 'Testimonial Duplicated',
+      description: `A copy of the testimonial from "${testimonial.authorName}" has been created.`,
+    });
+  };
   
   return (
     <Card>
@@ -237,6 +251,9 @@ export default function TestimonialManager() {
                     </div>
                 </div>
               <div className="flex items-center">
+                <Button variant="ghost" size="icon" onClick={() => handleDuplicate(testimonial)}>
+                  <Copy className="h-4 w-4" />
+                </Button>
                 <TestimonialDialog testimonial={testimonial} maxOrder={maxOrder} />
               </div>
             </Card>
@@ -247,5 +264,7 @@ export default function TestimonialManager() {
     </Card>
   );
 }
+
+    
 
     
