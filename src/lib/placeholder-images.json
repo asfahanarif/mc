@@ -20,8 +20,8 @@
     },
     {
       "id": "event",
-      "description": "A person speaking into a microphone at an event.",
-      "imageUrl": "https://images.unsplash.com/photo-1558008258-3256797b43f3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8ZXZlbnR8ZW58MHx8fHwxNzY3OTA3MzYxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "description": "A crowd of people at a conference or event.",
+      "imageUrl": "https://images.unsplash.com/photo-1523580494863-6f3031224c94?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxldmVudHN8ZW58MHx8fHwxNzY3OTU3NzgxfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "community event"
     },
     {
