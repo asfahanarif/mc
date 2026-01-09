@@ -142,7 +142,7 @@ export default function Home() {
             <div className="text-center space-y-3 mb-12">
                 <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">Qibla Direction</h2>
                 <p className="max-w-[600px] mx-auto text-foreground/80 md:text-lg">
-                Find the direction of the Kaaba from your current location.
+                Find the direction of the Kaaba from your current location. To get started, grant permission to access your device's location and motion sensors.
                 </p>
             </div>
             <QiblaDirection />

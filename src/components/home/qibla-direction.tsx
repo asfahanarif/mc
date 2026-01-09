@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Compass, LocateFixed, Loader2, AlertTriangle, Check, X } from 'lucide-react';
+import { Compass, LocateFixed, Loader2, AlertTriangle, Check, X, ArrowUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -96,7 +96,9 @@ export function QiblaDirection() {
 
     const handleOpenChange = (open: boolean) => {
         setIsOpen(open);
-        if (!open) {
+        if (open && permissionState === 'prompt') {
+            requestPermissions();
+        } else if (!open) {
             // Reset state when closing the dialog
             window.removeEventListener('deviceorientation', handleOrientation);
             setQiblaDirection(null);
@@ -117,18 +119,6 @@ export function QiblaDirection() {
     };
 
     const renderContent = () => {
-        if (permissionState === 'prompt' && !isLoading) {
-             return (
-                <div className="text-center space-y-4">
-                    <p>To find the Qibla direction, we need access to your device's location and orientation sensors. Your data is not stored.</p>
-                    <Button onClick={requestPermissions} size="lg">
-                        <LocateFixed className="mr-2 h-5 w-5" />
-                        Grant Permissions
-                    </Button>
-                </div>
-            );
-        }
-
         if (isLoading) {
             return (
                 <div className="flex flex-col items-center gap-2 h-64 justify-center">
@@ -156,25 +146,28 @@ export function QiblaDirection() {
                     <div className="relative w-64 h-64 rounded-full bg-background shadow-inner-lg border-4 border-primary/20 flex items-center justify-center" style={compassStyle}>
                         <span className="absolute top-2 text-xl font-bold text-primary">N</span>
                         <span className="absolute bottom-2 text-xl font-bold text-muted-foreground">S</span>
-                        <span className="absolute left-2 text-xl font-bold text-muted-foreground">W</span>
-                        <span className="absolute right-2 text-xl font-bold text-muted-foreground">E</span>
+                        <span className="absolute left-3 text-xl font-bold text-muted-foreground">W</span>
+                        <span className="absolute right-3 text-xl font-bold text-muted-foreground">E</span>
 
                         <div className="absolute inset-0 flex items-center justify-center" style={qiblaStyle}>
-                            <div className="w-2/3 h-2 bg-transparent flex justify-center">
-                                <KaabaIcon className="w-12 h-12 text-green-500 drop-shadow-lg" />
+                            <div className="w-0.5 h-full">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 flex items-center justify-center">
+                                    <KaabaIcon className="w-6 h-6 text-green-500 drop-shadow-lg" />
+                                </div>
+                                <div className="absolute top-8 left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-8 border-l-transparent border-r-transparent border-b-green-500"></div>
                             </div>
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/50"></div>
                         </div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/50"></div>
                     </div>
                      <p className="text-lg font-semibold text-center">
-                        Align your phone's top edge with the North mark (N).<br />The Kaaba icon will point to the Qibla.
+                        Align the North mark (N) with your phone's top. The Kaaba icon points to the Qibla.
                     </p>
                 </div>
             )
         }
         
-        // Fallback for initial state while waiting for sensor data
-        if (permissionState === 'granted') {
+        // Fallback for initial state while waiting for sensor data or permissions
+        if (permissionState === 'granted' || permissionState === 'prompt') {
              return (
                  <div className="flex flex-col items-center gap-2 h-64 justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -195,14 +188,11 @@ export function QiblaDirection() {
                 </Button>
             </DialogTrigger>
             <DialogContent className={cn(
-                "sm:max-w-md",
+                "sm:max-w-md w-[calc(100vw-2rem)] rounded-lg",
                 "bg-transparent border-0 shadow-none",
                 "sm:bg-background sm:border sm:shadow-lg"
               )}>
                 <div className="bg-background/90 backdrop-blur-lg rounded-lg p-6">
-                    <DialogHeader>
-                        <DialogTitle className="font-headline text-2xl text-center">Qibla Compass</DialogTitle>
-                    </DialogHeader>
                     <div className="p-4">
                         {renderContent()}
                     </div>
