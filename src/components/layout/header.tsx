@@ -43,16 +43,16 @@ const TopHeader = () => (
 
 const NavBar = () => (
     <div className="container flex h-16 items-center justify-center">
-        <div className="w-full md:w-[80%] lg:w-[70%] bg-[#faf8f5]/80 dark:bg-card/80 backdrop-blur-sm rounded-full border shadow-sm px-6 flex items-center justify-between h-full">
+        <div className="w-full lg:w-[75%] bg-[#faf8f5]/80 dark:bg-card/80 backdrop-blur-sm rounded-full border shadow-sm px-6 flex items-center justify-between h-full">
             <Link href="/" className="flex items-center text-4xl font-display text-primary">
                 MC
             </Link>
             <div className="flex items-center gap-1">
-                <div className="hidden md:block">
+                <div className="hidden lg:block">
                     <MainNav />
                 </div>
                 <ThemeToggle />
-                <div className="md:hidden">
+                <div className="lg:hidden">
                     <MobileNav />
                 </div>
             </div>
