@@ -1,0 +1,23 @@
+
+{
+    "theme_color": "#FAF8F5",
+    "background_color": "#FAF8F5",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/",
+    "name": "Muslimahs Club",
+    "short_name": "Muslimahs Club",
+    "description": "Empowering Women Through Qur'an & Sunnah!",
+    "icons": [
+        {
+            "src": "https://i.ibb.co/5g03Zq7C/MC-logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://i.ibb.co/5g03Zq7C/MC-logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
