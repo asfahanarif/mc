@@ -1,4 +1,3 @@
-
 'use client';
 
 import { FirebaseClientProvider } from "@/firebase";
@@ -11,6 +10,7 @@ import { FloatingDonateButton } from "@/components/shared/floating-donate-button
 import "./globals.css";
 import { DialogProvider } from "@/components/providers/dialog-provider";
 import { usePathname } from "next/navigation";
+import { PwaInstallBanner } from "@/components/pwa/pwa-install-banner";
 
 export default function RootLayout({
   children,
@@ -49,6 +49,7 @@ export default function RootLayout({
               <Toaster />
               <ScrollToTop />
               <FloatingDonateButton />
+              <PwaInstallBanner />
             </DialogProvider>
           </FirebaseClientProvider>
         </ThemeProvider>
