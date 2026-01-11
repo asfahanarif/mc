@@ -9,7 +9,7 @@ import { placeholderImages } from "@/lib/data";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection, query, orderBy } from "firebase/firestore";
 import type { Event } from "@/lib/schemas";
-import { Calendar, Video, MapPin, ExternalLink } from "lucide-react";
+import { Calendar, Video, MapPin, ExternalLink, CheckCircle2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function EventsPage() {
@@ -68,6 +68,14 @@ export default function EventsPage() {
                                             className="object-cover transition-transform duration-300 group-hover:scale-105"
                                             data-ai-hint="people seminar"
                                         />
+                                         {event.status === 'Completed' && (
+                                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                                <Badge className="bg-green-600 text-white gap-2 text-lg">
+                                                    <CheckCircle2 className="h-5 w-5" />
+                                                    Completed
+                                                </Badge>
+                                            </div>
+                                        )}
                                     </div>
                                     <CardHeader>
                                         <div className="flex items-center gap-2 mb-2">
@@ -100,7 +108,7 @@ export default function EventsPage() {
                                         <CardDescription>{event.description}</CardDescription>
                                     </CardContent>
                                     <CardFooter>
-                                        {event.registrationUrl && (
+                                        {event.status !== 'Completed' && event.registrationUrl && (
                                             <Button asChild>
                                                 <a href={registrationHref} target="_blank" rel="noopener noreferrer">
                                                     Register Now!

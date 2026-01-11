@@ -72,6 +72,7 @@ function EventForm({
       order: maxOrder + 1,
       registrationUrl: '',
       directionsUrl: '',
+      status: 'Upcoming',
     },
   });
   const { toast } = useToast();
@@ -157,19 +158,42 @@ function EventForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="schedule"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Schedule / Days</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., Every Saturday or 2024-12-25" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+            control={form.control}
+            name="schedule"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Schedule / Days</FormLabel>
+                <FormControl>
+                    <Input placeholder="e.g., Every Saturday" {...field} />
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+             <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select event status" />
+                        </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                        <SelectItem value="Upcoming">Upcoming</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
+        </div>
         
         <FormField
           control={form.control}

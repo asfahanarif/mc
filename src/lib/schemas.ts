@@ -11,6 +11,7 @@ export const EventSchema = z.object({
   order: z.number().optional(),
   registrationUrl: z.string().url({ message: "Please enter a valid URL for registration." }).optional().or(z.literal('')),
   directionsUrl: z.string().url({ message: "Please enter a valid URL for directions." }).optional().or(z.literal('')),
+  status: z.enum(['Upcoming', 'Completed']).optional(),
 });
 
 export type Event = z.infer<typeof EventSchema>;
