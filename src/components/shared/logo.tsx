@@ -14,3 +14,5 @@ export function Logo({ className }: { className?: string }) {
     </div>
   );
 }
+
+export default Logo;
