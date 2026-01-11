@@ -47,8 +47,17 @@ export default function RootLayout({
                 {!isAdminPage && <Footer />}
               </div>
               <Toaster />
-              <ScrollToTop />
-              <FloatingDonateButton />
+              
+              <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2">
+                <div className="hidden md:block">
+                  <ScrollToTop />
+                </div>
+                <div className="md:hidden">
+                  <ScrollToTop />
+                </div>
+                <FloatingDonateButton />
+              </div>
+
               <PwaInstallBanner />
             </DialogProvider>
           </FirebaseClientProvider>

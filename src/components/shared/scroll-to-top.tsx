@@ -33,19 +33,17 @@ export function ScrollToTop() {
   }, [])
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      <Button
-        variant="default"
-        size="icon"
-        onClick={scrollToTop}
-        className={cn(
-          "bg-primary text-primary-foreground rounded-full shadow-lg transition-opacity hover:bg-primary/90",
-          isVisible ? "opacity-100" : "opacity-0"
-        )}
-        aria-label="Scroll to top"
-      >
-        <ArrowUp className="h-6 w-6" />
-      </Button>
-    </div>
+    <Button
+      variant="default"
+      size="icon"
+      onClick={scrollToTop}
+      className={cn(
+        "bg-primary text-primary-foreground rounded-full shadow-lg transition-opacity hover:bg-primary/90",
+        isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+      )}
+      aria-label="Scroll to top"
+    >
+      <ArrowUp className="h-6 w-6" />
+    </Button>
   )
 }

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -18,10 +17,8 @@ export function FloatingDonateButton() {
     }
 
     return (
-        <div className="fixed bottom-4 right-4 z-50 md:hidden">
-            <Button size="lg" className="rounded-full shadow-lg group transition-all duration-300 ease-in-out hover:scale-105" onClick={() => setOpen(true)}>
-                Donate
-            </Button>
-        </div>
+        <Button size="lg" className="rounded-full shadow-lg group transition-all duration-300 ease-in-out hover:scale-105" onClick={() => setOpen(true)}>
+            Donate
+        </Button>
     );
 }
