@@ -11,6 +11,7 @@ import "./globals.css";
 import { DialogProvider } from "@/components/providers/dialog-provider";
 import { usePathname } from "next/navigation";
 import { PwaInstallBanner } from "@/components/pwa/pwa-install-banner";
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetClose } from "@/components/ui/sheet";
 
 export default function RootLayout({
   children,
@@ -49,12 +50,7 @@ export default function RootLayout({
               <Toaster />
               
               <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2">
-                <div className="hidden md:block">
-                  <ScrollToTop />
-                </div>
-                <div className="md:hidden">
-                  <ScrollToTop />
-                </div>
+                <ScrollToTop />
                 <FloatingDonateButton />
               </div>
 
