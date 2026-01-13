@@ -386,7 +386,7 @@ export default function QuranPage() {
                                                     ))}
                                                 </div>
                                             )}
-                                            {ayah.numberInSurah &lt; activeSurah.numberOfAyahs && <Separator className="mt-4" />}
+                                            {ayah.numberInSurah < activeSurah.numberOfAyahs && <Separator className="mt-4" />}
                                         </div>
                                     ))}
                                 </div>
@@ -415,4 +415,3 @@ export default function QuranPage() {
     </div>
   );
 }
-
