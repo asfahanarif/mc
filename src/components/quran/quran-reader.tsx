@@ -63,20 +63,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     translationFont,
   } = useQuranSettings();
 
-  useEffect(() => {
-    audioRef.current = new Audio();
-    const onEnded = () => setPlayingAudio(null);
-    const audio = audioRef.current;
-    audio.addEventListener('ended', onEnded);
-    
-    return () => {
-      if (audio) {
-        audio.removeEventListener('ended', onEnded);
-        audio.pause();
-      }
-    };
-  }, []);
-
   const fetchSurahDetails = useCallback(async (currentSurah: Surah, translations: string[]) => {
     setLoadingDetails(true);
     setSurahDetails(null);
@@ -112,6 +98,21 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   useEffect(() => {
     fetchSurahDetails(surah, selectedTranslations);
   }, [surah, selectedTranslations, fetchSurahDetails]);
+
+  useEffect(() => {
+    audioRef.current = new Audio();
+    const onEnded = () => setPlayingAudio(null);
+    const audio = audioRef.current;
+    audio.addEventListener('ended', onEnded);
+    
+    return () => {
+      if (audio) {
+        audio.removeEventListener('ended', onEnded);
+        audio.pause();
+      }
+    };
+  }, []);
+
 
   const handleNextSurah = () => {
     const currentIndex = allSurahs.findIndex(s => s.number === surah.number);

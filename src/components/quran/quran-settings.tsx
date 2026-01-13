@@ -27,7 +27,6 @@ import { ScrollArea } from '../ui/scroll-area';
 const ALLOWED_TRANSLATION_IDENTIFIERS = [
   'en.sahih',
   'ur.junagarhi',
-  // 'en.hilali', // Removed as per request
 ];
 
 export function QuranSettings({ allTranslations, settingType }: { allTranslations: TranslationEdition[], settingType: 'translations' | 'fonts' }) {
@@ -80,7 +79,7 @@ export function QuranSettings({ allTranslations, settingType }: { allTranslation
 
   if (settingType === 'fonts') {
     return (
-       <div className="grid gap-6">
+       <div className="grid gap-6 p-4">
         <div className="grid gap-4">
           <h3 className="font-medium">Fonts</h3>
           <div className="grid gap-2">
