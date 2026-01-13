@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { QuranSettings } from "@/components/quran/quran-settings";
 import { useQuranSettings } from "@/components/quran/quran-settings-provider";
 import { DialogHeader, DialogTitle, DialogClose, DialogFooter } from '@/components/ui/dialog';
+import type { TranslationEdition } from '@/lib/types';
 
 type Surah = {
   number: number;
@@ -37,7 +38,7 @@ type SurahDetails = {
 type QuranReaderProps = {
   surah: Surah;
   allSurahs: Surah[];
-  allTranslations: any[];
+  allTranslations: TranslationEdition[];
   onClose: () => void;
   onSurahChange: (surah: Surah) => void;
 };
@@ -76,12 +77,12 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     };
   }, []);
 
-  const fetchSurahDetails = useCallback(async (currentSurah: Surah) => {
+  const fetchSurahDetails = useCallback(async (currentSurah: Surah, translations: string[]) => {
     setLoadingDetails(true);
     setSurahDetails(null);
     setError(null);
     try {
-      const editions = ['ar.alafasy', ...selectedTranslations].join(',');
+      const editions = ['ar.alafasy', ...translations].join(',');
       const response = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.number}/editions/${editions}`);
       if (!response.ok) throw new Error("Failed to fetch Surah details.");
       
@@ -92,11 +93,11 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       if (!arabicEdition) throw new Error("Could not find Arabic edition.");
 
       const combinedAyahs = arabicEdition.ayahs.map((ayah: Ayah, index: number) => {
-        const translations = translationEditions.map((transData: any) => ({
+        const ayahTranslations = translationEditions.map((transData: any) => ({
           identifier: transData.edition.name,
           text: transData.ayahs[index].text,
         }));
-        return { ...ayah, translations };
+        return { ...ayah, translations: ayahTranslations };
       });
       
       setSurahDetails({ ayahs: combinedAyahs });
@@ -106,11 +107,11 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     } finally {
       setLoadingDetails(false);
     }
-  }, [selectedTranslations]);
+  }, []);
 
   useEffect(() => {
-    fetchSurahDetails(surah);
-  }, [surah, fetchSurahDetails]);
+    fetchSurahDetails(surah, selectedTranslations);
+  }, [surah, selectedTranslations, fetchSurahDetails]);
 
   const handleNextSurah = () => {
     const currentIndex = allSurahs.findIndex(s => s.number === surah.number);

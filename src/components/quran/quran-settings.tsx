@@ -24,30 +24,14 @@ import {
 import type { TranslationEdition } from '@/lib/types';
 import { ScrollArea } from '../ui/scroll-area';
 
-
 const ALLOWED_TRANSLATION_IDENTIFIERS = [
   'en.sahih',
   'ur.junagarhi',
-  'en.hilali',
+  // 'en.hilali', // Removed as per request
 ];
 
 export function QuranSettings({ allTranslations, settingType }: { allTranslations: TranslationEdition[], settingType: 'translations' | 'fonts' }) {
-  const {
-    arabicFontSize,
-    setArabicFontSize,
-    translationFontSize,
-    setTranslationFontSize,
-    lineHeight,
-    setLineHeight,
-    selectedTranslations,
-    setSelectedTranslations,
-    showTranslation,
-    setShowTranslation,
-    arabicFont,
-    setArabicFont,
-    translationFont,
-    setTranslationFont,
-  } = useQuranSettings();
+  const settings = useQuranSettings();
 
   const availableTranslations = allTranslations.filter(t => ALLOWED_TRANSLATION_IDENTIFIERS.includes(t.identifier));
 
@@ -60,14 +44,14 @@ export function QuranSettings({ allTranslations, settingType }: { allTranslation
             </Label>
             <Switch
               id="show-translation"
-              checked={showTranslation}
-              onCheckedChange={setShowTranslation}
+              checked={settings.showTranslation}
+              onCheckedChange={settings.setShowTranslation}
             />
         </div>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-full justify-between" disabled={!showTranslation}>
-                    <span>Select ({selectedTranslations.length})</span>
+                <Button variant="outline" className="w-full justify-between" disabled={!settings.showTranslation}>
+                    <span>Select ({settings.selectedTranslations.length})</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-64">
@@ -77,9 +61,9 @@ export function QuranSettings({ allTranslations, settingType }: { allTranslation
                   {availableTranslations.map(trans => (
                       <DropdownMenuCheckboxItem
                           key={trans.identifier}
-                          checked={selectedTranslations.includes(trans.identifier)}
+                          checked={settings.selectedTranslations.includes(trans.identifier)}
                           onCheckedChange={(checked) => {
-                              setSelectedTranslations(prev => 
+                              settings.setSelectedTranslations(prev => 
                                   checked ? [...prev, trans.identifier] : prev.filter(t => t !== trans.identifier)
                               );
                           }}
@@ -101,7 +85,7 @@ export function QuranSettings({ allTranslations, settingType }: { allTranslation
           <h3 className="font-medium">Fonts</h3>
           <div className="grid gap-2">
             <Label htmlFor="arabic-font">Arabic Font</Label>
-            <Select value={arabicFont} onValueChange={setArabicFont}>
+            <Select value={settings.arabicFont} onValueChange={settings.setArabicFont}>
               <SelectTrigger id="arabic-font">
                   <SelectValue placeholder="Select Arabic Font" />
               </SelectTrigger>
@@ -113,7 +97,7 @@ export function QuranSettings({ allTranslations, settingType }: { allTranslation
           </div>
           <div className="grid gap-2">
             <Label htmlFor="translation-font">Translation Font</Label>
-            <Select value={translationFont} onValueChange={setTranslationFont} disabled={!showTranslation}>
+            <Select value={settings.translationFont} onValueChange={settings.setTranslationFont} disabled={!settings.showTranslation}>
               <SelectTrigger id="translation-font">
                   <SelectValue placeholder="Select Translation Font" />
               </SelectTrigger>
@@ -134,8 +118,8 @@ export function QuranSettings({ allTranslations, settingType }: { allTranslation
               min={1}
               max={3}
               step={0.1}
-              value={[arabicFontSize]}
-              onValueChange={(value) => setArabicFontSize(value[0])}
+              value={[settings.arabicFontSize]}
+              onValueChange={(value) => settings.setArabicFontSize(value[0])}
             />
           </div>
           <div className="grid gap-2">
@@ -145,9 +129,9 @@ export function QuranSettings({ allTranslations, settingType }: { allTranslation
               min={0.8}
               max={2}
               step={0.1}
-              value={[translationFontSize]}
-              onValueChange={(value) => setTranslationFontSize(value[0])}
-              disabled={!showTranslation}
+              value={[settings.translationFontSize]}
+              onValueChange={(value) => settings.setTranslationFontSize(value[0])}
+              disabled={!settings.showTranslation}
             />
           </div>
         </div>
@@ -159,8 +143,8 @@ export function QuranSettings({ allTranslations, settingType }: { allTranslation
               min={1.2}
               max={2.5}
               step={0.1}
-              value={[lineHeight]}
-              onValueChange={(value) => setLineHeight(value[0])}
+              value={[settings.lineHeight]}
+              onValueChange={(value) => settings.setLineHeight(value[0])}
             />
           </div>
         </div>
