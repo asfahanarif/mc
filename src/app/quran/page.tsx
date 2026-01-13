@@ -1,14 +1,14 @@
 
 "use client";
 
-import { useState, useEffect, useRef, CSSProperties } from "react";
+import { useState, useEffect, useRef, CSSProperties, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { placeholderImages } from "@/lib/data";
-import { Volume2, Loader2, PlayCircle, BookOpen, X, ChevronLeft, ChevronRight, BookText, Settings, ZoomIn, ZoomOut, Pilcrow, Type } from "lucide-react";
+import { Loader2, PlayCircle, BookOpen, X, ChevronLeft, ChevronRight, BookText, Type, ZoomIn, ZoomOut } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -61,7 +61,6 @@ export default function QuranPage() {
     translationFontSize,
     lineHeight,
     showTranslation,
-    setShowTranslation,
     zoomLevel,
     zoomIn,
     zoomOut,
@@ -72,7 +71,6 @@ export default function QuranPage() {
   useEffect(() => {
     // Initialize Audio object only on the client
     audioRef.current = new Audio();
-
     const onEnded = () => setPlayingAudio(null);
     const audio = audioRef.current;
     audio.addEventListener('ended', onEnded);
@@ -108,8 +106,7 @@ export default function QuranPage() {
     fetchSurahs();
   }, []);
 
-  const fetchSurahDetails = async (surah: Surah, translationIds: string[]) => {
-    setActiveSurah(surah);
+  const fetchSurahDetails = useCallback(async (surah: Surah, translationIds: string[]) => {
     setLoadingDetails(true);
     setSurahDetails(null);
     setError(null);
@@ -129,7 +126,7 @@ export default function QuranPage() {
             const translations = translationEditions.map((transData: any) => {
                 const translationAyah = transData.ayahs[index];
                 return {
-                    identifier: transData.edition.name, // Using full name for display
+                    identifier: transData.edition.name,
                     text: translationAyah.text
                 };
             });
@@ -144,19 +141,19 @@ export default function QuranPage() {
     } finally {
         setLoadingDetails(false);
     }
-  };
+  }, []);
 
-
-  const handleSurahClick = (surah: Surah) => {
-    fetchSurahDetails(surah, selectedTranslations);
-  }
-
-  // Refetch details if the selected translations change while a surah is active
+  // Effect to fetch details when activeSurah or selectedTranslations change
   useEffect(() => {
     if (activeSurah) {
         fetchSurahDetails(activeSurah, selectedTranslations);
     }
-  }, [activeSurah, selectedTranslations]);
+  }, [activeSurah, selectedTranslations, fetchSurahDetails]);
+
+
+  const handleSurahClick = (surah: Surah) => {
+    setActiveSurah(surah);
+  }
 
   const playAudio = (audioUrl: string) => {
     if (!audioRef.current) return;
@@ -184,7 +181,7 @@ export default function QuranPage() {
     if (!activeSurah || surahs.length === 0) return;
     const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
     if (currentIndex > -1 && currentIndex < surahs.length - 1) {
-        handleSurahClick(surahs[currentIndex + 1]);
+        setActiveSurah(surahs[currentIndex + 1]);
     }
   }
 
@@ -192,7 +189,7 @@ export default function QuranPage() {
     if (!activeSurah || surahs.length === 0) return;
     const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
     if (currentIndex > 0) {
-        handleSurahClick(surahs[currentIndex - 1]);
+        setActiveSurah(surahs[currentIndex - 1]);
     }
   }
 
@@ -391,4 +388,3 @@ export default function QuranPage() {
     </div>
   );
 }
-
