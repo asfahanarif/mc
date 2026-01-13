@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { placeholderImages } from "@/lib/data";
-import { Volume2, Loader2, PlayCircle, BookOpen, X, ChevronLeft, ChevronRight, BookText, Settings, ZoomIn, ZoomOut } from "lucide-react";
+import { Volume2, Loader2, PlayCircle, BookOpen, X, ChevronLeft, ChevronRight, BookText, Settings, ZoomIn, ZoomOut, Pilcrow, Type } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -156,7 +156,7 @@ export default function QuranPage() {
     if (activeSurah) {
         fetchSurahDetails(activeSurah, selectedTranslations);
     }
-  }, [selectedTranslations]);
+  }, [activeSurah, selectedTranslations]);
 
   const playAudio = (audioUrl: string) => {
     if (!audioRef.current) return;
@@ -292,16 +292,6 @@ export default function QuranPage() {
                                 <span className="font-headline text-2xl text-primary">{activeSurah.number}. {activeSurah.englishName}</span>
                                 <span className="font-arabic text-3xl" style={{fontFamily: "'Noto Naskh Arabic', serif"}}>{activeSurah.name}</span>
                             </div>
-                            <div className="flex gap-2">
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button variant="outline"><Settings className="mr-2 h-4 w-4" /> Settings</Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-80">
-                                  <QuranSettings allTranslations={allTranslations} />
-                                </PopoverContent>
-                              </Popover>
-                            </div>
                             <DialogClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
                                 <X className="h-4 w-4" />
                                 <span className="sr-only">Close</span>
@@ -353,17 +343,38 @@ export default function QuranPage() {
                             )}
                         </div>
                     </ScrollArea>
-                    <DialogFooter className="p-2 flex-shrink-0 bg-background/90 justify-center gap-2">
-                        <Button size="icon" variant="outline" onClick={zoomOut}>
+                    <DialogFooter className="p-2 border-t flex-shrink-0 bg-background/90 justify-center items-center gap-2">
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomOut}>
                             <ZoomOut className="h-4 w-4" />
                         </Button>
-                        <Button size="icon" variant="outline" onClick={zoomIn}>
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomIn}>
                             <ZoomIn className="h-4 w-4" />
                         </Button>
-                        <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9 order-last sm:order-first" onClick={() => setShowTranslation(!showTranslation)}>
-                            <BookText className="mr-1 sm:mr-2 h-4 w-4" />
-                            {showTranslation ? "Hide" : "Show"}
-                        </Button>
+                        
+                        <Popover>
+                            <PopoverTrigger asChild>
+                               <Button size="icon" variant="ghost" className="h-8 w-8">
+                                    <BookText className="h-4 w-4" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-64 p-2">
+                                <QuranSettings allTranslations={allTranslations} settingType="translations" />
+                            </PopoverContent>
+                        </Popover>
+
+                         <Popover>
+                            <PopoverTrigger asChild>
+                               <Button size="icon" variant="ghost" className="h-8 w-8">
+                                    <Type className="h-4 w-4" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80">
+                                <QuranSettings allTranslations={allTranslations} settingType="fonts" />
+                            </PopoverContent>
+                        </Popover>
+
+                        <div className="flex-grow" />
+
                         <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9" onClick={handlePrevSurah} disabled={activeSurah.number === 1}>
                             <ChevronLeft className="mr-1 sm:mr-2 h-4 w-4" />
                             Prev
@@ -380,3 +391,4 @@ export default function QuranPage() {
     </div>
   );
 }
+
