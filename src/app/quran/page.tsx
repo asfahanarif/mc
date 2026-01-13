@@ -1,22 +1,24 @@
 
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, CSSProperties } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { placeholderImages } from "@/lib/data";
-import { Volume2, Loader2, PlayCircle, BookOpen, X, ChevronLeft, ChevronRight, BookText } from "lucide-react";
+import { Volume2, Loader2, PlayCircle, BookOpen, X, ChevronLeft, ChevronRight, BookText, Settings, ZoomIn, ZoomOut } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import type { TranslationEdition } from "@/lib/types";
+import { QuranSettings } from "@/components/quran/quran-settings";
+import { useQuranSettings } from "@/components/quran/quran-settings-provider";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 type Surah = {
   number: number;
@@ -44,18 +46,6 @@ type SurahDetails = {
     ayahs: (Ayah & { translations: { identifier: string; text: string }[] })[];
 };
 
-const ALLOWED_TRANSLATION_IDENTIFIERS = [
-  'en.sahih',     // Sahih International (English)
-  'ur.junagarhi', // Muhammad Junagarhi (Urdu)
-  'en.hilali',    // Hilali & Khan (English)
-];
-
-const translationLabels: { [key: string]: string } = {
-  'en.sahih': 'Sahih International (English)',
-  'en.hilali': 'Hilali & Khan (English)',
-  'ur.junagarhi': 'Muhammad Junagarhi (Urdu)',
-};
-
 export default function QuranPage() {
   const quranImage = placeholderImages.find((p) => p.id === "quran-explorer");
   const [surahs, setSurahs] = useState<Surah[]>([]);
@@ -67,11 +57,20 @@ export default function QuranPage() {
   const [surahDetails, setSurahDetails] = useState<SurahDetails | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
-  const [showTranslation, setShowTranslation] = useState(true);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const [selectedTranslations, setSelectedTranslations] = useState<string[]>(["en.sahih"]);
+  const {
+    selectedTranslations,
+    arabicFontSize,
+    translationFontSize,
+    lineHeight,
+    showTranslation,
+    setShowTranslation,
+    zoomLevel,
+    zoomIn,
+    zoomOut,
+  } = useQuranSettings();
 
   useEffect(() => {
     // Initialize Audio object only on the client
@@ -95,7 +94,7 @@ export default function QuranPage() {
       try {
         const surahRes = await fetch("https://api.alquran.cloud/v1/surah");
 
-        if (!surahRes.ok) throw new Error("Failed to fetch surahs list.");
+        if (!surahRes.ok) throw new Error("Failed to fetch Surahs list.");
         const surahData = await surahRes.json();
         setSurahs(surahData.data);
         
@@ -113,35 +112,48 @@ export default function QuranPage() {
     setLoadingDetails(true);
     setSurahDetails(null);
     try {
-        const fetchPromises = [
-            fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/ar.alafasy`),
-            ...translationIds.map(id => fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/${id}`))
-        ];
+        if (translationIds.length === 0) {
+            const arabicRes = await fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/ar.alafasy`);
+            if (!arabicRes.ok) throw new Error("Failed to fetch surah details.");
+            const arabicData = await arabicRes.json();
+             const combinedAyahs = arabicData.data.ayahs.map((ayah: Ayah) => ({
+                ...ayah,
+                translations: []
+            }));
+            setSurahDetails({ ayahs: combinedAyahs });
+        } else {
+            const fetchPromises = [
+                fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/editions/ar.alafasy,${translationIds.join(',')}`)
+            ];
 
-        const responses = await Promise.all(fetchPromises);
+            const responses = await Promise.all(fetchPromises);
 
-        for (const response of responses) {
-            if (!response.ok) throw new Error("Failed to fetch surah details.");
-        }
-        
-        const [arabicData, ...translationsData] = await Promise.all(responses.map(res => res.json()));
+            for (const response of responses) {
+                if (!response.ok) throw new Error("Failed to fetch surah details.");
+            }
+            
+            const [multiEditionData] = await Promise.all(responses.map(res => res.json()));
 
-        const combinedAyahs = arabicData.data.ayahs.map((ayah: Ayah, index: number) => {
-            const translations = translationsData.map((transData, transIndex) => {
-                const translationAyah = transData.data.ayahs[index];
+            const arabicEdition = multiEditionData.data.find((d: any) => d.edition.identifier === 'ar.alafasy');
+            const translationEditions = multiEditionData.data.filter((d: any) => d.edition.identifier !== 'ar.alafasy');
+
+            const combinedAyahs = arabicEdition.ayahs.map((ayah: Ayah, index: number) => {
+                const translations = translationEditions.map((transData: any) => {
+                    const translationAyah = transData.ayahs[index];
+                    return {
+                        identifier: transData.edition.identifier,
+                        text: translationAyah.text
+                    };
+                });
+                
                 return {
-                    identifier: translationIds[transIndex],
-                    text: translationAyah.text
+                    ...ayah,
+                    translations
                 };
             });
             
-            return {
-                ...ayah,
-                translations
-            };
-        });
-        
-        setSurahDetails({ ayahs: combinedAyahs });
+            setSurahDetails({ ayahs: combinedAyahs });
+        }
 
     } catch (e: any) {
         console.error(e);
@@ -206,6 +218,16 @@ export default function QuranPage() {
     (surah.name && surah.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
     surah.number.toString().includes(searchTerm)
   );
+
+  const arabicStyle: CSSProperties = {
+    fontSize: `${arabicFontSize * zoomLevel}rem`,
+    lineHeight,
+  };
+
+  const translationStyle: CSSProperties = {
+    fontSize: `${translationFontSize * zoomLevel}rem`,
+    lineHeight,
+  };
 
   return (
     <div>
@@ -285,29 +307,15 @@ export default function QuranPage() {
                                 <span className="font-headline text-2xl text-primary">{activeSurah.number}. {activeSurah.englishName}</span>
                                 <span className="font-arabic text-3xl">{activeSurah.name}</span>
                             </div>
-                             <div className="flex gap-2">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="outline">Translations ({selectedTranslations.length})</Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuLabel>Select Translations</DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        {ALLOWED_TRANSLATION_IDENTIFIERS.map(id => (
-                                            <DropdownMenuCheckboxItem
-                                                key={id}
-                                                checked={selectedTranslations.includes(id)}
-                                                onCheckedChange={(checked) => {
-                                                    setSelectedTranslations(prev => 
-                                                        checked ? [...prev, id] : prev.filter(t => t !== id)
-                                                    );
-                                                }}
-                                            >
-                                                {translationLabels[id]}
-                                            </DropdownMenuCheckboxItem>
-                                        ))}
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                            <div className="flex gap-2">
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button variant="outline"><Settings className="mr-2 h-4 w-4" /> Settings</Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-80">
+                                  <QuranSettings />
+                                </PopoverContent>
+                              </Popover>
                             </div>
                             <DialogClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
                                 <X className="h-4 w-4" />
@@ -330,18 +338,18 @@ export default function QuranPage() {
                                         <div key={ayah.number} className="flex flex-col gap-4">
                                             <div className="flex items-start gap-4">
                                                 <div className="w-8 h-8 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
-                                                <p className="text-xl md:text-2xl font-arabic text-right flex-grow" dir="rtl">{ayah.text}</p>
+                                                <p className="text-xl md:text-2xl font-arabic text-right flex-grow" dir="rtl" style={arabicStyle}>{ayah.text}</p>
                                                 <Button size="icon" variant="ghost" onClick={() => playAudio(ayah.audio)}>
                                                     {playingAudio === ayah.audio ? <Loader2 className="h-5 w-5 animate-spin"/> : <PlayCircle className="h-5 w-5"/>}
                                                 </Button>
                                             </div>
                                             {showTranslation && selectedTranslations.length > 0 && (
-                                                <div className="pl-12 space-y-3">
+                                                <div className="pl-12 space-y-3" style={translationStyle}>
                                                     {ayah.translations?.map((translation, index) => (
                                                         <div key={index} className="text-sm">
                                                             <p className="text-foreground/80">{translation.text}</p>
                                                             <p className="text-xs text-muted-foreground mt-1">
-                                                                - {translationLabels[translation.identifier]}
+                                                                - {translation.identifier}
                                                             </p>
                                                         </div>
                                                     ))}
@@ -355,6 +363,12 @@ export default function QuranPage() {
                         </div>
                     </ScrollArea>
                     <DialogFooter className="p-2 flex-shrink-0 bg-background/90 justify-center gap-2">
+                        <Button size="icon" variant="outline" onClick={zoomOut}>
+                            <ZoomOut className="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="outline" onClick={zoomIn}>
+                            <ZoomIn className="h-4 w-4" />
+                        </Button>
                         <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9 order-last sm:order-first" onClick={() => setShowTranslation(!showTranslation)}>
                             <BookText className="mr-1 sm:mr-2 h-4 w-4" />
                             {showTranslation ? "Hide" : "Show"}
@@ -375,5 +389,4 @@ export default function QuranPage() {
 
     </div>
   );
-
-    
+}

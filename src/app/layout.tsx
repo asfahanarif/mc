@@ -1,3 +1,4 @@
+
 'use client';
 
 import { FirebaseClientProvider } from "@/firebase";
@@ -12,6 +13,7 @@ import { DialogProvider } from "@/components/providers/dialog-provider";
 import { usePathname } from "next/navigation";
 import { PwaInstallBanner } from "@/components/pwa/pwa-install-banner";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetClose } from "@/components/ui/sheet";
+import { QuranSettingsProvider } from "@/components/quran/quran-settings-provider";
 
 export default function RootLayout({
   children,
@@ -42,19 +44,21 @@ export default function RootLayout({
         >
           <FirebaseClientProvider>
             <DialogProvider>
-              <div id="root-container" className="flex flex-col min-h-screen">
-                <Header />
-                <main className="flex-grow">{children}</main>
-                {!isAdminPage && <Footer />}
-              </div>
-              <Toaster />
-              
-              <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2">
-                <ScrollToTop />
-                <FloatingDonateButton />
-              </div>
+              <QuranSettingsProvider>
+                <div id="root-container" className="flex flex-col min-h-screen">
+                  <Header />
+                  <main className="flex-grow">{children}</main>
+                  {!isAdminPage && <Footer />}
+                </div>
+                <Toaster />
+                
+                <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2">
+                  <ScrollToTop />
+                  <FloatingDonateButton />
+                </div>
 
-              <PwaInstallBanner />
+                <PwaInstallBanner />
+              </QuranSettingsProvider>
             </DialogProvider>
           </FirebaseClientProvider>
         </ThemeProvider>
