@@ -15,6 +15,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { TranslationEdition } from "@/lib/types";
 
 type Surah = {
   number: number;
@@ -56,6 +58,8 @@ export default function QuranPage() {
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const [translations, setTranslations] = useState<TranslationEdition[]>([]);
+  const [selectedTranslation, setSelectedTranslation] = useState<string>("en.sahih");
 
   useEffect(() => {
     // Initialize Audio object only on the client
@@ -74,29 +78,43 @@ export default function QuranPage() {
   }, []);
   
   useEffect(() => {
-    const fetchSurahs = async () => {
+    const fetchSurahsAndTranslations = async () => {
+      setLoadingSurahs(true);
       try {
-        const res = await fetch("https://api.alquran.cloud/v1/surah");
-        if (!res.ok) throw new Error("Failed to fetch surahs list.");
-        const data = await res.json();
-        setSurahs(data.data);
+        const [surahRes, translationRes] = await Promise.all([
+            fetch("https://api.alquran.cloud/v1/surah"),
+            fetch("https://api.alquran.cloud/v1/edition/type/translation")
+        ]);
+
+        if (!surahRes.ok) throw new Error("Failed to fetch surahs list.");
+        const surahData = await surahRes.json();
+        setSurahs(surahData.data);
+        
+        if (translationRes.ok) {
+            const translationData = await translationRes.json();
+            const englishTranslations = translationData.data.filter((t: TranslationEdition) => t.language === 'en');
+            setTranslations(englishTranslations);
+        } else {
+            console.warn("Could not fetch list of translations.");
+        }
+
       } catch (e: any) {
         setError(e.message);
       } finally {
         setLoadingSurahs(false);
       }
     };
-    fetchSurahs();
+    fetchSurahsAndTranslations();
   }, []);
 
-  const fetchSurahDetails = async (surah: Surah) => {
+  const fetchSurahDetails = async (surah: Surah, translationId: string) => {
     setActiveSurah(surah);
     setLoadingDetails(true);
     setSurahDetails(null);
     try {
         const [ayahsRes, translationRes] = await Promise.all([
             fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/ar.alafasy`),
-            fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/en.sahih`)
+            fetch(`https://api.alquran.cloud/v1/surah/${translationId}`)
         ]);
 
         if (!ayahsRes.ok || !translationRes.ok) throw new Error("Failed to fetch surah details.");
@@ -117,6 +135,10 @@ export default function QuranPage() {
         setLoadingDetails(false);
     }
   };
+
+  const handleSurahClick = (surah: Surah) => {
+    fetchSurahDetails(surah, selectedTranslation);
+  }
 
   const playAudio = (audioUrl: string) => {
     if (!audioRef.current) return;
@@ -144,7 +166,7 @@ export default function QuranPage() {
     if (!activeSurah || surahs.length === 0) return;
     const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
     if (currentIndex > -1 && currentIndex < surahs.length - 1) {
-        fetchSurahDetails(surahs[currentIndex + 1]);
+        fetchSurahDetails(surahs[currentIndex + 1], selectedTranslation);
     }
   }
 
@@ -152,9 +174,17 @@ export default function QuranPage() {
     if (!activeSurah || surahs.length === 0) return;
     const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
     if (currentIndex > 0) {
-        fetchSurahDetails(surahs[currentIndex - 1]);
+        fetchSurahDetails(surahs[currentIndex - 1], selectedTranslation);
     }
   }
+
+  useEffect(() => {
+    if (activeSurah && surahDetails) {
+        fetchSurahDetails(activeSurah, selectedTranslation);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTranslation]);
+
 
   const filteredSurahs = surahs.filter(surah => 
     (surah.englishName && surah.englishName.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -215,7 +245,7 @@ export default function QuranPage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button className="w-full" onClick={() => fetchSurahDetails(surah)}>
+                        <Button className="w-full" onClick={() => handleSurahClick(surah)}>
                             <BookOpen className="mr-2 h-4 w-4" />
                             Read Surah
                         </Button>
@@ -239,6 +269,18 @@ export default function QuranPage() {
                             <div className="flex items-center gap-4">
                                 <span className="font-headline text-2xl text-primary">{activeSurah.number}. {activeSurah.englishName}</span>
                                 <span className="font-arabic text-3xl">{activeSurah.name}</span>
+                            </div>
+                             <div className="w-48">
+                                <Select value={selectedTranslation} onValueChange={setSelectedTranslation}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Translation" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {translations.map(t => (
+                                            <SelectItem key={t.identifier} value={t.identifier}>{t.englishName}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <DialogClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
                                 <X className="h-4 w-4" />
@@ -298,7 +340,3 @@ export default function QuranPage() {
     </div>
   );
 }
-
-    
-
-    

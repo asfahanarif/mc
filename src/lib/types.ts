@@ -50,3 +50,13 @@ export type Hadith = {
 export type HadithResult = {
     hadiths: Hadith[];
 };
+
+export type TranslationEdition = {
+    identifier: string;
+    language: string;
+    name: string;
+    englishName: string;
+    format: string;
+    type: string;
+    direction: string;
+};
