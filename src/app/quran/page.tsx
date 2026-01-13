@@ -51,6 +51,13 @@ const ALLOWED_TRANSLATION_IDENTIFIERS = [
   'ur.hilali',    // Hilali & Khan (Urdu)
 ];
 
+const translationLabels: { [key: string]: string } = {
+  'en.sahih': 'Sahih International (English)',
+  'en.hilali': 'Hilali & Khan (English)',
+  'ur.junagarhi': 'Muhammad Junagarhi (Urdu)',
+  'ur.hilali': 'Hilali & Khan (Urdu)',
+};
+
 export default function QuranPage() {
   const quranImage = placeholderImages.find((p) => p.id === "quran-explorer");
   const [surahs, setSurahs] = useState<Surah[]>([]);
@@ -314,7 +321,9 @@ export default function QuranPage() {
                                         <SelectContent>
                                              <SelectItem value="none">None</SelectItem>
                                             {translations.map(t => (
-                                                <SelectItem key={t.identifier} value={t.identifier}>{t.englishName}</SelectItem>
+                                                <SelectItem key={t.identifier} value={t.identifier}>
+                                                  {translationLabels[t.identifier] || t.englishName}
+                                                </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
@@ -387,5 +396,7 @@ export default function QuranPage() {
     </div>
   );
 }
+
+    
 
     
