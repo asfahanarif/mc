@@ -209,7 +209,6 @@ export default function QuranPage() {
     if (activeSurah) {
         fetchSurahDetails(activeSurah, selectedTranslations);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTranslations]);
 
 
@@ -390,3 +389,5 @@ export default function QuranPage() {
     </div>
   );
 }
+
+    
