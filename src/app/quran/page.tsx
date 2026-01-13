@@ -41,7 +41,7 @@ type AyahTranslation = {
 };
 
 type SurahDetails = {
-    ayahs: (Ayah & { translationText: string })[];
+    ayahs: (Ayah & { translations: { identifier: string; text: string }[] })[];
 };
 
 export default function QuranPage() {
@@ -60,7 +60,8 @@ export default function QuranPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [translations, setTranslations] = useState<TranslationEdition[]>([]);
-  const [selectedTranslation, setSelectedTranslation] = useState<string>("en.sahih");
+  const [selectedTranslation1, setSelectedTranslation1] = useState<string>("en.sahih");
+  const [selectedTranslation2, setSelectedTranslation2] = useState<string>("none");
 
   useEffect(() => {
     // Initialize Audio object only on the client
@@ -93,8 +94,7 @@ export default function QuranPage() {
         
         if (translationRes.ok) {
             const translationData = await translationRes.json();
-            const englishTranslations = translationData.data.filter((t: TranslationEdition) => t.language === 'en');
-            setTranslations(englishTranslations);
+            setTranslations(translationData.data);
         } else {
             console.warn("Could not fetch list of translations.");
         }
@@ -108,29 +108,57 @@ export default function QuranPage() {
     fetchSurahsAndTranslations();
   }, []);
 
-  const fetchSurahDetails = async (surah: Surah, translationId: string) => {
+  const fetchSurahDetails = async (surah: Surah, translationId1: string, translationId2: string) => {
     setActiveSurah(surah);
     setLoadingDetails(true);
     setSurahDetails(null);
     try {
-        const [ayahsRes, translationRes] = await Promise.all([
+        const fetchPromises = [
             fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/ar.alafasy`),
-            fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/${translationId}`)
-        ]);
+            fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/${translationId1}`)
+        ];
 
-        if (!ayahsRes.ok || !translationRes.ok) throw new Error("Failed to fetch surah details.");
+        if (translationId2 !== 'none') {
+            fetchPromises.push(fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/${translationId2}`));
+        }
+
+        const responses = await Promise.all(fetchPromises);
+
+        for (const response of responses) {
+            if (!response.ok) throw new Error("Failed to fetch surah details.");
+        }
         
-        const ayahsData = await ayahsRes.json();
-        const translationData = await translationRes.json();
+        const data = await Promise.all(responses.map(res => res.json()));
 
-        const combinedAyahs = ayahsData.data.ayahs.map((ayah: Ayah) => ({
-            ...ayah,
-            translationText: translationData.data.ayahs.find((t: AyahTranslation) => t.numberInSurah === ayah.numberInSurah)?.text || ''
-        }));
+        const ayahsData = data[0];
+        const translation1Data = data[1];
+        const translation2Data = translationId2 !== 'none' ? data[2] : null;
+
+        const combinedAyahs = ayahsData.data.ayahs.map((ayah: Ayah) => {
+            const translations = [];
+            
+            const trans1 = translation1Data.data.ayahs.find((t: AyahTranslation) => t.numberInSurah === ayah.numberInSurah);
+            if (trans1) {
+                translations.push({ identifier: translationId1, text: trans1.text });
+            }
+
+            if (translation2Data) {
+                 const trans2 = translation2Data.data.ayahs.find((t: AyahTranslation) => t.numberInSurah === ayah.numberInSurah);
+                 if (trans2) {
+                    translations.push({ identifier: translationId2, text: trans2.text });
+                 }
+            }
+            
+            return {
+                ...ayah,
+                translations
+            };
+        });
         
         setSurahDetails({ ayahs: combinedAyahs });
 
     } catch (e: any) {
+        console.error(e);
         setError("Could not load Surah. Please try again.");
     } finally {
         setLoadingDetails(false);
@@ -138,7 +166,7 @@ export default function QuranPage() {
   };
 
   const handleSurahClick = (surah: Surah) => {
-    fetchSurahDetails(surah, selectedTranslation);
+    fetchSurahDetails(surah, selectedTranslation1, selectedTranslation2);
   }
 
   const playAudio = (audioUrl: string) => {
@@ -167,7 +195,7 @@ export default function QuranPage() {
     if (!activeSurah || surahs.length === 0) return;
     const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
     if (currentIndex > -1 && currentIndex < surahs.length - 1) {
-        fetchSurahDetails(surahs[currentIndex + 1], selectedTranslation);
+        fetchSurahDetails(surahs[currentIndex + 1], selectedTranslation1, selectedTranslation2);
     }
   }
 
@@ -175,16 +203,16 @@ export default function QuranPage() {
     if (!activeSurah || surahs.length === 0) return;
     const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
     if (currentIndex > 0) {
-        fetchSurahDetails(surahs[currentIndex - 1], selectedTranslation);
+        fetchSurahDetails(surahs[currentIndex - 1], selectedTranslation1, selectedTranslation2);
     }
   }
 
   useEffect(() => {
     if (activeSurah && surahDetails) {
-        fetchSurahDetails(activeSurah, selectedTranslation);
+        fetchSurahDetails(activeSurah, selectedTranslation1, selectedTranslation2);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTranslation]);
+  }, [selectedTranslation1, selectedTranslation2]);
 
 
   const filteredSurahs = surahs.filter(surah => 
@@ -266,22 +294,37 @@ export default function QuranPage() {
            {activeSurah && (
                 <div className="bg-background/90 backdrop-blur-lg rounded-lg flex flex-col h-full overflow-hidden">
                     <DialogHeader className="p-4 border-b flex-shrink-0">
-                        <DialogTitle className="flex items-center justify-between">
+                        <DialogTitle className="flex flex-col md:flex-row items-center justify-between gap-2">
                             <div className="flex items-center gap-4">
                                 <span className="font-headline text-2xl text-primary">{activeSurah.number}. {activeSurah.englishName}</span>
                                 <span className="font-arabic text-3xl">{activeSurah.name}</span>
                             </div>
-                             <div className="w-48">
-                                <Select value={selectedTranslation} onValueChange={setSelectedTranslation}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select Translation" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {translations.map(t => (
-                                            <SelectItem key={t.identifier} value={t.identifier}>{t.englishName}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                             <div className="flex gap-2">
+                                <div className="w-48">
+                                    <Select value={selectedTranslation1} onValueChange={setSelectedTranslation1}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Translation 1" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {translations.map(t => (
+                                                <SelectItem key={t.identifier} value={t.identifier}>{t.englishName}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="w-48">
+                                    <Select value={selectedTranslation2} onValueChange={setSelectedTranslation2}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Translation 2" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">None</SelectItem>
+                                            {translations.map(t => (
+                                                <SelectItem key={t.identifier} value={t.identifier}>{t.englishName}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                             </div>
                             <DialogClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
                                 <X className="h-4 w-4" />
@@ -310,7 +353,16 @@ export default function QuranPage() {
                                                 </Button>
                                             </div>
                                             {showTranslation && (
-                                                <p className="text-foreground/80 pl-12 text-sm">{ayah.translationText}</p>
+                                                <div className="pl-12 space-y-3">
+                                                    {ayah.translations.map((translation, index) => (
+                                                        <div key={index} className="text-sm">
+                                                            <p className="text-foreground/80">{translation.text}</p>
+                                                            <p className="text-xs text-muted-foreground mt-1">
+                                                                - {translations.find(t => t.identifier === translation.identifier)?.englishName}
+                                                            </p>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             )}
                                             {ayah.numberInSurah < activeSurah.numberOfAyahs && <Separator className="mt-4" />}
                                         </div>
