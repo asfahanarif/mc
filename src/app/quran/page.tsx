@@ -44,6 +44,12 @@ type SurahDetails = {
     ayahs: (Ayah & { translations: { identifier: string; text: string }[] })[];
 };
 
+const ALLOWED_TRANSLATION_IDENTIFIERS = [
+  'en.sahih', // Sahih International (English)
+  'ur.junagarhi', // Muhammad Junagarhi (Urdu)
+  'en.hilali' // Hilali & Khan (English)
+];
+
 export default function QuranPage() {
   const quranImage = placeholderImages.find((p) => p.id === "quran-explorer");
   const [surahs, setSurahs] = useState<Surah[]>([]);
@@ -94,7 +100,10 @@ export default function QuranPage() {
         
         if (translationRes.ok) {
             const translationData = await translationRes.json();
-            setTranslations(translationData.data);
+            const filteredTranslations = translationData.data.filter((t: TranslationEdition) => 
+                ALLOWED_TRANSLATION_IDENTIFIERS.includes(t.identifier)
+            );
+            setTranslations(filteredTranslations);
         } else {
             console.warn("Could not fetch list of translations.");
         }
@@ -115,8 +124,11 @@ export default function QuranPage() {
     try {
         const fetchPromises = [
             fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/ar.alafasy`),
-            fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/${translationId1}`)
         ];
+        
+        if (translationId1 !== 'none') {
+            fetchPromises.push(fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/${translationId1}`));
+        }
 
         if (translationId2 !== 'none') {
             fetchPromises.push(fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/${translationId2}`));
@@ -131,15 +143,25 @@ export default function QuranPage() {
         const data = await Promise.all(responses.map(res => res.json()));
 
         const ayahsData = data[0];
-        const translation1Data = data[1];
-        const translation2Data = translationId2 !== 'none' ? data[2] : null;
+        let translation1Data = null;
+        let translation2Data = null;
+
+        let dataIndex = 1;
+        if (translationId1 !== 'none') {
+            translation1Data = data[dataIndex++];
+        }
+        if (translationId2 !== 'none') {
+            translation2Data = data[dataIndex];
+        }
 
         const combinedAyahs = ayahsData.data.ayahs.map((ayah: Ayah) => {
             const translations = [];
             
-            const trans1 = translation1Data.data.ayahs.find((t: AyahTranslation) => t.numberInSurah === ayah.numberInSurah);
-            if (trans1) {
-                translations.push({ identifier: translationId1, text: trans1.text });
+            if (translation1Data) {
+                const trans1 = translation1Data.data.ayahs.find((t: AyahTranslation) => t.numberInSurah === ayah.numberInSurah);
+                if (trans1) {
+                    translations.push({ identifier: translationId1, text: trans1.text });
+                }
             }
 
             if (translation2Data) {
@@ -364,7 +386,7 @@ export default function QuranPage() {
                                                     ))}
                                                 </div>
                                             )}
-                                            {ayah.numberInSurah < activeSurah.numberOfAyahs && <Separator className="mt-4" />}
+                                            {ayah.numberInSurah &lt; activeSurah.numberOfAyahs && <Separator className="mt-4" />}
                                         </div>
                                     ))}
                                 </div>
@@ -393,3 +415,4 @@ export default function QuranPage() {
     </div>
   );
 }
+
