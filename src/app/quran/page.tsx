@@ -37,6 +37,7 @@ type Ayah = {
 type AyahTranslation = {
     number: number;
     text: string;
+    numberInSurah: number;
 };
 
 type SurahDetails = {
@@ -114,7 +115,7 @@ export default function QuranPage() {
     try {
         const [ayahsRes, translationRes] = await Promise.all([
             fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/ar.alafasy`),
-            fetch(`https://api.alquran.cloud/v1/surah/${translationId}`)
+            fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/${translationId}`)
         ]);
 
         if (!ayahsRes.ok || !translationRes.ok) throw new Error("Failed to fetch surah details.");
