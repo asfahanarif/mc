@@ -29,21 +29,21 @@ const featuredItems = [
     icon: Newspaper,
     title: "Featured Articles",
     description: "Insightful articles on various Islamic topics.",
-    link: "/resources",
+    link: "/resources?tab=articles",
     image: placeholderImages.find(p => p.id === "article")
   },
   {
     icon: BookOpen,
     title: "Featured Duas",
     description: "Find supplications for every occasion.",
-    link: "/resources",
+    link: "/resources?tab=duas",
     image: placeholderImages.find(p => p.id === "dua")
   },
   {
     icon: Quote,
     title: "Featured Hadith",
     description: "Pearls of wisdom from the Prophet (PBUH).",
-    link: "/resources",
+    link: "/resources?tab=hadith",
     image: placeholderImages.find(p => p.id === "hadith")
   },
   {

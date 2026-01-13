@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { PageHeader } from "@/components/shared/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -276,8 +277,17 @@ function HadithTab() {
     );
 }
 
-export default function ResourcesPage() {
+function ResourcesPageContent() {
   const resourcesImage = placeholderImages.find(p => p.id === 'resources-library');
+  const searchParams = useSearchParams();
+  const tab = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(tab || 'articles');
+
+  useEffect(() => {
+    if (tab && (tab === 'articles' || tab === 'duas' || tab === 'hadith')) {
+      setActiveTab(tab);
+    }
+  }, [tab]);
 
   return (
     <div>
@@ -288,7 +298,7 @@ export default function ResourcesPage() {
       />
       <section className="py-16 md:py-24">
         <div className="container">
-          <Tabs defaultValue="articles" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto">
               <TabsTrigger value="articles"><Newspaper className="mr-2 h-4 w-4"/>Articles</TabsTrigger>
               <TabsTrigger value="duas"><BookOpen className="mr-2 h-4 w-4"/>Duas</TabsTrigger>
@@ -310,6 +320,11 @@ export default function ResourcesPage() {
   );
 }
 
-
-
+export default function ResourcesPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ResourcesPageContent />
+        </Suspense>
+    )
+}
     
