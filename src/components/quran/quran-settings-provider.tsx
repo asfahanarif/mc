@@ -18,6 +18,10 @@ interface QuranSettings {
   zoomLevel: number;
   zoomIn: () => void;
   zoomOut: () => void;
+  arabicFont: string;
+  setArabicFont: (font: string) => void;
+  translationFont: string;
+  setTranslationFont: (font: string) => void;
 }
 
 const QuranSettingsContext = createContext<QuranSettings | undefined>(undefined);
@@ -29,6 +33,8 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
   const [selectedTranslations, setSelectedTranslations] = useState<string[]>(['en.sahih']);
   const [showTranslation, setShowTranslation] = useState(true);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [arabicFont, setArabicFont] = useState("'Noto Naskh Arabic', serif");
+  const [translationFont, setTranslationFont] = useState("Montserrat, sans-serif");
   
   const zoomIn = () => setZoomLevel(prev => Math.min(prev + 0.1, 2));
   const zoomOut = () => setZoomLevel(prev => Math.max(prev - 0.1, 0.5));
@@ -47,6 +53,10 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
     zoomLevel,
     zoomIn,
     zoomOut,
+    arabicFont,
+    setArabicFont,
+    translationFont,
+    setTranslationFont,
   };
 
   return (

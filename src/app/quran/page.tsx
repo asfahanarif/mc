@@ -36,12 +36,6 @@ type Ayah = {
   numberInSurah: number;
 };
 
-type AyahTranslation = {
-    number: number;
-    text: string;
-    numberInSurah: number;
-};
-
 type SurahDetails = {
     ayahs: (Ayah & { translations: { identifier: string; text: string }[] })[];
 };
@@ -52,6 +46,7 @@ export default function QuranPage() {
   const [loadingSurahs, setLoadingSurahs] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [allTranslations, setAllTranslations] = useState<TranslationEdition[]>([]);
 
   const [activeSurah, setActiveSurah] = useState<Surah | null>(null);
   const [surahDetails, setSurahDetails] = useState<SurahDetails | null>(null);
@@ -70,6 +65,8 @@ export default function QuranPage() {
     zoomLevel,
     zoomIn,
     zoomOut,
+    arabicFont,
+    translationFont,
   } = useQuranSettings();
 
   useEffect(() => {
@@ -93,10 +90,14 @@ export default function QuranPage() {
       setLoadingSurahs(true);
       try {
         const surahRes = await fetch("https://api.alquran.cloud/v1/surah");
-
         if (!surahRes.ok) throw new Error("Failed to fetch Surahs list.");
         const surahData = await surahRes.json();
         setSurahs(surahData.data);
+
+        const transRes = await fetch("https://api.alquran.cloud/v1/edition/type/translation");
+        if (!transRes.ok) throw new Error("Failed to fetch translations.");
+        const transData = await transRes.json();
+        setAllTranslations(transData.data);
         
       } catch (e: any) {
         setError(e.message);
@@ -111,49 +112,31 @@ export default function QuranPage() {
     setActiveSurah(surah);
     setLoadingDetails(true);
     setSurahDetails(null);
+    setError(null);
     try {
-        if (translationIds.length === 0) {
-            const arabicRes = await fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/ar.alafasy`);
-            if (!arabicRes.ok) throw new Error("Failed to fetch surah details.");
-            const arabicData = await arabicRes.json();
-             const combinedAyahs = arabicData.data.ayahs.map((ayah: Ayah) => ({
-                ...ayah,
-                translations: []
-            }));
-            setSurahDetails({ ayahs: combinedAyahs });
-        } else {
-            const fetchPromises = [
-                fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/editions/ar.alafasy,${translationIds.join(',')}`)
-            ];
+        const editions = ['ar.alafasy', ...translationIds].join(',');
+        const surahRes = await fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/editions/${editions}`);
+        if (!surahRes.ok) throw new Error("Failed to fetch surah details.");
+        
+        const multiEditionData = await surahRes.json();
 
-            const responses = await Promise.all(fetchPromises);
+        const arabicEdition = multiEditionData.data.find((d: any) => d.edition.identifier === 'ar.alafasy');
+        const translationEditions = multiEditionData.data.filter((d: any) => d.edition.identifier !== 'ar.alafasy');
 
-            for (const response of responses) {
-                if (!response.ok) throw new Error("Failed to fetch surah details.");
-            }
-            
-            const [multiEditionData] = await Promise.all(responses.map(res => res.json()));
+        if (!arabicEdition) throw new Error("Could not find Arabic edition for this surah.");
 
-            const arabicEdition = multiEditionData.data.find((d: any) => d.edition.identifier === 'ar.alafasy');
-            const translationEditions = multiEditionData.data.filter((d: any) => d.edition.identifier !== 'ar.alafasy');
-
-            const combinedAyahs = arabicEdition.ayahs.map((ayah: Ayah, index: number) => {
-                const translations = translationEditions.map((transData: any) => {
-                    const translationAyah = transData.ayahs[index];
-                    return {
-                        identifier: transData.edition.identifier,
-                        text: translationAyah.text
-                    };
-                });
-                
+        const combinedAyahs = arabicEdition.ayahs.map((ayah: Ayah, index: number) => {
+            const translations = translationEditions.map((transData: any) => {
+                const translationAyah = transData.ayahs[index];
                 return {
-                    ...ayah,
-                    translations
+                    identifier: transData.edition.name, // Using full name for display
+                    text: translationAyah.text
                 };
             });
-            
-            setSurahDetails({ ayahs: combinedAyahs });
-        }
+            return { ...ayah, translations };
+        });
+        
+        setSurahDetails({ ayahs: combinedAyahs });
 
     } catch (e: any) {
         console.error(e);
@@ -163,9 +146,17 @@ export default function QuranPage() {
     }
   };
 
+
   const handleSurahClick = (surah: Surah) => {
     fetchSurahDetails(surah, selectedTranslations);
   }
+
+  // Refetch details if the selected translations change while a surah is active
+  useEffect(() => {
+    if (activeSurah) {
+        fetchSurahDetails(activeSurah, selectedTranslations);
+    }
+  }, [selectedTranslations]);
 
   const playAudio = (audioUrl: string) => {
     if (!audioRef.current) return;
@@ -193,7 +184,7 @@ export default function QuranPage() {
     if (!activeSurah || surahs.length === 0) return;
     const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
     if (currentIndex > -1 && currentIndex < surahs.length - 1) {
-        fetchSurahDetails(surahs[currentIndex + 1], selectedTranslations);
+        handleSurahClick(surahs[currentIndex + 1]);
     }
   }
 
@@ -201,16 +192,9 @@ export default function QuranPage() {
     if (!activeSurah || surahs.length === 0) return;
     const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
     if (currentIndex > 0) {
-        fetchSurahDetails(surahs[currentIndex - 1], selectedTranslations);
+        handleSurahClick(surahs[currentIndex - 1]);
     }
   }
-
-  useEffect(() => {
-    if (activeSurah) {
-        fetchSurahDetails(activeSurah, selectedTranslations);
-    }
-  }, [selectedTranslations]);
-
 
   const filteredSurahs = surahs.filter(surah => 
     (surah.englishName && surah.englishName.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -221,11 +205,13 @@ export default function QuranPage() {
   const arabicStyle: CSSProperties = {
     fontSize: `${arabicFontSize * zoomLevel}rem`,
     lineHeight,
+    fontFamily: arabicFont,
   };
 
   const translationStyle: CSSProperties = {
     fontSize: `${translationFontSize * zoomLevel}rem`,
     lineHeight,
+    fontFamily: translationFont,
   };
 
   return (
@@ -249,7 +235,7 @@ export default function QuranPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {[...Array(8)].map((_,i) => <Skeleton key={i} className="h-40 w-full" />)}
             </div>
-          ) : error ? (
+          ) : error && surahs.length === 0 ? (
             <Alert variant="destructive">
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
@@ -270,7 +256,7 @@ export default function QuranPage() {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="font-arabic text-xl font-bold">{surah.name}</p>
+                                <p className="font-arabic text-xl font-bold" style={{fontFamily: "'Noto Naskh Arabic', serif"}}>{surah.name}</p>
                             </div>
                         </div>
                     </CardHeader>
@@ -304,7 +290,7 @@ export default function QuranPage() {
                         <DialogTitle className="flex flex-col md:flex-row items-center justify-between gap-2">
                             <div className="flex items-center gap-4">
                                 <span className="font-headline text-2xl text-primary">{activeSurah.number}. {activeSurah.englishName}</span>
-                                <span className="font-arabic text-3xl">{activeSurah.name}</span>
+                                <span className="font-arabic text-3xl" style={{fontFamily: "'Noto Naskh Arabic', serif"}}>{activeSurah.name}</span>
                             </div>
                             <div className="flex gap-2">
                               <Popover>
@@ -312,7 +298,7 @@ export default function QuranPage() {
                                   <Button variant="outline"><Settings className="mr-2 h-4 w-4" /> Settings</Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-80">
-                                  <QuranSettings />
+                                  <QuranSettings allTranslations={allTranslations} />
                                 </PopoverContent>
                               </Popover>
                             </div>
@@ -331,13 +317,19 @@ export default function QuranPage() {
                                     <Skeleton className="h-20 w-full" />
                                 </div>
                             )}
+                            {error && !loadingDetails && (
+                                <Alert variant="destructive">
+                                    <AlertTitle>Error</AlertTitle>
+                                    <AlertDescription>{error}</AlertDescription>
+                                </Alert>
+                            )}
                             {surahDetails && (
                                 <div className="space-y-6">
                                     {surahDetails.ayahs.map(ayah => (
                                         <div key={ayah.number} className="flex flex-col gap-4">
                                             <div className="flex items-start gap-4">
                                                 <div className="w-8 h-8 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
-                                                <p className="text-xl md:text-2xl font-arabic text-right flex-grow" dir="rtl" style={arabicStyle}>{ayah.text}</p>
+                                                <p className="text-xl md:text-2xl text-right flex-grow" dir="rtl" style={arabicStyle}>{ayah.text}</p>
                                                 <Button size="icon" variant="ghost" onClick={() => playAudio(ayah.audio)}>
                                                     {playingAudio === ayah.audio ? <Loader2 className="h-5 w-5 animate-spin"/> : <PlayCircle className="h-5 w-5"/>}
                                                 </Button>
@@ -346,7 +338,7 @@ export default function QuranPage() {
                                                 <div className="pl-12 space-y-3" style={translationStyle}>
                                                     {ayah.translations?.map((translation, index) => (
                                                         <div key={index} className="text-sm">
-                                                            <p className="text-foreground/80">{translation.text}</p>
+                                                            <p className="text-foreground/80" style={{direction: translation.identifier.toLowerCase().includes('urdu') ? 'rtl' : 'ltr', fontFamily: translation.identifier.toLowerCase().includes('urdu') ? "'Noto Nastaliq Urdu', serif" : translationFont}}>{translation.text}</p>
                                                             <p className="text-xs text-muted-foreground mt-1">
                                                                 - {translation.identifier}
                                                             </p>
@@ -385,9 +377,6 @@ export default function QuranPage() {
            )}
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }
-
-    
