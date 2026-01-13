@@ -358,7 +358,7 @@ export default function QuranPage() {
                                                     ))}
                                                 </div>
                                             )}
-                                            {ayah.numberInSurah < activeSurah.numberOfAyahs && <Separator className="mt-4" />}
+                                            {ayah.numberInSurah &lt; activeSurah.numberOfAyahs && &lt;Separator className="mt-4" />}
                                         </div>
                                     ))}
                                 </div>
@@ -371,12 +371,12 @@ export default function QuranPage() {
                             {showTranslation ? "Hide" : "Show"}
                         </Button>
                         <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9" onClick={handlePrevSurah} disabled={activeSurah.number === 1}>
-                            <ChevronLeft className="mr-1 sm:mr-2 h-4 w-4" />
+                            &lt;ChevronLeft className="mr-1 sm:mr-2 h-4 w-4" />
                             Prev
                         </Button>
                         <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9" onClick={handleNextSurah} disabled={activeSurah.number === 114}>
                             Next
-                            <ChevronRight className="ml-1 sm:ml-2 h-4 w-4" />
+                            &lt;ChevronRight className="ml-1 sm:ml-2 h-4 w-4" />
                         </Button>
                     </DialogFooter>
                 </div>
@@ -387,5 +387,7 @@ export default function QuranPage() {
     </div>
   );
 }
+
+    
 
     
