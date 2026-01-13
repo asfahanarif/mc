@@ -45,9 +45,10 @@ type SurahDetails = {
 };
 
 const ALLOWED_TRANSLATION_IDENTIFIERS = [
-  'en.sahih', // Sahih International (English)
+  'en.sahih',     // Sahih International (English)
   'ur.junagarhi', // Muhammad Junagarhi (Urdu)
-  'en.hilali' // Hilali & Khan (English)
+  'en.hilali',    // Hilali & Khan (English)
+  'ur.hilali',    // Hilali & Khan (Urdu)
 ];
 
 export default function QuranPage() {
@@ -66,8 +67,7 @@ export default function QuranPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [translations, setTranslations] = useState<TranslationEdition[]>([]);
-  const [selectedTranslation1, setSelectedTranslation1] = useState<string>("en.sahih");
-  const [selectedTranslation2, setSelectedTranslation2] = useState<string>("none");
+  const [selectedTranslation, setSelectedTranslation] = useState<string>("en.sahih");
 
   useEffect(() => {
     // Initialize Audio object only on the client
@@ -117,7 +117,7 @@ export default function QuranPage() {
     fetchSurahsAndTranslations();
   }, []);
 
-  const fetchSurahDetails = async (surah: Surah, translationId1: string, translationId2: string) => {
+  const fetchSurahDetails = async (surah: Surah, translationId: string) => {
     setActiveSurah(surah);
     setLoadingDetails(true);
     setSurahDetails(null);
@@ -126,12 +126,8 @@ export default function QuranPage() {
             fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/ar.alafasy`),
         ];
         
-        if (translationId1 !== 'none') {
-            fetchPromises.push(fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/${translationId1}`));
-        }
-
-        if (translationId2 !== 'none') {
-            fetchPromises.push(fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/${translationId2}`));
+        if (translationId !== 'none') {
+            fetchPromises.push(fetch(`https://api.alquran.cloud/v1/surah/${surah.number}/${translationId}`));
         }
 
         const responses = await Promise.all(fetchPromises);
@@ -143,32 +139,20 @@ export default function QuranPage() {
         const data = await Promise.all(responses.map(res => res.json()));
 
         const ayahsData = data[0];
-        let translation1Data = null;
-        let translation2Data = null;
+        let translationData = null;
 
-        let dataIndex = 1;
-        if (translationId1 !== 'none') {
-            translation1Data = data[dataIndex++];
-        }
-        if (translationId2 !== 'none') {
-            translation2Data = data[dataIndex];
+        if (translationId !== 'none') {
+            translationData = data[1];
         }
 
         const combinedAyahs = ayahsData.data.ayahs.map((ayah: Ayah) => {
             const translations = [];
             
-            if (translation1Data) {
-                const trans1 = translation1Data.data.ayahs.find((t: AyahTranslation) => t.numberInSurah === ayah.numberInSurah);
-                if (trans1) {
-                    translations.push({ identifier: translationId1, text: trans1.text });
+            if (translationData) {
+                const trans = translationData.data.ayahs.find((t: AyahTranslation) => t.numberInSurah === ayah.numberInSurah);
+                if (trans) {
+                    translations.push({ identifier: translationId, text: trans.text });
                 }
-            }
-
-            if (translation2Data) {
-                 const trans2 = translation2Data.data.ayahs.find((t: AyahTranslation) => t.numberInSurah === ayah.numberInSurah);
-                 if (trans2) {
-                    translations.push({ identifier: translationId2, text: trans2.text });
-                 }
             }
             
             return {
@@ -188,7 +172,7 @@ export default function QuranPage() {
   };
 
   const handleSurahClick = (surah: Surah) => {
-    fetchSurahDetails(surah, selectedTranslation1, selectedTranslation2);
+    fetchSurahDetails(surah, selectedTranslation);
   }
 
   const playAudio = (audioUrl: string) => {
@@ -217,7 +201,7 @@ export default function QuranPage() {
     if (!activeSurah || surahs.length === 0) return;
     const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
     if (currentIndex > -1 && currentIndex < surahs.length - 1) {
-        fetchSurahDetails(surahs[currentIndex + 1], selectedTranslation1, selectedTranslation2);
+        fetchSurahDetails(surahs[currentIndex + 1], selectedTranslation);
     }
   }
 
@@ -225,16 +209,16 @@ export default function QuranPage() {
     if (!activeSurah || surahs.length === 0) return;
     const currentIndex = surahs.findIndex(s => s.number === activeSurah.number);
     if (currentIndex > 0) {
-        fetchSurahDetails(surahs[currentIndex - 1], selectedTranslation1, selectedTranslation2);
+        fetchSurahDetails(surahs[currentIndex - 1], selectedTranslation);
     }
   }
 
   useEffect(() => {
     if (activeSurah && surahDetails) {
-        fetchSurahDetails(activeSurah, selectedTranslation1, selectedTranslation2);
+        fetchSurahDetails(activeSurah, selectedTranslation);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTranslation1, selectedTranslation2]);
+  }, [selectedTranslation]);
 
 
   const filteredSurahs = surahs.filter(surah => 
@@ -322,25 +306,13 @@ export default function QuranPage() {
                                 <span className="font-arabic text-3xl">{activeSurah.name}</span>
                             </div>
                              <div className="flex gap-2">
-                                <div className="w-48">
-                                    <Select value={selectedTranslation1} onValueChange={setSelectedTranslation1}>
+                                <div className="w-64">
+                                    <Select value={selectedTranslation} onValueChange={setSelectedTranslation}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Translation 1" />
+                                            <SelectValue placeholder="Translation" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {translations.map(t => (
-                                                <SelectItem key={t.identifier} value={t.identifier}>{t.englishName}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="w-48">
-                                    <Select value={selectedTranslation2} onValueChange={setSelectedTranslation2}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Translation 2" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="none">None</SelectItem>
+                                             <SelectItem value="none">None</SelectItem>
                                             {translations.map(t => (
                                                 <SelectItem key={t.identifier} value={t.identifier}>{t.englishName}</SelectItem>
                                             ))}
@@ -376,7 +348,7 @@ export default function QuranPage() {
                                             </div>
                                             {showTranslation && (
                                                 <div className="pl-12 space-y-3">
-                                                    {ayah.translations.map((translation, index) => (
+                                                    {ayah.translations?.map((translation, index) => (
                                                         <div key={index} className="text-sm">
                                                             <p className="text-foreground/80">{translation.text}</p>
                                                             <p className="text-xs text-muted-foreground mt-1">
