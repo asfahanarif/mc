@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, BookOpen, Calendar, Mail, Mic, Newspaper, Quote, Users, Globe, Video, Presentation, BookHeart } from "lucide-react";
+import { ArrowRight, BookOpen, Calendar, Mail, Mic, Newspaper, Quote, Users, Globe, Video, Presentation, BookHeart, MessageSquare } from "lucide-react";
 import { PrayerTimings } from "@/components/home/prayer-timings";
 import { NewsletterForm } from "@/components/home/newsletter-form";
 import { Logo } from "@/components/shared/logo";
@@ -221,6 +221,29 @@ export default function Home() {
             <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">What Our Sisters Say</h2>
           </div>
           <TestimonialsCarousel />
+        </div>
+      </section>
+
+      <section id="forum-cta" className="w-full py-16 md:py-24 bg-background">
+        <div className="container">
+          <div className="mx-auto max-w-4xl rounded-xl bg-primary/5 border border-primary/10 p-8 md:p-12 text-center shadow-lg">
+            <div className="flex justify-center mb-6">
+                <div className="flex items-center justify-center h-20 w-20 rounded-full bg-primary/10">
+                    <MessageSquare className="h-10 w-10 text-primary" />
+                </div>
+            </div>
+            <h2 className="text-3xl font-headline font-bold text-primary">Join the Conversation</h2>
+            <p className="mt-2 text-lg text-foreground/80 max-w-2xl mx-auto">
+              Our Open Forum is a vibrant space to ask questions, share knowledge, and connect with sisters. Your voice matters.
+            </p>
+            <div className="mt-8">
+              <Button asChild size="lg">
+                <Link href="/forum">
+                  Ask a Question
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
