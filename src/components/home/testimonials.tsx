@@ -59,7 +59,7 @@ export function TestimonialsCarousel() {
                   <p className="italic text-foreground/80 mb-4">&ldquo;{testimonial.content}&rdquo;</p>
                   <div className="flex items-center mt-auto">
                     <Image
-                        src={testimonial.imageUrl || `https://picsum.photos/seed/${testimonial.id}/40/40`}
+                        src={testimonial.imageUrl || 'https://i.pinimg.com/736x/51/bd/ec/51bdec9c6b1b42e993d540ec4c418bc7.jpg'}
                         alt={testimonial.authorName}
                         width={40}
                         height={40}

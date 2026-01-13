@@ -245,7 +245,7 @@ export default function TeamManager() {
                             <ArrowDown className="h-4 w-4" />
                         </Button>
                     </div>
-                    <Image src={member.imageUrl || `https://i.pinimg.com/736x/51/bd/ec/51bdec9c6b1b42e993d540ec4c418bc7.jpg`} alt={member.name} width={64} height={64} className='rounded-full' />
+                    <Image src={member.imageUrl || 'https://i.pinimg.com/736x/51/bd/ec/51bdec9c6b1b42e993d540ec4c418bc7.jpg'} alt={member.name} width={64} height={64} className='rounded-full' />
                     <div>
                         <h3 className="font-semibold">{member.name}</h3>
                         <p className="text-sm text-muted-foreground">{member.title}</p>

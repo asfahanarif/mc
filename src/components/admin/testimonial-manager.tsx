@@ -244,7 +244,7 @@ export default function TestimonialManager() {
                             <ArrowDown className="h-4 w-4" />
                         </Button>
                     </div>
-                    <Image src={testimonial.imageUrl || `https://picsum.photos/seed/${testimonial.id}/64/64`} alt={testimonial.authorName} width={48} height={48} className='rounded-full' />
+                    <Image src={testimonial.imageUrl || 'https://i.pinimg.com/736x/51/bd/ec/51bdec9c6b1b42e993d540ec4c418bc7.jpg'} alt={testimonial.authorName} width={48} height={48} className='rounded-full' />
                     <div>
                         <p className="italic">"{testimonial.content.substring(0,80)}..."</p>
                         <p className="text-sm text-muted-foreground mt-2">- {testimonial.authorName}, {testimonial.authorTitle}</p>
