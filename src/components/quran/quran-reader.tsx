@@ -180,14 +180,31 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
   const playAudio = (audioUrl: string) => {
     if (!audioRef.current) return;
+  
+    // If the requested audio is already playing, pause it and return.
     if (playingAudio === audioUrl) {
       audioRef.current.pause();
       setPlayingAudio(null);
-    } else {
-      audioRef.current.src = audioUrl;
-      audioRef.current.play();
-      setPlayingAudio(audioUrl);
+      return;
     }
+  
+    // If another audio is playing, stop it first.
+    if (playingAudio) {
+      audioRef.current.pause();
+    }
+  
+    // Set the new source and play it.
+    audioRef.current.src = audioUrl;
+    audioRef.current.play().catch(error => {
+      // The play() request was interrupted (e.g., by a quick follow-up call)
+      // This is a common race condition, we can usually ignore it if the intent is to play the new audio.
+      if (error.name === 'AbortError') {
+        console.log('Audio playback aborted, likely by a new play request.');
+      } else {
+        console.error('Error playing audio:', error);
+      }
+    });
+    setPlayingAudio(audioUrl);
   };
 
   const arabicStyle: CSSProperties = {
