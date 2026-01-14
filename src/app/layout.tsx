@@ -22,6 +22,7 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
+  const isQuranPage = pathname === '/quran';
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -48,7 +49,7 @@ export default function RootLayout({
                 <div id="root-container" className="flex flex-col min-h-screen">
                   <Header />
                   <main className="flex-grow">{children}</main>
-                  {!isAdminPage && <Footer />}
+                  {!isAdminPage && !isQuranPage && <Footer />}
                 </div>
                 <Toaster />
                 
