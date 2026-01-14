@@ -407,3 +407,5 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
+
+    
