@@ -97,6 +97,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     scrollSpeed,
     setScrollSpeed,
     isAutoplayEnabled,
+    setIsAutoplayEnabled,
   } = useQuranSettings();
 
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -309,7 +310,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
       {/* Main Content */}
       <ScrollArea className="flex-grow" viewportRef={scrollContainerRef} onScroll={handleScroll}>
-        <div className="container max-w-4xl py-8">
+        <div className="container max-w-4xl pt-8 pb-24">
           {loadingDetails && (
             <div className="space-y-6">
               {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-24 w-full" />)}
@@ -404,5 +405,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   );
 }
 
+
+    
 
     
