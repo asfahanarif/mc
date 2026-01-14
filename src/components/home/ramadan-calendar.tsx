@@ -317,12 +317,9 @@ export function RamadanCalendar() {
                     <Separator />
                     <div className="space-y-4 text-center">
                         <div>
-                            <h4 className="font-semibold">Transliteration</h4>
+                            <h4 className="font-semibold">Transliteration & Translation</h4>
                             <p className="text-sm text-muted-foreground italic">Dhahaba al-zama' wa abtallat al-'urooq wa thabata al-ajr in sha Allah.</p>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold">Translation</h4>
-                            <p className="text-sm text-muted-foreground">The thirst is gone, the veins are moistened, and the reward is confirmed, if Allah wills.</p>
+                            <p className="text-sm text-muted-foreground mt-1">"The thirst is gone, the veins are moistened, and the reward is confirmed, if Allah wills."</p>
                         </div>
                     </div>
                      <div className="pt-4 border-t">
@@ -341,4 +338,3 @@ export function RamadanCalendar() {
   );
 }
 
-    
