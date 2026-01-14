@@ -1,4 +1,3 @@
-
 'use client';
 import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay";
@@ -29,11 +28,11 @@ export function TestimonialsCarousel() {
           delay: 5000,
         }),
       ]}
-      className="w-full max-w-4xl mx-auto"
+      className="w-full max-w-6xl mx-auto"
     >
       <CarouselContent>
         {isLoading && [...Array(3)].map((_, i) => (
-          <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/3">
+          <CarouselItem key={i} className="md:basis-1/2">
              <div className="p-1 h-full">
               <Card className="flex flex-col h-full shadow-lg">
                 <CardContent className="flex flex-col items-center text-center p-6 flex-grow">
@@ -52,7 +51,7 @@ export function TestimonialsCarousel() {
           </CarouselItem>
         ))}
         {testimonials?.map((testimonial) => (
-          <CarouselItem key={testimonial.id} className="md:basis-1/2 lg:basis-1/3">
+          <CarouselItem key={testimonial.id} className="md:basis-1/2">
             <div className="p-1 h-full">
               <Card className="flex flex-col h-full shadow-lg">
                 <CardContent className="flex flex-col items-center text-center p-6 flex-grow">
