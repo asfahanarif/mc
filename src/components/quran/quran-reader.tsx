@@ -260,7 +260,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   return (
     <div className="bg-background flex flex-col h-screen overflow-hidden">
       {/* Header */}
-      <header className="p-4 border-b flex-shrink-0 flex items-center justify-between gap-4 md:sticky top-0 bg-background/80 backdrop-blur-sm z-10">
+      <header className="p-2 border-b flex-shrink-0 flex items-center justify-between gap-4 md:sticky top-0 bg-background/80 backdrop-blur-sm z-10">
         <div className="flex-1">
           <Button variant="outline" size="sm" onClick={onClose}><ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
         </div>
