@@ -22,6 +22,8 @@ interface QuranSettings {
   setArabicFont: (font: string) => void;
   translationFont: string;
   setTranslationFont: (font: string) => void;
+  selectedReciter: string;
+  setSelectedReciter: (reciter: string) => void;
 }
 
 const QuranSettingsContext = createContext<QuranSettings | undefined>(undefined);
@@ -35,6 +37,7 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
   const [zoomLevel, setZoomLevel] = useState(1);
   const [arabicFont, setArabicFont] = useState("'Noto Naskh Arabic', serif");
   const [translationFont, setTranslationFont] = useState("Montserrat, sans-serif");
+  const [selectedReciter, setSelectedReciter] = useState('ar.alafasy');
   
   const zoomIn = () => setZoomLevel(prev => Math.min(prev + 0.1, 2));
   const zoomOut = () => setZoomLevel(prev => Math.max(prev - 0.1, 0.5));
@@ -57,6 +60,8 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
     setArabicFont,
     translationFont,
     setTranslationFont,
+    selectedReciter,
+    setSelectedReciter,
   };
 
   return (
@@ -73,3 +78,5 @@ export const useQuranSettings = (): QuranSettings => {
   }
   return context;
 };
+
+    

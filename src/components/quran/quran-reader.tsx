@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Loader2, PlayCircle, BookText, Type, X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
+import { Loader2, PlayCircle, BookText, Type, X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Music4 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -49,6 +49,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   const [error, setError] = useState<string | null>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [allReciters, setAllReciters] = useState<TranslationEdition[]>([]);
 
   const {
     selectedTranslations,
@@ -61,29 +62,45 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     zoomOut,
     arabicFont,
     translationFont,
+    selectedReciter,
   } = useQuranSettings();
 
-  const fetchSurahDetails = useCallback(async (currentSurah: Surah, translations: string[]) => {
+  useEffect(() => {
+    const fetchReciters = async () => {
+        try {
+            const res = await fetch("https://api.alquran.cloud/v1/edition/type/audio");
+            if (!res.ok) throw new Error("Failed to fetch reciters.");
+            const data = await res.json();
+            setAllReciters(data.data);
+        } catch (e) {
+            console.error("Could not load reciters list:", e);
+        }
+    };
+    fetchReciters();
+  }, []);
+
+  const fetchSurahDetails = useCallback(async (currentSurah: Surah, translations: string[], reciter: string) => {
     setLoadingDetails(true);
     setSurahDetails(null);
     setError(null);
     try {
-      const editions = ['ar.alafasy', ...translations].join(',');
+      const editions = [reciter, ...translations].join(',');
       const response = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.number}/editions/${editions}`);
       if (!response.ok) throw new Error("Failed to fetch Surah details.");
       
       const multiEditionData = await response.json();
-      const arabicEdition = multiEditionData.data.find((d: any) => d.edition.identifier === 'ar.alafasy');
-      const translationEditions = multiEditionData.data.filter((d: any) => d.edition.identifier !== 'ar.alafasy');
+      const arabicEdition = multiEditionData.data.find((d: any) => d.edition.type === 'quran');
+      const audioEdition = multiEditionData.data.find((d: any) => d.edition.identifier === reciter);
+      const translationEditions = multiEditionData.data.filter((d: any) => d.edition.type === 'translation');
 
-      if (!arabicEdition) throw new Error("Could not find Arabic edition.");
+      if (!audioEdition) throw new Error("Could not find audio edition.");
 
-      const combinedAyahs = arabicEdition.ayahs.map((ayah: Ayah, index: number) => {
+      const combinedAyahs = audioEdition.ayahs.map((ayah: Ayah, index: number) => {
         const ayahTranslations = translationEditions.map((transData: any) => ({
           identifier: transData.edition.name,
           text: transData.ayahs[index].text,
         }));
-        return { ...ayah, translations: ayahTranslations };
+        return { ...ayah, text: arabicEdition?.ayahs[index]?.text || ayah.text, translations: ayahTranslations };
       });
       
       setSurahDetails({ ayahs: combinedAyahs });
@@ -96,8 +113,8 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   }, []);
 
   useEffect(() => {
-    fetchSurahDetails(surah, selectedTranslations);
-  }, [surah, selectedTranslations, fetchSurahDetails]);
+    fetchSurahDetails(surah, selectedTranslations, selectedReciter);
+  }, [surah, selectedTranslations, selectedReciter, fetchSurahDetails]);
 
   useEffect(() => {
     audioRef.current = new Audio();
@@ -218,6 +235,17 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
         <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomIn}>
           <ZoomIn className="h-4 w-4" />
         </Button>
+        
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button size="icon" variant="ghost" className="h-8 w-8">
+              <Music4 className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 p-2">
+            <QuranSettings allTranslations={allTranslations} allReciters={allReciters} settingType="audio" />
+          </PopoverContent>
+        </Popover>
 
         <Popover>
           <PopoverTrigger asChild>
@@ -226,7 +254,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-64 p-2">
-            <QuranSettings allTranslations={allTranslations} settingType="translations" />
+            <QuranSettings allTranslations={allTranslations} allReciters={allReciters} settingType="translations" />
           </PopoverContent>
         </Popover>
 
@@ -237,7 +265,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-80">
-            <QuranSettings allTranslations={allTranslations} settingType="fonts" />
+            <QuranSettings allTranslations={allTranslations} allReciters={allReciters} settingType="fonts" />
           </PopoverContent>
         </Popover>
 
@@ -253,3 +281,5 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
+
+    

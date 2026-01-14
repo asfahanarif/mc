@@ -29,7 +29,7 @@ const ALLOWED_TRANSLATION_IDENTIFIERS = [
   'ur.junagarhi',
 ];
 
-export function QuranSettings({ allTranslations, settingType }: { allTranslations: TranslationEdition[], settingType: 'translations' | 'fonts' }) {
+export function QuranSettings({ allTranslations, allReciters, settingType }: { allTranslations: TranslationEdition[], allReciters: TranslationEdition[], settingType: 'translations' | 'fonts' | 'audio' }) {
   const settings = useQuranSettings();
 
   const availableTranslations = allTranslations.filter(t => ALLOWED_TRANSLATION_IDENTIFIERS.includes(t.identifier));
@@ -73,6 +73,28 @@ export function QuranSettings({ allTranslations, settingType }: { allTranslation
                 </ScrollArea>
             </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+    );
+  }
+
+  if (settingType === 'audio') {
+    return (
+      <div className="grid gap-4">
+        <h3 className="font-medium">Reciter</h3>
+          <Select value={settings.selectedReciter} onValueChange={settings.setSelectedReciter}>
+            <SelectTrigger>
+                <SelectValue placeholder="Select a reciter" />
+            </SelectTrigger>
+            <SelectContent>
+              <ScrollArea className='h-64'>
+                {allReciters.map(reciter => (
+                    <SelectItem key={reciter.identifier} value={reciter.identifier}>
+                        {reciter.englishName}
+                    </SelectItem>
+                ))}
+              </ScrollArea>
+            </SelectContent>
+          </Select>
       </div>
     );
   }
@@ -153,3 +175,5 @@ export function QuranSettings({ allTranslations, settingType }: { allTranslation
 
   return null;
 }
+
+    
