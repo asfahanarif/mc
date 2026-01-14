@@ -163,22 +163,40 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     }
   }, [surah, selectedTranslations, selectedReciter, fetchSurahDetails]);
 
+  const playAudio = useCallback((audioUrl: string) => {
+    if (!audioRef.current) return;
+  
+    if (playingAudio === audioUrl) {
+      audioRef.current.pause();
+      setPlayingAudio(null);
+      return;
+    }
+  
+    setPlayingAudio(audioUrl);
+    audioRef.current.src = audioUrl;
+    audioRef.current.play().catch(error => {
+      console.error('Error playing audio:', error);
+      setPlayingAudio(null);
+    });
+
+    const ayahNumberInSurah = surahDetails?.ayahs.find(a => a.audio === audioUrl)?.numberInSurah;
+    if (ayahNumberInSurah && ayahRefs.current[ayahNumberInSurah]) {
+      ayahRefs.current[ayahNumberInSurah]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [playingAudio, surahDetails]);
+
   const handleAudioEnd = useCallback(() => {
-    if (!surahDetails) return;
+    if (!surahDetails || !playingAudio) return;
   
-    const currentAyahUrl = playingAudio;
-    if (!currentAyahUrl) return;
+    const currentAyahIndex = surahDetails.ayahs.findIndex(a => a.audio === playingAudio);
   
-    const currentAyahIndex = surahDetails.ayahs.findIndex(a => a.audio === currentAyahUrl);
-    const nextAyahIndex = currentAyahIndex + 1;
-  
-    if (nextAyahIndex < surahDetails.ayahs.length) {
-      const nextAyah = surahDetails.ayahs[nextAyahIndex];
+    if (currentAyahIndex > -1 && currentAyahIndex < surahDetails.ayahs.length - 1) {
+      const nextAyah = surahDetails.ayahs[currentAyahIndex + 1];
       playAudio(nextAyah.audio);
     } else {
       setPlayingAudio(null); // End of surah
     }
-  }, [surahDetails, playingAudio]);
+  }, [surahDetails, playingAudio, playAudio]);
 
   useEffect(() => {
     audioRef.current = new Audio();
@@ -207,38 +225,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     const currentIndex = allSurahs.findIndex(s => s.number === surah.number);
     if (currentIndex > 0) {
       onSurahChange(allSurahs[currentIndex - 1]);
-    }
-  };
-
-  const playAudio = (audioUrl: string) => {
-    if (!audioRef.current) return;
-  
-    if (playingAudio === audioUrl) {
-      audioRef.current.pause();
-      setPlayingAudio(null);
-      return;
-    }
-
-    // Stop any currently playing audio before starting a new one
-    if (playingAudio) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
-
-    audioRef.current.src = audioUrl;
-    audioRef.current.play().catch(error => {
-      if (error.name === 'AbortError') {
-        console.log('Audio playback aborted, likely by a new play request.');
-      } else {
-        console.error('Error playing audio:', error);
-      }
-    });
-    setPlayingAudio(audioUrl);
-
-    // Find the ayah number from the URL and scroll to it
-    const ayahNumberInSurah = surahDetails?.ayahs.find(a => a.audio === audioUrl)?.numberInSurah;
-    if (ayahNumberInSurah && ayahRefs.current[ayahNumberInSurah]) {
-      ayahRefs.current[ayahNumberInSurah]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };
 
