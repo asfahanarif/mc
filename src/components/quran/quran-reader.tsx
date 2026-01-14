@@ -266,11 +266,11 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
           <Button variant="outline" size="sm" onClick={onClose}><ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
         </div>
         <div className="flex-1 text-center">
-            <p className="font-arabic text-2xl text-primary" style={{ fontFamily: arabicFont }}>{surah.name}</p>
+            <p className="font-arabic text-2xl text-primary" style={{ fontFamily: "Amiri, serif" }}>{surah.name}</p>
         </div>
         <div className="flex-1 text-right">
             {surahDetails && surahDetails.ayahs.length > 0 && (
-                <h1 className="font-headline text-xl text-primary">
+                <h1 className="font-headline text-xl text-primary hidden lg:block">
                     Juz {surahDetails.ayahs[0].juz} - Surah {surah.number}
                 </h1>
             )}
