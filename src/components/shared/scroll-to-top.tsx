@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { usePathname } from "next/navigation";
 import { ArrowUp } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -8,6 +9,11 @@ import { Button } from "@/components/ui/button"
 
 export function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false)
+  const pathname = usePathname();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   const toggleVisibility = () => {
     if (window.pageYOffset > 300) {
