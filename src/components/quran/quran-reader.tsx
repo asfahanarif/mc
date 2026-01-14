@@ -305,7 +305,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
             )}
         </div>
       </header>
-       <Progress value={scrollProgress} className="h-1 rounded-none w-full" />
+       <Progress value={scrollProgress} className="h-2 rounded-none w-full" />
 
       {/* Main Content */}
       <ScrollArea className="flex-grow" viewportRef={scrollContainerRef} onScroll={handleScroll}>
@@ -403,3 +403,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
+
+
+    
