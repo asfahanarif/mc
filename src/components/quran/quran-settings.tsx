@@ -131,36 +131,42 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                     </Select>
                 </div>
                  <Separator />
-                <div className="grid gap-2">
-                    <Label htmlFor="arabic-font">Arabic Font (Uthmani)</Label>
-                    <Select value={settings.arabicFont} onValueChange={settings.setArabicFont} disabled={settings.arabicScript !== 'quran-uthmani'}>
-                    <SelectTrigger id="arabic-font">
-                        <SelectValue placeholder="Select Arabic Font" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="'Noto Naskh Arabic', serif">Noto Naskh Arabic</SelectItem>
-                        <SelectItem value="'Amiri', serif">Amiri</SelectItem>
-                        <SelectItem value="'Lateef', serif">Lateef</SelectItem>
-                        <SelectItem value="'Tajawal', sans-serif">Tajawal</SelectItem>
-                        <SelectItem value="'Cairo', sans-serif">Cairo</SelectItem>
-                        <SelectItem value="'Almarai', sans-serif">Almarai</SelectItem>
-                        <SelectItem value="'Scheherazade New', serif">Scheherazade New</SelectItem>
-                    </SelectContent>
-                    </Select>
-                </div>
-                <div className="grid gap-2">
-                    <Label htmlFor="indopak-font">Arabic Font (Indo-Pak)</Label>
-                    <Select value={settings.indoPakFont} onValueChange={settings.setIndoPakFont} disabled={settings.arabicScript !== 'quran-indopak'}>
-                    <SelectTrigger id="indopak-font">
-                        <SelectValue placeholder="Select Indo-Pak Font" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="'Al Qalam', sans-serif">Al Qalam</SelectItem>
-                        <SelectItem value="'Almarai', sans-serif">Almarai</SelectItem>
-                        <SelectItem value="'Nastaleeq', sans-serif">Nastaleeq</SelectItem>
-                    </SelectContent>
-                    </Select>
-                </div>
+                
+                {settings.arabicScript === 'quran-uthmani' && (
+                    <div className="grid gap-2">
+                        <Label htmlFor="arabic-font">Arabic Font (Uthmani)</Label>
+                        <Select value={settings.arabicFont} onValueChange={settings.setArabicFont}>
+                        <SelectTrigger id="arabic-font">
+                            <SelectValue placeholder="Select Arabic Font" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="'Noto Naskh Arabic', serif">Noto Naskh Arabic</SelectItem>
+                            <SelectItem value="'Amiri', serif">Amiri</SelectItem>
+                            <SelectItem value="'Lateef', serif">Lateef</SelectItem>
+                            <SelectItem value="'Tajawal', sans-serif">Tajawal</SelectItem>
+                            <SelectItem value="'Cairo', sans-serif">Cairo</SelectItem>
+                            <SelectItem value="'Almarai', sans-serif">Almarai</SelectItem>
+                            <SelectItem value="'Scheherazade New', serif">Scheherazade New</SelectItem>
+                        </SelectContent>
+                        </Select>
+                    </div>
+                )}
+
+                {settings.arabicScript === 'quran-indopak' && (
+                    <div className="grid gap-2">
+                        <Label htmlFor="indopak-font">Arabic Font (Indo-Pak)</Label>
+                        <Select value={settings.indoPakFont} onValueChange={settings.setIndoPakFont}>
+                        <SelectTrigger id="indopak-font">
+                            <SelectValue placeholder="Select Indo-Pak Font" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="'Al Qalam', sans-serif">Al Qalam</SelectItem>
+                            <SelectItem value="'Almarai', sans-serif">Almarai</SelectItem>
+                            <SelectItem value="'Nastaleeq', sans-serif">Nastaleeq</SelectItem>
+                        </SelectContent>
+                        </Select>
+                    </div>
+                )}
                 <div className="grid gap-2">
                     <Label htmlFor="translation-font">English Font</Label>
                     <Select value={settings.translationFont} onValueChange={settings.setTranslationFont} disabled={!settings.showTranslation}>
