@@ -26,6 +26,12 @@ interface QuranSettings {
   setUrduFont: (font: string) => void;
   selectedReciter: string;
   setSelectedReciter: (reciter: string) => void;
+  isArabicBold: boolean;
+  setIsArabicBold: (isBold: boolean) => void;
+  isTranslationBold: boolean;
+  setIsTranslationBold: (isBold: boolean) => void;
+  isUrduBold: boolean;
+  setIsUrduBold: (isBold: boolean) => void;
 }
 
 const QuranSettingsContext = createContext<QuranSettings | undefined>(undefined);
@@ -41,6 +47,9 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
   const [translationFont, setTranslationFont] = useState("Montserrat, sans-serif");
   const [urduFont, setUrduFont] = useState("'Noto Nastaliq Urdu', serif");
   const [selectedReciter, setSelectedReciter] = useState('ar.alafasy');
+  const [isArabicBold, setIsArabicBold] = useState(false);
+  const [isTranslationBold, setIsTranslationBold] = useState(false);
+  const [isUrduBold, setIsUrduBold] = useState(false);
   
   const zoomIn = () => setZoomLevel(prev => Math.min(prev + 0.1, 2));
   const zoomOut = () => setZoomLevel(prev => Math.max(prev - 0.1, 0.5));
@@ -67,6 +76,12 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
     setUrduFont,
     selectedReciter,
     setSelectedReciter,
+    isArabicBold,
+    setIsArabicBold,
+    isTranslationBold,
+    setIsTranslationBold,
+    isUrduBold,
+    setIsUrduBold,
   };
 
   return (
@@ -83,5 +98,3 @@ export const useQuranSettings = (): QuranSettings => {
   }
   return context;
 };
-
-    

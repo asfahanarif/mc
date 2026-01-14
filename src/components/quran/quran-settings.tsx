@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import type { TranslationEdition } from '@/lib/types';
 import { ScrollArea } from '../ui/scroll-area';
+import { Separator } from '../ui/separator';
 
 const allowedTranslations = [
   { id: 'en.sahih', name: 'Sahih International (English)' },
@@ -153,6 +154,27 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
             </Select>
           </div>
         </div>
+
+        <Separator />
+        
+        <div className="grid gap-4">
+            <h3 className="font-medium">Font Weight</h3>
+            <div className="flex items-center justify-between">
+                <Label htmlFor="arabic-bold">Bold Arabic Text</Label>
+                <Switch id="arabic-bold" checked={settings.isArabicBold} onCheckedChange={settings.setIsArabicBold} />
+            </div>
+            <div className="flex items-center justify-between">
+                <Label htmlFor="translation-bold">Bold English Text</Label>
+                <Switch id="translation-bold" checked={settings.isTranslationBold} onCheckedChange={settings.setIsTranslationBold} disabled={!settings.showTranslation} />
+            </div>
+            <div className="flex items-center justify-between">
+                <Label htmlFor="urdu-bold">Bold Urdu Text</Label>
+                <Switch id="urdu-bold" checked={settings.isUrduBold} onCheckedChange={settings.setIsUrduBold} disabled={!settings.showTranslation} />
+            </div>
+        </div>
+
+        <Separator />
+        
         <div className="grid gap-4">
           <h3 className="font-medium">Text Size</h3>
           <div className="grid gap-2">

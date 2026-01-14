@@ -63,6 +63,9 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     translationFont,
     urduFont,
     selectedReciter,
+    isArabicBold,
+    isTranslationBold,
+    isUrduBold
   } = useQuranSettings();
 
   const fetchSurahDetails = useCallback(async (currentSurah: Surah, translations: string[], reciter: string) => {
@@ -162,6 +165,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     fontSize: `${arabicFontSize * zoomLevel}rem`,
     lineHeight,
     fontFamily: arabicFont,
+    fontWeight: isArabicBold ? 700 : 400,
   };
 
   const getTranslationStyle = (identifier: string): CSSProperties => {
@@ -171,6 +175,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
         lineHeight,
         fontFamily: isUrdu ? urduFont : translationFont,
         direction: isUrdu ? 'rtl' : 'ltr',
+        fontWeight: isUrdu ? (isUrduBold ? 700 : 400) : (isTranslationBold ? 700 : 400),
     };
   };
 
