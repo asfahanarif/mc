@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
@@ -272,7 +271,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
         <div className="flex-1">
           <Button variant="outline" size="icon" className="rounded-full" onClick={onClose}><ArrowLeft className="h-5 w-5" /></Button>
         </div>
-        <div className="flex-1 flex items-center gap-2 justify-center">
+        <div className="flex-1 flex items-center gap-2 justify-center text-center">
             <Dialog>
                 <DialogTrigger asChild>
                     <Button variant="ghost" size="icon" className='h-7 w-7 text-primary/50 hover:text-primary'>
@@ -306,7 +305,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                   </div>
                 </DialogContent>
             </Dialog>
-            <p className="font-arabic text-2xl text-primary" style={{ fontFamily: "Amiri, serif" }}>{surah.name}</p>
+            <p className="font-arabic text-2xl text-primary whitespace-nowrap" style={{ fontFamily: "Amiri, serif" }}>{surah.name}</p>
         </div>
         <div className="flex-1 text-right">
             {surahDetails && surahDetails.ayahs.length > 0 && (
@@ -417,3 +416,4 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     
 
     
+
