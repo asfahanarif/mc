@@ -63,7 +63,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const ayahRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -182,27 +182,10 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   }, [surahDetails, playingAudio, isAutoplayEnabled]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && !audioRef.current) {
-        audioRef.current = new Audio();
-    }
-    const audio = audioRef.current;
-
-    if (audio) {
-      audio.addEventListener('ended', handleAudioEnd);
-
-      return () => {
-        audio.removeEventListener('ended', handleAudioEnd);
-        audio.pause();
-        setPlayingAudio(null);
-      };
-    }
-  }, [handleAudioEnd]);
-
-  useEffect(() => {
     const audio = audioRef.current;
     if (playingAudio && audio) {
         if (audio.src !== playingAudio) {
-            audio.src = playingAudio;
+          audio.src = playingAudio;
         }
         audio.play().catch(error => {
             if (error.name !== 'AbortError') {
@@ -220,11 +203,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   }, [playingAudio, surahDetails]);
 
   const togglePlay = (audioUrl: string) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
     if (playingAudio === audioUrl) {
-      audio.pause();
       setPlayingAudio(null); // Pause
     } else {
       setPlayingAudio(audioUrl); // Play
@@ -271,6 +250,9 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
   return (
     <div className="bg-background flex flex-col h-screen overflow-hidden">
+      {/* Audio Element */}
+      <audio ref={audioRef} onEnded={handleAudioEnd} />
+
       {/* Header */}
       <header className="p-4 border-b flex-shrink-0 flex items-center justify-between gap-4 md:sticky top-0 bg-secondary/30 backdrop-blur-sm z-10">
         <div className="flex-1">
@@ -409,6 +391,5 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       </footer>
     </div>
   );
-}
 
     
