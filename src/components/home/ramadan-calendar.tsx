@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Search, LocateFixed, Loader2 } from 'lucide-react';
+import { Search, LocateFixed, Loader2, Download } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -19,6 +19,8 @@ import { countries } from '@/lib/countries';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 type RamadanDay = {
     timings: {
@@ -78,8 +80,6 @@ export function RamadanCalendar() {
             }
         }
 
-        // Filter for actual Ramadan days based on API or expected dates
-        // This is a simple assumption; a more robust solution would check Hijri date from API
         const ramadanStartDate = new Date(`${RAMADAN_YEAR}-02-18`); 
         const ramadanEndDate = new Date(`${RAMADAN_YEAR}-03-19`);
         
@@ -157,6 +157,58 @@ export function RamadanCalendar() {
       return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   }
 
+  const handleDownloadPdf = () => {
+    const doc = new jsPDF();
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+
+    doc.setFont('Helvetica', 'bold');
+    doc.setTextColor('#333');
+    doc.setFontSize(22);
+    doc.text("Muslimahs Club", doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+
+    doc.setFontSize(16);
+    doc.text("Ramadan 2026 Calendar", doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+    
+    doc.setFont('Helvetica', 'normal');
+    doc.setFontSize(12);
+    doc.setTextColor('#666');
+    doc.text(`Location: ${locationName}`, doc.internal.pageSize.getWidth() / 2, 38, { align: 'center' });
+
+    const tableColumn = ["Date", "Day", "Suhoor", "Iftar"];
+    const tableRows: any[] = [];
+
+    calendar.forEach(day => {
+        const row = [
+            day.date.readable,
+            day.date.gregorian.weekday.en,
+            formatTime(day.timings.Imsak),
+            formatTime(day.timings.Maghrib),
+        ];
+        tableRows.push(row);
+    });
+
+    (doc as any).autoTable({
+        head: [tableColumn],
+        body: tableRows,
+        startY: 50,
+        theme: 'grid',
+        headStyles: { fillColor: [41, 28, 25], textColor: 255 },
+        styles: { halign: 'center' },
+        columnStyles: {
+            0: { halign: 'left' },
+            1: { halign: 'left' },
+        }
+    });
+
+    doc.setFontSize(10);
+    doc.setTextColor(150);
+    const footerText = "Generated from muslimahsclub.com";
+    const pageWidth = doc.internal.pageSize.getWidth();
+    doc.text(footerText, pageWidth - 14, doc.internal.pageSize.getHeight() - 10, { align: 'right'});
+
+    doc.save(`Ramadan_2026_${locationName.replace(/, /g, '_')}.pdf`);
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
         <form onSubmit={handleSearch} className="flex flex-col gap-2 mb-4 max-w-lg mx-auto">
@@ -185,7 +237,7 @@ export function RamadanCalendar() {
             </Button>
           </div>
         </form>
-         <div className="text-center mb-8">
+         <div className="text-center mb-8 flex justify-center items-center gap-4">
             <Button onClick={handleGeoLocation} disabled={isLoading}>
                 {isLoading && !calendar.length && hasSearched ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -194,6 +246,12 @@ export function RamadanCalendar() {
                 )}
                 Use My Location
             </Button>
+            {calendar.length > 0 && (
+                <Button onClick={handleDownloadPdf} variant="outline">
+                    <Download className="mr-2 h-4 w-4" />
+                    Download PDF
+                </Button>
+            )}
         </div>
 
         {isLoading ? (
