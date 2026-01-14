@@ -57,7 +57,7 @@ const defaultSettings = {
   showTranslation: true,
   zoomLevel: 1,
   arabicFont: "'Scheherazade New', serif",
-  indoPakFont: "'Qalam', cursive",
+  indoPakFont: "'Al Qalam', sans-serif",
   translationFont: "'Roboto', sans-serif",
   urduFont: "'Noto Nastaliq Urdu', serif",
   selectedReciter: 'ar.alafasy',
