@@ -320,7 +320,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
       {/* Footer */}
       <footer className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">
-        <div className="p-2 bg-background/80 backdrop-blur-sm border rounded-full shadow-lg flex flex-col items-center gap-2">
+        <div className="p-2 bg-background/80 backdrop-blur-sm border rounded-full shadow-lg flex items-center gap-2">
             <div className="flex items-center justify-center gap-2">
                 <Popover>
                     <PopoverTrigger asChild>
@@ -363,4 +363,3 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
-
