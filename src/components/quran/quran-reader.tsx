@@ -52,6 +52,7 @@ const allReciters: TranslationEdition[] = [
     { identifier: 'ar.abdurrahmaansudais', language: 'ar', name: 'Abdurrahmaan As-Sudais', englishName: 'Abdurrahman as-Sudais', format: 'audio', type: 'versebyverse', direction: 'ltr' },
     { identifier: 'ar.mahermuaiqly', language: 'ar', name: 'Maher Al Muaiqly', englishName: 'Maher Al Muaiqly', format: 'audio', type: 'versebyverse', direction: 'ltr' },
     { identifier: 'ar.minshawi', language: 'ar', name: 'Minshawi', englishName: 'Mohamed Siddiq al-Minshawi', format: 'audio', type: 'versebyverse', direction: 'ltr' },
+    { identifier: 'ar.saoodshuraym', language: 'ar', name: 'Saood Ash-Shuraym', englishName: 'Saood Ash-Shuraym', format: 'audio', type: 'versebyverse', direction: 'ltr' },
     { identifier: 'en.walk', language: 'en', name: 'Walk', englishName: 'Ibrahim Walk (English)', format: 'audio', type: 'versebyverse', direction: 'ltr' },
     { identifier: 'ur.khan', language: 'ur', name: 'Khan', englishName: 'Shamshad Ali Khan (Urdu)', format: 'audio', type: 'versebyverse', direction: 'ltr' }
 ];
@@ -409,3 +410,5 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
+
+    
