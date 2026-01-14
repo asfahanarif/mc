@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
@@ -168,6 +169,12 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     fontFamily: translationFont,
   };
 
+  const translationNameMapping: { [key: string]: string } = {
+    "Sahih International": "Sahih International (English)",
+    "Hilali & Khan": "Hilali & Khan (English)",
+    "Junagarhi": "Junagarhi (Urdu)"
+  };
+
   return (
     <div className="bg-background flex flex-col h-screen overflow-hidden">
       {/* Header */}
@@ -215,7 +222,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                       {ayah.translations?.map((translation, index) => (
                         <div key={index}>
                           <p className="text-foreground/80" style={{ direction: translation.identifier.toLowerCase().includes('urdu') ? 'rtl' : 'ltr', fontFamily: translation.identifier.toLowerCase().includes('urdu') ? "'Noto Nastaliq Urdu', serif" : translationFont }}>{translation.text}</p>
-                          <p className="text-xs text-muted-foreground mt-2">- {translation.identifier}</p>
+                          <p className="text-xs text-muted-foreground mt-2">- {translationNameMapping[translation.identifier] || translation.identifier}</p>
                         </div>
                       ))}
                     </div>

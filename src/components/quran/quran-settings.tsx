@@ -25,15 +25,16 @@ import type { TranslationEdition } from '@/lib/types';
 import { ScrollArea } from '../ui/scroll-area';
 
 const allowedTranslations = [
-  'en.sahih',
-  'en.hilali',
-  'ur.junagarhi',
+  { id: 'en.sahih', name: 'Sahih International (English)' },
+  { id: 'en.hilali', name: 'Hilali & Khan (English)' },
+  { id: 'ur.junagarhi', name: 'Junagarhi (Urdu)' },
 ];
+
 
 export function QuranSettings({ allTranslations, allReciters, settingType }: { allTranslations: TranslationEdition[], allReciters: TranslationEdition[], settingType: 'translations' | 'fonts' | 'audio' }) {
   const settings = useQuranSettings();
 
-  const filteredTranslations = allTranslations.filter(t => allowedTranslations.includes(t.identifier));
+  const filteredTranslations = allTranslations.filter(t => allowedTranslations.some(at => at.id === t.identifier));
 
   if (settingType === 'translations') {
     return (
@@ -68,7 +69,7 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
                               );
                           }}
                       >
-                          {trans.englishName}
+                          {allowedTranslations.find(at => at.id === trans.identifier)?.name || trans.englishName}
                       </DropdownMenuCheckboxItem>
                   ))}
                 </ScrollArea>
