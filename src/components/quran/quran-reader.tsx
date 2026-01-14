@@ -330,7 +330,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
       {/* Main Content */}
       <ScrollArea className="flex-grow" viewportRef={scrollContainerRef} onScroll={handleScroll}>
-        <div className="container max-w-4xl pt-8 pb-40">
+        <div className="container max-w-4xl pt-8 pb-64">
           {loadingDetails && (
             <div className="space-y-6">
               {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-24 w-full" />)}
