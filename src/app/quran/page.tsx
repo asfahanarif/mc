@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from "react";
@@ -8,13 +7,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { placeholderImages } from "@/lib/data";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import type { TranslationEdition } from "@/lib/types";
 import { QuranReader } from "@/components/quran/quran-reader";
-import { cn } from "@/lib/utils";
 
 type Surah = {
   number: number;
@@ -25,14 +22,13 @@ type Surah = {
   revelationType: string;
 };
 
-export default function QuranPage() {
+function SurahList({ onSelectSurah }: { onSelectSurah: (surah: Surah) => void }) {
   const quranImage = placeholderImages.find((p) => p.id === "quran-explorer");
   const [surahs, setSurahs] = useState<Surah[]>([]);
   const [loadingSurahs, setLoadingSurahs] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [allTranslations, setAllTranslations] = useState<TranslationEdition[]>([]);
-  const [activeSurah, setActiveSurah] = useState<Surah | null>(null);
 
   useEffect(() => {
     const fetchSurahsAndTranslations = async () => {
@@ -62,14 +58,6 @@ export default function QuranPage() {
     fetchSurahsAndTranslations();
   }, []);
 
-  const handleSurahClick = (surah: Surah) => {
-    setActiveSurah(surah);
-  };
-
-  const handleDialogClose = () => {
-    setActiveSurah(null);
-  };
-
   const filteredSurahs = surahs.filter(surah =>
     surah.englishName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     surah.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -86,16 +74,19 @@ export default function QuranPage() {
       <section className="py-16 md:py-24">
         <div className="container max-w-7xl">
           <div className="max-w-xl mx-auto mb-12">
-            <Input
-              placeholder="Search for a Surah by name or number..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
-            />
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                placeholder="Search for a Surah by name or number..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10"
+              />
+            </div>
           </div>
           {loadingSurahs ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {[...Array(8)].map((_, i) => <Skeleton key={i} className="h-40 w-full" />)}
+              {[...Array(12)].map((_, i) => <Skeleton key={i} className="h-40 w-full" />)}
             </div>
           ) : error ? (
             <Alert variant="destructive">
@@ -105,11 +96,11 @@ export default function QuranPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredSurahs.map((surah) => (
-                <Card key={surah.number} className="flex flex-col">
+                <Card key={surah.number} className="flex flex-col hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
                           {surah.number}
                         </div>
                         <div>
@@ -129,7 +120,7 @@ export default function QuranPage() {
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button className="w-full" onClick={() => handleSurahClick(surah)}>
+                    <Button className="w-full" onClick={() => onSelectSurah(surah)}>
                       <BookOpen className="mr-2 h-4 w-4" />
                       Read Surah
                     </Button>
@@ -140,23 +131,45 @@ export default function QuranPage() {
           )}
         </div>
       </section>
-
-      <Dialog open={!!activeSurah} onOpenChange={(isOpen) => !isOpen && handleDialogClose()}>
-        <DialogContent className={cn(
-            "w-[calc(100vw-2rem)] max-h-[80vh] p-0 flex flex-col sm:max-w-5xl sm:max-h-[90vh]",
-            "bg-transparent border-0 shadow-none"
-        )}>
-           {activeSurah && (
-             <QuranReader
-                surah={activeSurah}
-                allSurahs={surahs}
-                allTranslations={allTranslations}
-                onClose={handleDialogClose}
-                onSurahChange={setActiveSurah}
-              />
-           )}
-        </DialogContent>
-      </Dialog>
     </div>
-  );
+  )
+}
+
+export default function QuranPage() {
+  const [activeSurah, setActiveSurah] = useState<Surah | null>(null);
+  const [allSurahs, setAllSurahs] = useState<Surah[]>([]);
+  const [allTranslations, setAllTranslations] = useState<TranslationEdition[]>([]);
+
+  useEffect(() => {
+    // Fetch all surahs to enable next/prev navigation in reader
+    const fetchAllData = async () => {
+      try {
+        const [surahRes, transRes] = await Promise.all([
+          fetch("https://api.alquran.cloud/v1/surah"),
+          fetch("https://api.alquran.cloud/v1/edition/type/translation")
+        ]);
+        const surahData = await surahRes.json();
+        const transData = await transRes.json();
+        setAllSurahs(surahData.data);
+        setAllTranslations(transData.data);
+      } catch (error) {
+        console.error("Failed to fetch initial Quran data:", error);
+      }
+    };
+    fetchAllData();
+  }, []);
+
+  if (activeSurah) {
+    return (
+      <QuranReader
+        surah={activeSurah}
+        allSurahs={allSurahs}
+        allTranslations={allTranslations}
+        onClose={() => setActiveSurah(null)}
+        onSurahChange={setActiveSurah}
+      />
+    );
+  }
+
+  return <SurahList onSelectSurah={setActiveSurah} />;
 }
