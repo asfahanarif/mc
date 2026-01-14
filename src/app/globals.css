@@ -59,6 +59,14 @@
 }
 
 @layer base {
+  @font-face {
+    font-family: 'My Indo-Pak Font';
+    src: url('/fonts/MyIndoPakFont.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
   * {
     @apply border-border;
   }

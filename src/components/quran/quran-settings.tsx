@@ -155,6 +155,7 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                         <SelectValue placeholder="Select Indo-Pak Font" />
                     </SelectTrigger>
                     <SelectContent>
+                        <SelectItem value="'My Indo-Pak Font', sans-serif">My Indo-Pak Font (Custom)</SelectItem>
                         <SelectItem value="'Qalam', cursive">Qalam (Madinah)</SelectItem>
                         <SelectItem value="'Noto Nastaliq Urdu', serif">Noto Nastaliq Urdu</SelectItem>
                         <SelectItem value="'Amiri', serif">Amiri</SelectItem>
