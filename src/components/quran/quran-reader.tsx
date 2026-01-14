@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
@@ -279,7 +280,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                     </Button>
                 </DialogTrigger>
                 <DialogContent className={cn(
-                    "sm:max-w-md",
+                    "sm:max-w-md w-[calc(100vw-2rem)] rounded-lg p-0",
                     "bg-transparent border-0 shadow-none",
                     "sm:bg-background sm:border sm:shadow-lg"
                   )}>
@@ -332,9 +333,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
           )}
           {surahDetails && (
             <div className="space-y-8">
-              {surah.number !== 1 && surah.number !== 9 && (
-                <p className="font-arabic text-4xl text-center" style={{ fontFamily: "'Noto Naskh Arabic', serif" }}>بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
-              )}
               {surahDetails.ayahs.map(ayah => (
                 <div key={ayah.number} ref={(el) => (ayahRefs.current[ayah.numberInSurah] = el)} className="flex flex-col gap-4 py-4 border-b">
                   <div className="flex items-start gap-4">
@@ -416,4 +414,5 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     
 
     
+
 
