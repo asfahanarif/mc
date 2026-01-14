@@ -13,6 +13,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { QuranSettings } from "@/components/quran/quran-settings";
 import { useQuranSettings } from "@/components/quran/quran-settings-provider";
 import type { TranslationEdition } from '@/lib/types';
+import { Slider } from '../ui/slider';
+import { Label } from '../ui/label';
 
 type Surah = {
   number: number;
@@ -81,6 +83,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     isAutoScrolling,
     setIsAutoScrolling,
     scrollSpeed,
+    setScrollSpeed,
   } = useQuranSettings();
 
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -150,19 +153,39 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     }
   }, [surah, selectedTranslations, selectedReciter, fetchSurahDetails]);
 
+  const handleAudioEnd = useCallback(() => {
+    if (!surahDetails) return;
+  
+    const currentAyahUrl = playingAudio;
+    if (!currentAyahUrl) return;
+  
+    const currentAyahIndex = surahDetails.ayahs.findIndex(a => a.audio === currentAyahUrl);
+    const nextAyahIndex = currentAyahIndex + 1;
+  
+    if (nextAyahIndex < surahDetails.ayahs.length) {
+      const nextAyah = surahDetails.ayahs[nextAyahIndex];
+      playAudio(nextAyah.audio);
+    } else {
+      setPlayingAudio(null); // End of surah
+    }
+  }, [surahDetails, playingAudio]);
+
   useEffect(() => {
     audioRef.current = new Audio();
-    const onEnded = () => setPlayingAudio(null);
     const audio = audioRef.current;
-    audio.addEventListener('ended', onEnded);
+    
+    // Add the listener for when audio finishes playing
+    audio.addEventListener('ended', handleAudioEnd);
     
     return () => {
       if (audio) {
-        audio.removeEventListener('ended', onEnded);
+        audio.removeEventListener('ended', handleAudioEnd);
         audio.pause();
+        audioRef.current = null;
       }
     };
-  }, []);
+  }, [handleAudioEnd]);
+  
 
   const handleNextSurah = () => {
     const currentIndex = allSurahs.findIndex(s => s.number === surah.number);
@@ -181,23 +204,18 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   const playAudio = (audioUrl: string) => {
     if (!audioRef.current) return;
   
-    // If the requested audio is already playing, pause it and return.
     if (playingAudio === audioUrl) {
       audioRef.current.pause();
       setPlayingAudio(null);
       return;
     }
-  
-    // If another audio is playing, stop it first.
+
     if (playingAudio) {
       audioRef.current.pause();
     }
-  
-    // Set the new source and play it.
+
     audioRef.current.src = audioUrl;
     audioRef.current.play().catch(error => {
-      // The play() request was interrupted (e.g., by a quick follow-up call)
-      // This is a common race condition, we can usually ignore it if the intent is to play the new audio.
       if (error.name === 'AbortError') {
         console.log('Audio playback aborted, likely by a new play request.');
       } else {
@@ -205,6 +223,12 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       }
     });
     setPlayingAudio(audioUrl);
+
+    // Find the ayah number from the URL and scroll to it
+    const ayahNumberInSurah = surahDetails?.ayahs.find(a => a.audio === audioUrl)?.numberInSurah;
+    if (ayahNumberInSurah && ayahRefs.current[ayahNumberInSurah]) {
+      ayahRefs.current[ayahNumberInSurah]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   };
 
   const arabicStyle: CSSProperties = {
@@ -267,7 +291,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                   <div className="flex items-start gap-4">
                     <div className="flex flex-col items-center gap-2">
                         <div className="w-9 h-9 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
-                         <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50" onClick={() => playAudio(ayah.audio)}>
+                         <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50 border-primary/20 hover:bg-primary/10" onClick={() => playAudio(ayah.audio)}>
                             {playingAudio === ayah.audio ? <PauseCircle className="h-5 w-5" /> : <PlayCircle className="h-5 w-5" />}
                         </Button>
                     </div>
@@ -316,9 +340,21 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
           <PopoverContent className="w-80 mb-2"><QuranSettings allTranslations={allTranslations} allReciters={allReciters} settingType="fonts" /></PopoverContent>
         </Popover>
         
-        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setIsAutoScrolling(!isAutoScrolling)}>
-            {isAutoScrolling ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-        </Button>
+        <div className="flex items-center gap-2">
+            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setIsAutoScrolling(!isAutoScrolling)}>
+                {isAutoScrolling ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+            </Button>
+            <div className="w-24">
+                <Slider
+                id="scroll-speed"
+                min={1}
+                max={100}
+                step={1}
+                value={[scrollSpeed]}
+                onValueChange={(value) => setScrollSpeed(value[0])}
+                />
+            </div>
+        </div>
 
         <div className="flex-grow" />
 
