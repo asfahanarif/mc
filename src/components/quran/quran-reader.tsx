@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Loader2, PlayCircle, BookText, Type, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Music4, ArrowLeft, PauseCircle } from "lucide-react";
+import { Loader2, PlayCircle, BookText, Type, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Music4, ArrowLeft, PauseCircle, Play, Pause } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -58,6 +59,8 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   const [error, setError] = useState<string | null>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const ayahRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const {
     selectedTranslations,
@@ -74,8 +77,39 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     selectedReciter,
     isArabicBold,
     isTranslationBold,
-    isUrduBold
+    isUrduBold,
+    isAutoScrolling,
+    setIsAutoScrolling,
+    scrollSpeed,
   } = useQuranSettings();
+
+  const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startAutoScroll = useCallback(() => {
+    if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
+    scrollIntervalRef.current = setInterval(() => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({ top: 1, behavior: 'smooth' });
+        }
+    }, 110 - scrollSpeed); // Adjust interval based on speed
+  }, [scrollSpeed]);
+
+  const stopAutoScroll = useCallback(() => {
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+      scrollIntervalRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAutoScrolling) {
+      startAutoScroll();
+    } else {
+      stopAutoScroll();
+    }
+    return () => stopAutoScroll();
+  }, [isAutoScrolling, startAutoScroll, stopAutoScroll]);
+
 
   const fetchSurahDetails = useCallback(async (currentSurah: Surah, translations: string[], reciter: string) => {
     setLoadingDetails(true);
@@ -193,7 +227,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       </header>
 
       {/* Main Content */}
-      <ScrollArea className="flex-grow">
+      <ScrollArea className="flex-grow" viewportRef={scrollContainerRef}>
         <div className="container max-w-4xl py-8">
           {loadingDetails && (
             <div className="space-y-6">
@@ -212,7 +246,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                 <p className="font-arabic text-4xl text-center" style={{ fontFamily: "'Noto Naskh Arabic', serif" }}>بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
               )}
               {surahDetails.ayahs.map(ayah => (
-                <div key={ayah.number} className="flex flex-col gap-4 py-4 border-b">
+                <div key={ayah.number} ref={(el) => (ayahRefs.current[ayah.numberInSurah] = el)} className="flex flex-col gap-4 py-4 border-b">
                   <div className="flex items-start gap-4">
                     <div className="flex flex-col items-center gap-2">
                         <div className="w-9 h-9 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
@@ -264,6 +298,10 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
           </PopoverTrigger>
           <PopoverContent className="w-80 mb-2"><QuranSettings allTranslations={allTranslations} allReciters={allReciters} settingType="fonts" /></PopoverContent>
         </Popover>
+        
+        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setIsAutoScrolling(!isAutoScrolling)}>
+            {isAutoScrolling ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+        </Button>
 
         <div className="flex-grow" />
 
@@ -273,6 +311,3 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
-
-
-

@@ -219,6 +219,20 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
             />
           </div>
         </div>
+        <Separator />
+         <div className="grid gap-4">
+          <h3 className="font-medium">Scroll Speed</h3>
+          <div className="grid gap-2">
+            <Slider
+              id="scroll-speed"
+              min={1}
+              max={100}
+              step={1}
+              value={[settings.scrollSpeed]}
+              onValueChange={(value) => settings.setScrollSpeed(value[0])}
+            />
+          </div>
+        </div>
       </div>
     )
   }

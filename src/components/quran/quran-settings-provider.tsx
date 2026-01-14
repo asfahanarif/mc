@@ -32,6 +32,10 @@ interface QuranSettings {
   setIsTranslationBold: (isBold: boolean) => void;
   isUrduBold: boolean;
   setIsUrduBold: (isBold: boolean) => void;
+  isAutoScrolling: boolean;
+  setIsAutoScrolling: (isScrolling: boolean) => void;
+  scrollSpeed: number;
+  setScrollSpeed: (speed: number) => void;
 }
 
 const QuranSettingsContext = createContext<QuranSettings | undefined>(undefined);
@@ -50,6 +54,8 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
   const [isArabicBold, setIsArabicBold] = useState(false);
   const [isTranslationBold, setIsTranslationBold] = useState(false);
   const [isUrduBold, setIsUrduBold] = useState(false);
+  const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+  const [scrollSpeed, setScrollSpeed] = useState(50); // From 1 to 100
   
   const zoomIn = () => setZoomLevel(prev => Math.min(prev + 0.1, 2));
   const zoomOut = () => setZoomLevel(prev => Math.max(prev - 0.1, 0.5));
@@ -82,6 +88,10 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
     setIsTranslationBold,
     isUrduBold,
     setIsUrduBold,
+    isAutoScrolling,
+    setIsAutoScrolling,
+    scrollSpeed,
+    setScrollSpeed,
   };
 
   return (
