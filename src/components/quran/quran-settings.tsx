@@ -104,7 +104,8 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                 </DropdownMenu>
             </div>
         </TabsContent>
-        <TabsContent value="fonts" className="p-4">
+        <TabsContent value="fonts" className="p-0">
+          <ScrollArea className="h-72 p-4">
              <div className="grid gap-6">
                 <div className="grid gap-2">
                     <Label htmlFor="arabic-font">Arabic Font</Label>
@@ -213,6 +214,7 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                     />
                 </div>
             </div>
+          </ScrollArea>
         </TabsContent>
     </Tabs>
     <Separator />
