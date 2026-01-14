@@ -157,7 +157,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     // Use an exponential curve for a more natural feel
     const interval = maxInterval - (maxInterval - minInterval) * Math.pow(speedPercentage, 2);
 
-    const scrollStep = (scrollContainerRef.current?.clientHeight || window.innerHeight) * 0.003;
+    const scrollStep = (scrollContainerRef.current?.clientHeight || window.innerHeight) * 0.008;
   
     scrollIntervalRef.current = setInterval(() => {
       if (scrollContainerRef.current) {
