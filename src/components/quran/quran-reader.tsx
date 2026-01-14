@@ -130,60 +130,64 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   }, [isAutoScrolling, startAutoScroll, stopAutoScroll]);
 
 
-  const fetchSurahDetails = useCallback(async (currentSurah: Surah, translations: string[], reciter: string, script: string) => {
+ const fetchSurahDetails = useCallback(async (currentSurah: Surah, translations: string[], reciter: string, script: string) => {
     setLoadingDetails(true);
     setSurahDetails(null);
     setError(null);
     try {
-      const editions = [reciter, script, ...translations].join(',');
-      const response = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.number}/editions/${editions}`);
-      if (!response.ok) throw new Error("Failed to fetch Surah details.");
-      
-      const multiEditionData = await response.json();
-      const audioEdition = multiEditionData.data.find((d: any) => d.edition.identifier === reciter);
-      const arabicEdition = multiEditionData.data.find((d: any) => d.edition.identifier === script);
-      const translationEditions = multiEditionData.data.filter((d: any) => d.edition.type === 'translation');
+        let arabicTextAyahs: any[] = [];
+        // Use Quran.com for IndoPak script, as alquran.cloud's is incorrect
+        if (script === 'quran-indopak') {
+            const indoPakResponse = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani_indopak?chapter_number=${currentSurah.number}`);
+            if (!indoPakResponse.ok) throw new Error("Failed to fetch Indo-Pak script text.");
+            const indoPakData = await indoPakResponse.json();
+            arabicTextAyahs = indoPakData.verses.map((v: any) => ({ text: v.text_indopak, number: v.id }));
+        }
 
-      if (!audioEdition || !arabicEdition) {
-          const fallbackResponse = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.number}/editions/quran-uthmani,${reciter},${translations.join(',')}`);
-          if (!fallbackResponse.ok) throw new Error("Could not find required audio or text editions, and fallback failed.");
-          const fallbackData = await fallbackResponse.json();
-          
-          const fallbackAudioEdition = fallbackData.data.find((d: any) => d.edition.identifier === reciter);
-          const originalScriptEdition = arabicEdition; // This might be null, that's fine for the logic below
-          
-          if(!fallbackAudioEdition) throw new Error("Fallback failed to find required audio edition.");
+        // Fetch audio and translations from alquran.cloud
+        const editions = [reciter, ...translations, (script !== 'quran-indopak' ? script : 'quran-uthmani')].join(',');
+        const response = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.number}/editions/${editions}`);
+        if (!response.ok) throw new Error("Failed to fetch Surah details (audio/translations).");
+        
+        const multiEditionData = await response.json();
 
-          // Keep original script if it loaded, otherwise use fallback Uthmani for text
-          const textEditionToUse = originalScriptEdition || fallbackData.data.find((d: any) => d.edition.identifier === 'quran-uthmani');
-          if(!textEditionToUse) throw new Error("Fallback failed to find any Arabic text edition.");
+        const audioEdition = multiEditionData.data.find((d: any) => d.edition.format === 'audio');
+        const uthmaniEdition = multiEditionData.data.find((d: any) => d.edition.identifier === 'quran-uthmani');
+        const translationEditions = multiEditionData.data.filter((d: any) => d.edition.type === 'translation');
 
-          const combinedAyahs = fallbackAudioEdition.ayahs.map((ayah: Ayah, index: number) => {
-              const ayahTranslations = fallbackData.data.filter((d: any) => d.edition.type === 'translation').map((transData: any) => ({
-                  identifier: transData.edition.identifier,
-                  text: transData.ayahs[index].text,
-              }));
-              return { ...ayah, text: textEditionToUse.ayahs[index].text, translations: ayahTranslations };
-          });
-          setSurahDetails({ ayahs: combinedAyahs });
+        if (!audioEdition) {
+            throw new Error("Could not find the required audio edition.");
+        }
+        
+        // If we didn't fetch IndoPak separately, use the one from this API call.
+        if (script !== 'quran-indopak') {
+             const arabicEdition = multiEditionData.data.find((d: any) => d.edition.identifier === script);
+             if (!arabicEdition) throw new Error("Could not find the required Arabic text edition.");
+             arabicTextAyahs = arabicEdition.ayahs;
+        }
 
-      } else {
-          const combinedAyahs = audioEdition.ayahs.map((ayah: Ayah, index: number) => {
+        // Combine the data
+        const combinedAyahs = audioEdition.ayahs.map((ayah: Ayah, index: number) => {
             const ayahTranslations = translationEditions.map((transData: any) => ({
-              identifier: transData.edition.identifier,
-              text: transData.ayahs[index].text,
+                identifier: transData.edition.identifier,
+                text: transData.ayahs[index].text,
             }));
-            return { ...ayah, text: arabicEdition.ayahs[index].text, translations: ayahTranslations };
-          });
-          setSurahDetails({ ayahs: combinedAyahs });
-      }
+            return {
+                ...ayah,
+                text: arabicTextAyahs[index]?.text || uthmaniEdition.ayahs[index].text, // Fallback to Uthmani if something goes wrong
+                translations: ayahTranslations,
+            };
+        });
+        setSurahDetails({ ayahs: combinedAyahs });
+
     } catch (e: any) {
-      console.error(e);
-      setError("Could not load Surah. Please try again.");
+        console.error(e);
+        setError("Could not load Surah. Please try again.");
     } finally {
-      setLoadingDetails(false);
+        setLoadingDetails(false);
     }
-  }, []);
+}, []);
+
 
   useEffect(() => {
     if (surah.number) {
@@ -447,3 +451,5 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
+
+    
