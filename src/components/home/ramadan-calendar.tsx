@@ -175,7 +175,7 @@ export function RamadanCalendar() {
     
     try {
         const logoDataUri = await getImageDataUri(logoUrl);
-        doc.addImage(logoDataUri, 'PNG', doc.internal.pageSize.getWidth() / 2 - 15, 10, 30, 30);
+        doc.addImage(logoDataUri, 'PNG', doc.internal.pageSize.getWidth() / 2 - 10, 10, 20, 20);
     } catch (error) {
         console.error("Could not load logo for PDF:", error);
     }
@@ -183,15 +183,15 @@ export function RamadanCalendar() {
     doc.setFont('Helvetica', 'bold');
     doc.setTextColor(primaryColor);
     doc.setFontSize(22);
-    doc.text("MUSLIMAHS CLUB", doc.internal.pageSize.getWidth() / 2, 50, { align: 'center' });
+    doc.text("MUSLIMAHS CLUB", doc.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
 
     doc.setFontSize(16);
-    doc.text("Ramadan 2026 Calendar", doc.internal.pageSize.getWidth() / 2, 60, { align: 'center' });
+    doc.text("Ramadan 2026 Calendar", doc.internal.pageSize.getWidth() / 2, 50, { align: 'center' });
     
     doc.setFont('Helvetica', 'normal');
     doc.setFontSize(12);
     doc.setTextColor('#666');
-    doc.text(`Location: ${locationName}`, doc.internal.pageSize.getWidth() / 2, 68, { align: 'center' });
+    doc.text(`Location: ${locationName}`, doc.internal.pageSize.getWidth() / 2, 58, { align: 'center' });
 
     const tableColumn = ["Date", "Day", "Suhoor", "Iftar"];
     const tableRows: any[] = [];
@@ -209,14 +209,16 @@ export function RamadanCalendar() {
     (doc as any).autoTable({
         head: [tableColumn],
         body: tableRows,
-        startY: 80,
+        startY: 65,
         theme: 'grid',
         headStyles: { fillColor: primaryColor, textColor: 255 },
-        styles: { halign: 'center' },
+        styles: { halign: 'center', fontSize: 8 },
         columnStyles: {
             0: { halign: 'left' },
             1: { halign: 'left' },
-        }
+        },
+        // This ensures the table doesn't create new pages
+        pageBreak: 'avoid',
     });
 
     doc.save(`Ramadan_2026_${locationName.replace(/, /g, '_')}.pdf`);
