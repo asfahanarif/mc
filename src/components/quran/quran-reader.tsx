@@ -30,6 +30,7 @@ type Ayah = {
   text: string;
   audio: string;
   numberInSurah: number;
+  juz: number;
 };
 
 type SurahDetails = {
@@ -264,7 +265,11 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
           <Button variant="outline" size="sm" onClick={onClose}><ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
         </div>
         <div className="flex-1 text-center">
-            <h1 className="font-headline text-2xl text-primary">{surah.number}. {surah.englishName}</h1>
+            {surahDetails && surahDetails.ayahs.length > 0 && (
+                <h1 className="font-headline text-xl text-primary">
+                    Juz {surahDetails.ayahs[0].juz} - Surah {surah.number}
+                </h1>
+            )}
         </div>
         <div className="flex-1 text-right">
             <p className="font-arabic text-3xl" style={{ fontFamily: "'Noto Nastaliq Urdu', serif" }}>{surah.name}</p>
