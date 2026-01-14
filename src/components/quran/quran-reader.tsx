@@ -16,6 +16,7 @@ import type { TranslationEdition } from '@/lib/types';
 import { Slider } from '../ui/slider';
 import { Label } from '../ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 
 type Surah = {
   number: number;
@@ -63,7 +64,8 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const ayahRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -182,23 +184,11 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   }, [surahDetails, playingAudio, isAutoplayEnabled]);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (playingAudio && audio) {
-        if (audio.src !== playingAudio) {
-          audio.src = playingAudio;
-        }
-        audio.play().catch(error => {
-            if (error.name !== 'AbortError') {
-                console.error("Error playing audio:", error);
-                setPlayingAudio(null);
-            }
-        });
+    if (playingAudio) {
         const ayahNumberInSurah = surahDetails?.ayahs.find(a => a.audio === playingAudio)?.numberInSurah;
         if (ayahNumberInSurah && ayahRefs.current[ayahNumberInSurah]) {
             ayahRefs.current[ayahNumberInSurah]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-    } else if (audio) {
-        audio.pause();
     }
   }, [playingAudio, surahDetails]);
 
@@ -248,10 +238,23 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     "ur.junagarhi": "Junagarhi (Urdu)"
   };
 
+   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    if (scrollHeight <= clientHeight) {
+        setScrollProgress(100);
+        return;
+    }
+    const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
+    setScrollProgress(progress);
+  };
+
+
   return (
     <div className="bg-background flex flex-col h-screen overflow-hidden">
       {/* Audio Element */}
-      <audio ref={audioRef} onEnded={handleAudioEnd} />
+      {playingAudio && (
+        <audio src={playingAudio} autoPlay onEnded={handleAudioEnd} />
+      )}
 
       {/* Header */}
       <header className="p-4 border-b flex-shrink-0 flex items-center justify-between gap-4 md:sticky top-0 bg-secondary/30 backdrop-blur-sm z-10">
@@ -302,9 +305,10 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
             )}
         </div>
       </header>
+       <Progress value={scrollProgress} className="h-1 rounded-none w-full" />
 
       {/* Main Content */}
-      <ScrollArea className="flex-grow" viewportRef={scrollContainerRef}>
+      <ScrollArea className="flex-grow" viewportRef={scrollContainerRef} onScroll={handleScroll}>
         <div className="container max-w-4xl py-8">
           {loadingDetails && (
             <div className="space-y-6">
@@ -398,7 +402,4 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       </footer>
     </div>
   );
-
-    
-
-    
+}
