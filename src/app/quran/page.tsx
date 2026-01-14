@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from "react";
@@ -12,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { TranslationEdition } from "@/lib/types";
 import { QuranReader } from "@/components/quran/quran-reader";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Surah = {
   number: number;
@@ -29,6 +31,7 @@ function SurahList({ onSelectSurah }: { onSelectSurah: (surah: Surah) => void })
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [allTranslations, setAllTranslations] = useState<TranslationEdition[]>([]);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchSurahsAndTranslations = async () => {
@@ -77,7 +80,7 @@ function SurahList({ onSelectSurah }: { onSelectSurah: (surah: Surah) => void })
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
-                placeholder="Search for a Surah by name or number..."
+                placeholder={isMobile ? "Search for a Surah" : "Search for a Surah by name or number..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10"
