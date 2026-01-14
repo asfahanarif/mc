@@ -110,9 +110,9 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
         setTranslationFont(parsed.translationFont || defaultSettings.translationFont);
         setUrduFont(parsed.urduFont || defaultSettings.urduFont);
         setSelectedReciter(parsed.selectedReciter || defaultSettings.selectedReciter);
-        setIsArabicBold(parsed.isArabicBold || defaultSettings.isArabicBold);
-        setIsTranslationBold(parsed.isTranslationBold || defaultSettings.isTranslationBold);
-        setIsUrduBold(parsed.isUrduBold || defaultSettings.isUrduBold);
+        setIsArabicBold(parsed.isArabicBold !== undefined ? parsed.isArabicBold : defaultSettings.isArabicBold);
+        setIsTranslationBold(parsed.isTranslationBold !== undefined ? parsed.isTranslationBold : defaultSettings.isTranslationBold);
+        setIsUrduBold(parsed.isUrduBold !== undefined ? parsed.isUrduBold : defaultSettings.isUrduBold);
         setScrollSpeed(parsed.scrollSpeed || defaultSettings.scrollSpeed);
       }
     } catch (error) {
