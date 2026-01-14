@@ -489,7 +489,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                     <div className="flex items-start gap-4 px-4">
                         <div className="flex flex-col items-center gap-2">
                             <div className="w-9 h-9 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
-                             <Button size="icon" variant="default" className="h-9 w-9" onClick={() => playAudio(ayah.audio)}>
+                             <Button size="icon" variant="outline" className="h-9 w-9 text-primary border-primary/50 hover:bg-primary/10 hover:text-primary" onClick={() => playAudio(ayah.audio)}>
                                 {playingAudio === ayah.audio ? <PauseCircle className="h-5 w-5" /> : <PlayCircle className="h-5 w-5" />}
                             </Button>
                         </div>
