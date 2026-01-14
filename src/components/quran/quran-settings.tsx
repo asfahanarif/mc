@@ -62,6 +62,17 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                     </ScrollArea>
                     </SelectContent>
                 </Select>
+                <Separator />
+                <div className="flex items-center justify-between">
+                    <Label htmlFor="autoplay" className="font-medium">
+                    Autoplay Ayahs
+                    </Label>
+                    <Switch
+                    id="autoplay"
+                    checked={settings.isAutoplayEnabled}
+                    onCheckedChange={settings.setIsAutoplayEnabled}
+                    />
+                </div>
             </div>
         </TabsContent>
         <TabsContent value="text" className="p-4">

@@ -36,6 +36,8 @@ interface QuranSettings {
   setIsAutoScrolling: (isScrolling: boolean) => void;
   scrollSpeed: number;
   setScrollSpeed: (speed: number) => void;
+  isAutoplayEnabled: boolean;
+  setIsAutoplayEnabled: (enabled: boolean) => void;
   resetSettings: () => void;
 }
 
@@ -58,6 +60,7 @@ const defaultSettings = {
   isTranslationBold: false,
   isUrduBold: false,
   scrollSpeed: 50,
+  isAutoplayEnabled: true,
 };
 
 export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => {
@@ -76,6 +79,7 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
   const [isUrduBold, setIsUrduBold] = useState(defaultSettings.isUrduBold);
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const [scrollSpeed, setScrollSpeed] = useState(defaultSettings.scrollSpeed);
+  const [isAutoplayEnabled, setIsAutoplayEnabled] = useState(defaultSettings.isAutoplayEnabled);
   
   const resetSettings = () => {
     setArabicFontSize(defaultSettings.arabicFontSize);
@@ -92,6 +96,7 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
     setIsTranslationBold(defaultSettings.isTranslationBold);
     setIsUrduBold(defaultSettings.isUrduBold);
     setScrollSpeed(defaultSettings.scrollSpeed);
+    setIsAutoplayEnabled(defaultSettings.isAutoplayEnabled);
   };
 
   // Load settings from localStorage on initial client-side render
@@ -114,6 +119,7 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
         setIsTranslationBold(parsed.isTranslationBold !== undefined ? parsed.isTranslationBold : defaultSettings.isTranslationBold);
         setIsUrduBold(parsed.isUrduBold !== undefined ? parsed.isUrduBold : defaultSettings.isUrduBold);
         setScrollSpeed(parsed.scrollSpeed || defaultSettings.scrollSpeed);
+        setIsAutoplayEnabled(parsed.isAutoplayEnabled !== undefined ? parsed.isAutoplayEnabled : defaultSettings.isAutoplayEnabled);
       }
     } catch (error) {
         console.error("Failed to load Quran settings from localStorage", error);
@@ -137,6 +143,7 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
         isTranslationBold,
         isUrduBold,
         scrollSpeed,
+        isAutoplayEnabled,
     };
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settingsToSave));
@@ -145,7 +152,8 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
     }
   }, [
     arabicFontSize, translationFontSize, lineHeight, selectedTranslations, showTranslation, zoomLevel,
-    arabicFont, translationFont, urduFont, selectedReciter, isArabicBold, isTranslationBold, isUrduBold, scrollSpeed
+    arabicFont, translationFont, urduFont, selectedReciter, isArabicBold, isTranslationBold, isUrduBold, scrollSpeed,
+    isAutoplayEnabled,
   ]);
 
 
@@ -184,6 +192,8 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
     setIsAutoScrolling,
     scrollSpeed,
     setScrollSpeed,
+    isAutoplayEnabled,
+    setIsAutoplayEnabled,
     resetSettings,
   };
 

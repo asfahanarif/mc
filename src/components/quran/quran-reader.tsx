@@ -93,6 +93,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     setIsAutoScrolling,
     scrollSpeed,
     setScrollSpeed,
+    isAutoplayEnabled,
   } = useQuranSettings();
 
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -164,30 +165,35 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   }, [surah, selectedTranslations, selectedReciter, fetchSurahDetails]);
 
   const handleAudioEnd = useCallback(() => {
-    if (!surahDetails || !playingAudio) return;
+    if (!isAutoplayEnabled || !surahDetails || !playingAudio) {
+        setPlayingAudio(null);
+        return;
+    };
 
     const currentAyahIndex = surahDetails.ayahs.findIndex(a => a.audio === playingAudio);
 
     if (currentAyahIndex > -1 && currentAyahIndex < surahDetails.ayahs.length - 1) {
         const nextAyah = surahDetails.ayahs[currentAyahIndex + 1];
-        setPlayingAudio(nextAyah.audio); // This will trigger the useEffect below
+        setPlayingAudio(nextAyah.audio);
     } else {
         setPlayingAudio(null); // End of surah
     }
-  }, [surahDetails, playingAudio]);
+  }, [surahDetails, playingAudio, isAutoplayEnabled]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !audioRef.current) {
         audioRef.current = new Audio();
-        audioRef.current.addEventListener('ended', handleAudioEnd);
+    }
+    const audio = audioRef.current;
 
-        return () => {
-            const audio = audioRef.current;
-            if (audio) {
-                audio.removeEventListener('ended', handleAudioEnd);
-                audio.pause();
-            }
-        };
+    if (audio) {
+      audio.addEventListener('ended', handleAudioEnd);
+
+      return () => {
+        audio.removeEventListener('ended', handleAudioEnd);
+        audio.pause();
+        setPlayingAudio(null);
+      };
     }
   }, [handleAudioEnd]);
 
@@ -213,7 +219,11 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   }, [playingAudio, surahDetails]);
 
   const togglePlay = (audioUrl: string) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
     if (playingAudio === audioUrl) {
+      audio.pause();
       setPlayingAudio(null); // Pause
     } else {
       setPlayingAudio(audioUrl); // Play
