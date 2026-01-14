@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Loader2, PlayCircle, BookText, Type, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Music4, ArrowLeft, PauseCircle, Play, Pause, Settings, Info } from "lucide-react";
+import { Loader2, PlayCircle, BookText, Type, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Music4, ArrowLeft, PauseCircle, Play, Pause, Settings, Info, X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -15,7 +15,7 @@ import { useQuranSettings } from "@/components/quran/quran-settings-provider";
 import type { TranslationEdition } from '@/lib/types';
 import { Slider } from '../ui/slider';
 import { Label } from '../ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 
 type Surah = {
   number: number;
@@ -272,14 +272,23 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
         <div className="flex-1">
           <Button variant="outline" size="icon" className="rounded-full" onClick={onClose}><ArrowLeft className="h-5 w-5" /></Button>
         </div>
-        <div className="flex-1 text-center lg:text-right flex items-center gap-2 justify-center lg:justify-end">
+        <div className="flex-1 flex items-center gap-2 justify-center">
             <Dialog>
                 <DialogTrigger asChild>
                     <Button variant="ghost" size="icon" className='h-7 w-7 text-primary/50 hover:text-primary'>
                         <Info className='h-4 w-4' />
                     </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className={cn(
+                    "sm:max-w-md",
+                    "bg-transparent border-0 shadow-none",
+                    "sm:bg-background sm:border sm:shadow-lg"
+                  )}>
+                  <div className="bg-background/90 backdrop-blur-lg rounded-lg p-6 relative">
+                    <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
+                        <X className="h-4 w-4" />
+                        <span className="sr-only">Close</span>
+                    </DialogClose>
                     <DialogHeader>
                         <DialogTitle className='font-headline text-2xl text-primary'>{surah.englishName} ({surah.name})</DialogTitle>
                         <DialogDescription>{surah.englishNameTranslation}</DialogDescription>
@@ -294,6 +303,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                             <p className="text-lg font-semibold text-foreground">{surah.numberOfAyahs}</p>
                         </div>
                     </div>
+                  </div>
                 </DialogContent>
             </Dialog>
             <p className="font-arabic text-2xl text-primary" style={{ fontFamily: "Amiri, serif" }}>{surah.name}</p>
@@ -399,6 +409,8 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
+
+    
 
     
 
