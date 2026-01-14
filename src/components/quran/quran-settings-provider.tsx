@@ -32,7 +32,7 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
   const [arabicFontSize, setArabicFontSize] = useState(1.75); // rem
   const [translationFontSize, setTranslationFontSize] = useState(1); // rem
   const [lineHeight, setLineHeight] = useState(1.8);
-  const [selectedTranslations, setSelectedTranslations] = useState<string[]>(['en.sahih']);
+  const [selectedTranslations, setSelectedTranslations] = useState<string[]>(['en.sahih', 'en.hilali', 'ur.junagarhi']);
   const [showTranslation, setShowTranslation] = useState(true);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [arabicFont, setArabicFont] = useState("'Noto Naskh Arabic', serif");
