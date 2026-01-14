@@ -261,7 +261,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       {/* Header */}
       <header className="p-4 border-b flex-shrink-0 flex items-center justify-between gap-4 sticky top-0 bg-background/80 backdrop-blur-sm z-10">
         <div className="flex-1">
-          <Button variant="outline" size="sm" onClick={onClose}><ArrowLeft className="mr-2 h-4 w-4" /> Back to Surah List</Button>
+          <Button variant="outline" size="sm" onClick={onClose}><ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
         </div>
         <div className="flex-1 text-center">
             <h1 className="font-headline text-2xl text-primary">{surah.number}. {surah.englishName}</h1>
@@ -319,40 +319,46 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       </ScrollArea>
 
       {/* Footer */}
-      <footer className="p-2 border-t flex-shrink-0 flex justify-center items-center gap-2 sticky bottom-0 bg-background/80 backdrop-blur-sm z-10">
-        <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9" onClick={handlePrevSurah} disabled={surah.number === 1}><ChevronLeft className="mr-1 sm:mr-2 h-4 w-4" /> Prev</Button>
-        <div className="flex-grow" />
-
-        <div className="flex items-center gap-2">
-            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setIsAutoScrolling(!isAutoScrolling)}>
-                {isAutoScrolling ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-            </Button>
-            <div className="w-24">
-                <Slider
-                id="scroll-speed"
-                min={1}
-                max={100}
-                step={1}
-                value={[scrollSpeed]}
-                onValueChange={(value) => setScrollSpeed(value[0])}
-                />
+      <footer className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">
+        <div className="p-2 bg-background/80 backdrop-blur-sm border rounded-full shadow-lg flex flex-col items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button size="icon" variant="ghost" className="h-8 w-8"><Settings className="h-4 w-4" /></Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 mb-2 p-0">
+                        <QuranSettings allTranslations={allTranslations} allReciters={allReciters} />
+                    </PopoverContent>
+                </Popover>
+                
+                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomOut}><ZoomOut className="h-4 w-4" /></Button>
+                <div className="flex items-center gap-2">
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setIsAutoScrolling(!isAutoScrolling)}>
+                        {isAutoScrolling ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                    </Button>
+                    <div className="w-24">
+                        <Slider
+                        id="scroll-speed"
+                        min={1}
+                        max={100}
+                        step={1}
+                        value={[scrollSpeed]}
+                        onValueChange={(value) => setScrollSpeed(value[0])}
+                        />
+                    </div>
+                </div>
+                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomIn}><ZoomIn className="h-4 w-4" /></Button>
+            </div>
+             <div className="flex items-center justify-center rounded-full bg-primary/10 px-1">
+                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handlePrevSurah} disabled={surah.number === 1}>
+                    <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <Separator orientation='vertical' className='h-5'/>
+                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handleNextSurah} disabled={surah.number === 114}>
+                    <ChevronRight className="h-5 w-5" />
+                </Button>
             </div>
         </div>
-        
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button size="icon" variant="ghost" className="h-8 w-8"><Settings className="h-4 w-4" /></Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80 mb-2 p-0">
-                <QuranSettings allTranslations={allTranslations} allReciters={allReciters} />
-            </PopoverContent>
-        </Popover>
-        
-        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomOut}><ZoomOut className="h-4 w-4" /></Button>
-        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomIn}><ZoomIn className="h-4 w-4" /></Button>
-
-        <div className="flex-grow" />
-        <Button size="sm" className="px-2 h-8 sm:px-3 sm:h-9" onClick={handleNextSurah} disabled={surah.number === 114}>Next <ChevronRight className="ml-1 sm:ml-2 h-4 w-4" /></Button>
       </footer>
     </div>
   );
