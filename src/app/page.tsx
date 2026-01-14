@@ -111,10 +111,10 @@ export default function Home() {
               <Card key={item.label} className="bg-background/50 hover:shadow-lg transition-shadow md:hidden">
                 <CardContent className="pt-4 flex flex-col items-center justify-center gap-1">
                     <item.icon className="h-8 w-8 text-primary" />
-                    <p className="text-2xl font-bold text-foreground">
+                    <p className="text-2xl font-semibold text-foreground">
                         <AnimatedCounter value={item.value} />
                     </p>
-                    <p className="text-sm text-muted-foreground">{item.label}</p>
+                    <p className="text-sm font-semibold text-muted-foreground">{item.label}</p>
                 </CardContent>
               </Card>
             ))}
@@ -122,10 +122,10 @@ export default function Home() {
               <Card key={item.label} className="bg-background/50 hover:shadow-lg transition-shadow">
                 <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
                     <item.icon className="h-10 w-10 text-primary" />
-                    <p className="text-3xl font-bold text-foreground">
+                    <p className="text-3xl font-semibold text-foreground">
                         <AnimatedCounter value={item.value} />
                     </p>
-                    <p className="text-md text-muted-foreground">{item.label}</p>
+                    <p className="text-md font-semibold text-muted-foreground">{item.label}</p>
                 </CardContent>
               </Card>
             ))}
@@ -133,10 +133,10 @@ export default function Home() {
               <Card key={item.label} className="bg-background/50 hover:shadow-lg transition-shadow hidden md:block">
                 <CardContent className="pt-6 flex flex-col items-center justify-center gap-2">
                     <item.icon className="h-10 w-10 text-primary" />
-                    <p className="text-3xl font-bold text-foreground">
+                    <p className="text-3xl font-semibold text-foreground">
                         <AnimatedCounter value={item.value} />
                     </p>
-                    <p className="text-md text-muted-foreground">{item.label}</p>
+                    <p className="text-md font-semibold text-muted-foreground">{item.label}</p>
                 </CardContent>
               </Card>
             ))}
