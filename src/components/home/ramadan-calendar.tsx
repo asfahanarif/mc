@@ -25,6 +25,7 @@ import { Separator } from '../ui/separator';
 
 type RamadanDay = {
     timings: {
+        Fajr: string;
         Imsak: string;
         Maghrib: string;
     },
@@ -185,7 +186,7 @@ export function RamadanCalendar() {
         const row = [
             day.date.readable,
             day.date.gregorian.weekday.en,
-            formatTime(day.timings.Imsak),
+            formatTime(day.timings.Fajr),
             formatTime(day.timings.Maghrib),
         ];
         tableRows.push(row);
@@ -295,7 +296,7 @@ export function RamadanCalendar() {
                                     <TableCell>{day.date.readable}</TableCell>
                                     <TableCell>{day.date.gregorian.weekday.en}</TableCell>
                                     <TableCell className="text-center font-semibold">
-                                        <Badge variant="outline">{formatTime(day.timings.Imsak)}</Badge>
+                                        <Badge variant="outline">{formatTime(day.timings.Fajr)}</Badge>
                                     </TableCell>
                                     <TableCell className="text-center font-semibold">
                                         <Badge>{formatTime(day.timings.Maghrib)}</Badge>
@@ -337,4 +338,3 @@ export function RamadanCalendar() {
     </div>
   );
 }
-
