@@ -163,27 +163,40 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     }
   }, [surah, selectedTranslations, selectedReciter, fetchSurahDetails]);
 
-  const playAudio = useCallback((audioUrl: string) => {
+  const playAudio = useCallback(async (audioUrl: string) => {
     if (!audioRef.current) return;
-  
-    if (playingAudio === audioUrl) {
-      audioRef.current.pause();
-      setPlayingAudio(null);
-      return;
-    }
-  
-    setPlayingAudio(audioUrl);
-    audioRef.current.src = audioUrl;
-    audioRef.current.play().catch(error => {
-      console.error('Error playing audio:', error);
-      setPlayingAudio(null);
-    });
 
-    const ayahNumberInSurah = surahDetails?.ayahs.find(a => a.audio === audioUrl)?.numberInSurah;
-    if (ayahNumberInSurah && ayahRefs.current[ayahNumberInSurah]) {
-      ayahRefs.current[ayahNumberInSurah]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // If clicking the currently playing ayah, pause it.
+    if (playingAudio === audioUrl) {
+        audioRef.current.pause();
+        setPlayingAudio(null);
+        return;
     }
-  }, [playingAudio, surahDetails]);
+
+    // Pause any currently playing audio before starting a new one.
+    if (playingAudio) {
+        audioRef.current.pause();
+    }
+
+    // Set the new source and play it.
+    audioRef.current.src = audioUrl;
+    setPlayingAudio(audioUrl);
+
+    try {
+        await audioRef.current.play();
+        const ayahNumberInSurah = surahDetails?.ayahs.find(a => a.audio === audioUrl)?.numberInSurah;
+        if (ayahNumberInSurah && ayahRefs.current[ayahNumberInSurah]) {
+            ayahRefs.current[ayahNumberInSurah]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    } catch (error: any) {
+        // The play request can be interrupted by another play/pause action.
+        // This is a common race condition, and we can safely ignore the AbortError.
+        if (error.name !== 'AbortError') {
+            console.error('Error playing audio:', error);
+            setPlayingAudio(null); // Reset state if there's a real error
+        }
+    }
+}, [playingAudio, surahDetails]);
 
   const handleAudioEnd = useCallback(() => {
     if (!surahDetails || !playingAudio) return;
@@ -199,11 +212,13 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   }, [surahDetails, playingAudio, playAudio]);
 
   useEffect(() => {
+    // Create the audio element once and attach listeners.
     audioRef.current = new Audio();
     const audio = audioRef.current;
     
     audio.addEventListener('ended', handleAudioEnd);
     
+    // Cleanup function to remove listeners and pause audio when the component unmounts.
     return () => {
       if (audio) {
         audio.removeEventListener('ended', handleAudioEnd);
@@ -211,7 +226,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
         audioRef.current = null;
       }
     };
-  }, [handleAudioEnd]);
+  }, [handleAudioEnd]); // Re-run effect only if the handleAudioEnd callback changes.
   
 
   const handleNextSurah = () => {
@@ -393,5 +408,3 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
-
-    
