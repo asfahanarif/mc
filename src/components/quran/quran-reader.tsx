@@ -337,8 +337,14 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
         if (navigator.share) {
             try {
                 await navigator.share(shareData);
-            } catch (err) {
-                console.error('Share failed:', err);
+            } catch (err: any) {
+                // NotAllowedError can happen if the user cancels the share.
+                // We'll only log other errors.
+                if (err.name !== 'NotAllowedError') {
+                    console.error('Share failed:', err);
+                    // Fallback to copy for other errors.
+                    handleCopy(ayah);
+                }
             }
         } else {
             // Fallback for browsers that don't support navigator.share
