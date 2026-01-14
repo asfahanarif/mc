@@ -24,15 +24,8 @@ import {
 import type { TranslationEdition } from '@/lib/types';
 import { ScrollArea } from '../ui/scroll-area';
 
-const ALLOWED_TRANSLATION_IDENTIFIERS = [
-  'en.sahih',
-  'ur.junagarhi',
-];
-
 export function QuranSettings({ allTranslations, allReciters, settingType }: { allTranslations: TranslationEdition[], allReciters: TranslationEdition[], settingType: 'translations' | 'fonts' | 'audio' }) {
   const settings = useQuranSettings();
-
-  const availableTranslations = allTranslations.filter(t => ALLOWED_TRANSLATION_IDENTIFIERS.includes(t.identifier));
 
   if (settingType === 'translations') {
     return (
@@ -57,7 +50,7 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
                 <DropdownMenuLabel>Display Translations</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <ScrollArea className="h-48">
-                  {availableTranslations.map(trans => (
+                  {allTranslations.map(trans => (
                       <DropdownMenuCheckboxItem
                           key={trans.identifier}
                           checked={settings.selectedTranslations.includes(trans.identifier)}
@@ -175,5 +168,3 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
 
   return null;
 }
-
-    
