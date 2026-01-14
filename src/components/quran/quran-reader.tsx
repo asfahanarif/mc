@@ -421,7 +421,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
             </Alert>
           )}
           {surahDetails && (
-            <div className="space-y-8">
+            <div className="space-y-4">
               {surahDetails.ayahs.map(ayah => (
                 <div 
                     key={ayah.number} 
@@ -450,15 +450,15 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                         ))}
                         </div>
                     )}
-                    <div className="px-4 flex justify-end items-center gap-2 mt-2">
-                        <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={() => handleCopy(ayah)}>
-                            <Copy className="h-4 w-4 mr-2" />
-                            Copy
+                    <div className="px-4 flex justify-start items-center gap-1 mt-2">
+                        <Button size="icon" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={() => handleCopy(ayah)}>
+                            <Copy className="h-4 w-4" />
+                            <span className="sr-only">Copy</span>
                         </Button>
                         {navigator.share && (
-                        <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={() => handleShare(ayah)}>
-                                <Share2 className="h-4 w-4 mr-2" />
-                                Share
+                        <Button size="icon" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={() => handleShare(ayah)}>
+                                <Share2 className="h-4 w-4" />
+                                <span className="sr-only">Share</span>
                             </Button>
                         )}
                     </div>
