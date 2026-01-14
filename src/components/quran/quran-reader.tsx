@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Loader2, PlayCircle, BookText, Type, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Music4, ArrowLeft, PauseCircle, Play, Pause, Settings, Info, X } from "lucide-react";
+import { Loader2, PlayCircle, BookText, Type, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Music4, ArrowLeft, PauseCircle, Play, Pause, Settings, Info, X, Copy, Share2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -17,6 +17,7 @@ import { Slider } from '../ui/slider';
 import { Label } from '../ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { useToast } from '@/hooks/use-toast';
 
 type Surah = {
   number: number;
@@ -69,6 +70,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const ayahRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { toast } = useToast();
 
   const {
     selectedTranslations,
@@ -304,6 +306,45 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
     setScrollProgress(progress);
   };
+  
+    const getShareableText = (ayah: any) => {
+        let text = `"${ayah.text}"\n\n(Qur'an ${surah.number}:${ayah.numberInSurah})\n\n`;
+        if (showTranslation && selectedTranslations.length > 0) {
+            ayah.translations?.filter((t: any) => selectedTranslations.includes(t.identifier)).forEach((translation: any) => {
+                text += `Translation (${translationNameMapping[translation.identifier] || translation.identifier}):\n"${translation.text}"\n\n`;
+            });
+        }
+        text += "Shared from Muslimahs Club App";
+        return text;
+    };
+
+    const handleCopy = async (ayah: any) => {
+        const textToCopy = getShareableText(ayah);
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            toast({ title: 'Ayah Copied!', description: 'The verse and its translation have been copied.' });
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+            toast({ title: 'Failed to Copy', variant: 'destructive' });
+        }
+    };
+    
+    const handleShare = async (ayah: any) => {
+        const shareData = {
+            title: `Qur'an ${surah.number}:${ayah.numberInSurah}`,
+            text: getShareableText(ayah),
+        };
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.error('Share failed:', err);
+            }
+        } else {
+            // Fallback for browsers that don't support navigator.share
+            handleCopy(ayah);
+        }
+    };
 
 
   return (
@@ -357,7 +398,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
             )}
         </div>
       </header>
-       <Progress value={scrollProgress} className="h-2 rounded-none w-full" />
+       <Progress value={scrollProgress} className="h-1 rounded-none w-full transition-transform duration-300 ease-in-out" />
 
       {/* Main Content */}
       <ScrollArea className="flex-grow" viewportRef={scrollContainerRef} onScroll={handleScroll}>
@@ -390,6 +431,14 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                          <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50 border-primary/20 hover:bg-primary/10" onClick={() => playAudio(ayah.audio)}>
                             {playingAudio === ayah.audio ? <PauseCircle className="h-5 w-5" /> : <PlayCircle className="h-5 w-5" />}
                         </Button>
+                        <Button size="icon" variant="ghost" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => handleCopy(ayah)}>
+                            <Copy className="h-4 w-4" />
+                        </Button>
+                        {navigator.share && (
+                           <Button size="icon" variant="ghost" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => handleShare(ayah)}>
+                                <Share2 className="h-4 w-4" />
+                            </Button>
+                        )}
                     </div>
                     <p className="text-2xl md:text-3xl text-right flex-grow leading-loose" dir="rtl" style={arabicStyle}>{ayah.text}</p>
                   </div>
