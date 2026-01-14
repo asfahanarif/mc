@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
@@ -42,13 +41,22 @@ type QuranReaderProps = {
   onSurahChange: (surah: Surah) => void;
 };
 
+const allReciters: TranslationEdition[] = [
+    { identifier: 'ar.alafasy', language: 'ar', name: 'Alafasy', englishName: 'Mishary Rashid Alafasy', format: 'audio', type: 'versebyverse', direction: 'ltr' },
+    { identifier: 'ar.abdulsamad', language: 'ar', name: 'Abdul Samad', englishName: 'Abdul Basit Abdul Samad', format: 'audio', type: 'versebyverse', direction: 'ltr' },
+    { identifier: 'ar.abdurrahmaansudais', language: 'ar', name: 'Abdurrahmaan As-Sudais', englishName: 'Abdurrahman as-Sudais', format: 'audio', type: 'versebyverse', direction: 'ltr' },
+    { identifier: 'ar.mahermuaiqly', language: 'ar', name: 'Maher Al Muaiqly', englishName: 'Maher Al Muaiqly', format: 'audio', type: 'versebyverse', direction: 'ltr' },
+    { identifier: 'ar.minshawi', language: 'ar', name: 'Minshawi', englishName: 'Mohamed Siddiq al-Minshawi', format: 'audio', type: 'versebyverse', direction: 'ltr' },
+    { identifier: 'en.walk', language: 'en', name: 'Walk', englishName: 'Ibrahim Walk (English)', format: 'audio', type: 'versebyverse', direction: 'ltr' },
+];
+
+
 export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSurahChange }: QuranReaderProps) {
   const [surahDetails, setSurahDetails] = useState<SurahDetails | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [allReciters, setAllReciters] = useState<TranslationEdition[]>([]);
 
   const {
     selectedTranslations,
@@ -106,20 +114,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
         fetchSurahDetails(surah, selectedTranslations, selectedReciter);
     }
   }, [surah, selectedTranslations, selectedReciter, fetchSurahDetails]);
-
-  useEffect(() => {
-    const fetchReciters = async () => {
-        try {
-            const res = await fetch("https://api.alquran.cloud/v1/edition/type/audio");
-            if (!res.ok) throw new Error("Failed to fetch reciters.");
-            const data = await res.json();
-            setAllReciters(data.data);
-        } catch (e) {
-            console.error("Could not load reciters list:", e);
-        }
-    };
-    fetchReciters();
-  }, []);
 
   useEffect(() => {
     audioRef.current = new Audio();
