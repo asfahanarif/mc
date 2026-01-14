@@ -115,6 +115,11 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
               <SelectContent>
                   <SelectItem value="'Noto Naskh Arabic', serif">Noto Naskh Arabic</SelectItem>
                   <SelectItem value="'Amiri', serif">Amiri</SelectItem>
+                  <SelectItem value="'Lateef', serif">Lateef</SelectItem>
+                  <SelectItem value="'Tajawal', sans-serif">Tajawal</SelectItem>
+                  <SelectItem value="'Cairo', sans-serif">Cairo</SelectItem>
+                  <SelectItem value="'Almarai', sans-serif">Almarai</SelectItem>
+                  <SelectItem value="'Scheherazade New', serif">Scheherazade New</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -128,6 +133,11 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
                   <SelectItem value="'Montserrat', sans-serif">Montserrat</SelectItem>
                   <SelectItem value="'Cormorant Garamond', serif">Cormorant Garamond</SelectItem>
                   <SelectItem value="'Lora', serif">Lora</SelectItem>
+                  <SelectItem value="'Lato', sans-serif">Lato</SelectItem>
+                  <SelectItem value="'Roboto', sans-serif">Roboto</SelectItem>
+                  <SelectItem value="'Merriweather', serif">Merriweather</SelectItem>
+                  <SelectItem value="'Playfair Display', serif">Playfair Display</SelectItem>
+                  <SelectItem value="'EB Garamond', serif">EB Garamond</SelectItem>
               </SelectContent>
             </Select>
           </div>
