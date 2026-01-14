@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
@@ -272,3 +273,4 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
+
