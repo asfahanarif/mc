@@ -15,6 +15,7 @@ import { QiblaDirection } from "@/components/home/qibla-direction";
 import { dailyHadith } from "@/lib/hadiths";
 import { useState, useEffect } from "react";
 import { AnimatedCounter } from "@/components/shared/animated-counter";
+import { RamadanCalendar } from "@/components/home/ramadan-calendar";
 
 const counters = [
     { icon: Users, label: "Sisters", value: "1200+", screen: "all" },
@@ -184,6 +185,18 @@ export default function Home() {
                 </p>
             </div>
             <QiblaDirection />
+        </div>
+      </section>
+
+       <section id="ramadan-calendar" className="w-full py-16 md:py-24 bg-background">
+        <div className="container px-4 md:px-6">
+          <div className="text-center space-y-3 mb-12">
+            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">Ramadan 2026 Calendar</h2>
+            <p className="max-w-[600px] mx-auto text-foreground/80 md:text-lg">
+              Get Suhoor and Iftar timings for your city for Ramadan 2026.
+            </p>
+          </div>
+          <RamadanCalendar />
         </div>
       </section>
       
