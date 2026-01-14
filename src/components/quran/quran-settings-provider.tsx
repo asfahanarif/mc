@@ -36,49 +36,84 @@ interface QuranSettings {
   setIsAutoScrolling: (isScrolling: boolean) => void;
   scrollSpeed: number;
   setScrollSpeed: (speed: number) => void;
+  resetSettings: () => void;
 }
 
 const QuranSettingsContext = createContext<QuranSettings | undefined>(undefined);
 
 const STORAGE_KEY = 'quran-settings';
 
+const defaultSettings = {
+  arabicFontSize: 1.75, // rem
+  translationFontSize: 1, // rem
+  lineHeight: 1.8,
+  selectedTranslations: ['en.sahih', 'en.hilali', 'ur.junagarhi'],
+  showTranslation: true,
+  zoomLevel: 1,
+  arabicFont: "'Amiri', serif",
+  translationFont: "Montserrat, sans-serif",
+  urduFont: "'Noto Nastaliq Urdu', serif",
+  selectedReciter: 'ar.alafasy',
+  isArabicBold: false,
+  isTranslationBold: false,
+  isUrduBold: false,
+  scrollSpeed: 50,
+};
+
 export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => {
-  const [arabicFontSize, setArabicFontSize] = useState(1.75); // rem
-  const [translationFontSize, setTranslationFontSize] = useState(1); // rem
-  const [lineHeight, setLineHeight] = useState(1.8);
-  const [selectedTranslations, setSelectedTranslations] = useState<string[]>(['en.sahih', 'en.hilali', 'ur.junagarhi']);
-  const [showTranslation, setShowTranslation] = useState(true);
-  const [zoomLevel, setZoomLevel] = useState(1);
-  const [arabicFont, setArabicFont] = useState("'Amiri', serif");
-  const [translationFont, setTranslationFont] = useState("Montserrat, sans-serif");
-  const [urduFont, setUrduFont] = useState("'Noto Nastaliq Urdu', serif");
-  const [selectedReciter, setSelectedReciter] = useState('ar.alafasy');
-  const [isArabicBold, setIsArabicBold] = useState(false);
-  const [isTranslationBold, setIsTranslationBold] = useState(false);
-  const [isUrduBold, setIsUrduBold] = useState(false);
+  const [arabicFontSize, setArabicFontSize] = useState(defaultSettings.arabicFontSize);
+  const [translationFontSize, setTranslationFontSize] = useState(defaultSettings.translationFontSize);
+  const [lineHeight, setLineHeight] = useState(defaultSettings.lineHeight);
+  const [selectedTranslations, setSelectedTranslations] = useState<string[]>(defaultSettings.selectedTranslations);
+  const [showTranslation, setShowTranslation] = useState(defaultSettings.showTranslation);
+  const [zoomLevel, setZoomLevel] = useState(defaultSettings.zoomLevel);
+  const [arabicFont, setArabicFont] = useState(defaultSettings.arabicFont);
+  const [translationFont, setTranslationFont] = useState(defaultSettings.translationFont);
+  const [urduFont, setUrduFont] = useState(defaultSettings.urduFont);
+  const [selectedReciter, setSelectedReciter] = useState(defaultSettings.selectedReciter);
+  const [isArabicBold, setIsArabicBold] = useState(defaultSettings.isArabicBold);
+  const [isTranslationBold, setIsTranslationBold] = useState(defaultSettings.isTranslationBold);
+  const [isUrduBold, setIsUrduBold] = useState(defaultSettings.isUrduBold);
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
-  const [scrollSpeed, setScrollSpeed] = useState(50); // From 1 to 100
+  const [scrollSpeed, setScrollSpeed] = useState(defaultSettings.scrollSpeed);
   
+  const resetSettings = () => {
+    setArabicFontSize(defaultSettings.arabicFontSize);
+    setTranslationFontSize(defaultSettings.translationFontSize);
+    setLineHeight(defaultSettings.lineHeight);
+    setSelectedTranslations(defaultSettings.selectedTranslations);
+    setShowTranslation(defaultSettings.showTranslation);
+    setZoomLevel(defaultSettings.zoomLevel);
+    setArabicFont(defaultSettings.arabicFont);
+    setTranslationFont(defaultSettings.translationFont);
+    setUrduFont(defaultSettings.urduFont);
+    setSelectedReciter(defaultSettings.selectedReciter);
+    setIsArabicBold(defaultSettings.isArabicBold);
+    setIsTranslationBold(defaultSettings.isTranslationBold);
+    setIsUrduBold(defaultSettings.isUrduBold);
+    setScrollSpeed(defaultSettings.scrollSpeed);
+  };
+
   // Load settings from localStorage on initial client-side render
   useEffect(() => {
     try {
       const savedSettings = localStorage.getItem(STORAGE_KEY);
       if (savedSettings) {
         const parsed = JSON.parse(savedSettings);
-        setArabicFontSize(parsed.arabicFontSize || 1.75);
-        setTranslationFontSize(parsed.translationFontSize || 1);
-        setLineHeight(parsed.lineHeight || 1.8);
-        setSelectedTranslations(parsed.selectedTranslations || ['en.sahih', 'en.hilali', 'ur.junagarhi']);
+        setArabicFontSize(parsed.arabicFontSize || defaultSettings.arabicFontSize);
+        setTranslationFontSize(parsed.translationFontSize || defaultSettings.translationFontSize);
+        setLineHeight(parsed.lineHeight || defaultSettings.lineHeight);
+        setSelectedTranslations(parsed.selectedTranslations || defaultSettings.selectedTranslations);
         setShowTranslation(parsed.showTranslation === false ? false : true);
-        setZoomLevel(parsed.zoomLevel || 1);
-        setArabicFont(parsed.arabicFont || "'Amiri', serif");
-        setTranslationFont(parsed.translationFont || "Montserrat, sans-serif");
-        setUrduFont(parsed.urduFont || "'Noto Nastaliq Urdu', serif");
-        setSelectedReciter(parsed.selectedReciter || 'ar.alafasy');
-        setIsArabicBold(parsed.isArabicBold || false);
-        setIsTranslationBold(parsed.isTranslationBold || false);
-        setIsUrduBold(parsed.isUrduBold || false);
-        setScrollSpeed(parsed.scrollSpeed || 50);
+        setZoomLevel(parsed.zoomLevel || defaultSettings.zoomLevel);
+        setArabicFont(parsed.arabicFont || defaultSettings.arabicFont);
+        setTranslationFont(parsed.translationFont || defaultSettings.translationFont);
+        setUrduFont(parsed.urduFont || defaultSettings.urduFont);
+        setSelectedReciter(parsed.selectedReciter || defaultSettings.selectedReciter);
+        setIsArabicBold(parsed.isArabicBold || defaultSettings.isArabicBold);
+        setIsTranslationBold(parsed.isTranslationBold || defaultSettings.isTranslationBold);
+        setIsUrduBold(parsed.isUrduBold || defaultSettings.isUrduBold);
+        setScrollSpeed(parsed.scrollSpeed || defaultSettings.scrollSpeed);
       }
     } catch (error) {
         console.error("Failed to load Quran settings from localStorage", error);
@@ -149,6 +184,7 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
     setIsAutoScrolling,
     scrollSpeed,
     setScrollSpeed,
+    resetSettings,
   };
 
   return (

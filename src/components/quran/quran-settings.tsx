@@ -25,6 +25,7 @@ import type { TranslationEdition } from '@/lib/types';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RotateCcw } from 'lucide-react';
 
 const allowedTranslations = [
   { id: 'en.sahih', name: 'Sahih International (English)' },
@@ -37,6 +38,7 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
   const settings = useQuranSettings();
 
   return (
+    <>
     <Tabs defaultValue="audio" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="audio">Audio</TabsTrigger>
@@ -213,5 +215,13 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
             </div>
         </TabsContent>
     </Tabs>
+    <Separator />
+    <div className="p-4">
+        <Button variant="outline" className="w-full" onClick={settings.resetSettings}>
+            <RotateCcw className="mr-2 h-4 w-4" />
+            Reset to Default
+        </Button>
+    </div>
+    </>
   );
 }
