@@ -320,8 +320,15 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
           {surahDetails && (
             <div className="space-y-8">
               {surahDetails.ayahs.map(ayah => (
-                <div key={ayah.number} ref={(el) => (ayahRefs.current[ayah.numberInSurah] = el)} className="flex flex-col gap-4 py-4 border-b">
-                  <div className="flex items-start gap-4">
+                <div 
+                    key={ayah.number} 
+                    ref={(el) => (ayahRefs.current[ayah.numberInSurah] = el)} 
+                    className={cn(
+                        "flex flex-col gap-4 py-4 border-b transition-colors rounded-lg",
+                        playingAudio === ayah.audio && "bg-primary/5"
+                    )}
+                >
+                  <div className="flex items-start gap-4 px-4">
                     <div className="flex flex-col items-center gap-2">
                         <div className="w-9 h-9 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
                          <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50 border-primary/20 hover:bg-primary/10" onClick={() => togglePlay(ayah.audio)}>
@@ -331,7 +338,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                     <p className="text-2xl md:text-3xl text-right flex-grow leading-loose" dir="rtl" style={arabicStyle}>{ayah.text}</p>
                   </div>
                   {showTranslation && selectedTranslations.length > 0 && (
-                    <div className="pl-12 space-y-4">
+                    <div className="pl-16 pr-4 space-y-4">
                       {ayah.translations?.filter(t => selectedTranslations.includes(t.identifier)).map((translation, index) => (
                         <div key={index}>
                           <p className="text-foreground/80" style={getTranslationStyle(translation.identifier)}>{translation.text}</p>
@@ -391,5 +398,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       </footer>
     </div>
   );
+
+    
 
     
