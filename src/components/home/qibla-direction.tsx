@@ -193,10 +193,6 @@ export function QiblaDirection() {
                 "bg-transparent border-0 shadow-none",
               )}>
                 <div className="rounded-full w-full h-full flex items-center justify-center relative">
-                    <DialogClose className="absolute top-[-2rem] left-1/2 -translate-x-1/2 rounded-full opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-10 bg-background/50 h-8 w-8">
-                        <X className="h-4 w-4" />
-                        <span className="sr-only">Close</span>
-                    </DialogClose>
                     <DialogHeader className='sr-only'>
                         <DialogTitle>Qibla Compass</DialogTitle>
                         <DialogDescription>
