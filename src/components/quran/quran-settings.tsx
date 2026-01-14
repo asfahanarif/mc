@@ -152,7 +152,7 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
                   <SelectItem value="'Noto Nastaliq Urdu', serif">Noto Nastaliq Urdu</SelectItem>
                   <SelectItem value="'Amiri', serif">Amiri</SelectItem>
                   <SelectItem value="'Scheherazade New', serif">Scheherazade New</SelectItem>
-                  <SelectItem value="'Tajawal', sans-serif">Tajawal</SelectItem>
+                  <SelectItem value="'Lateef', serif">Lateef</SelectItem>
                   <SelectItem value="'Almarai', sans-serif">Almarai</SelectItem>
               </SelectContent>
             </Select>
