@@ -66,7 +66,7 @@ const defaultSettings = {
   isUrduBold: false,
   scrollSpeed: 50,
   isAutoplayEnabled: true,
-  arabicScript: 'quran-uthmani',
+  arabicScript: 'quran-indopak',
 };
 
 export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => {
