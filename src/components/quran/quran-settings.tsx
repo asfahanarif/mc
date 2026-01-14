@@ -26,6 +26,7 @@ import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RotateCcw } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const allowedTranslations = [
   { id: 'en.sahih', name: 'Sahih International (English)' },
@@ -116,12 +117,12 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
             </div>
         </TabsContent>
         <TabsContent value="fonts" className="p-0">
-          <ScrollArea className="h-72 p-4">
-             <div className="grid gap-6">
+          <ScrollArea className="h-72">
+             <div className="grid gap-6 p-4">
                 <div className="grid gap-2">
                     <Label htmlFor="arabic-script">Arabic Script</Label>
                     <Select value={settings.arabicScript} onValueChange={settings.setArabicScript}>
-                    <SelectTrigger id="arabic-script">
+                    <SelectTrigger id="arabic-script" className="py-6">
                         <SelectValue placeholder="Select Arabic Script" />
                     </SelectTrigger>
                     <SelectContent>
@@ -136,7 +137,7 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                     <div className="grid gap-2">
                         <Label htmlFor="arabic-font">Arabic Font (Uthmani)</Label>
                         <Select value={settings.arabicFont} onValueChange={settings.setArabicFont}>
-                        <SelectTrigger id="arabic-font">
+                        <SelectTrigger id="arabic-font" className="py-6">
                             <SelectValue placeholder="Select Arabic Font" />
                         </SelectTrigger>
                         <SelectContent>
@@ -156,7 +157,7 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                     <div className="grid gap-2">
                         <Label htmlFor="indopak-font">Arabic Font (Indo-Pak)</Label>
                         <Select value={settings.indoPakFont} onValueChange={settings.setIndoPakFont}>
-                        <SelectTrigger id="indopak-font">
+                        <SelectTrigger id="indopak-font" className="py-6">
                             <SelectValue placeholder="Select Indo-Pak Font" />
                         </SelectTrigger>
                         <SelectContent>
@@ -170,7 +171,7 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                 <div className="grid gap-2">
                     <Label htmlFor="translation-font">English Font</Label>
                     <Select value={settings.translationFont} onValueChange={settings.setTranslationFont} disabled={!settings.showTranslation}>
-                    <SelectTrigger id="translation-font">
+                    <SelectTrigger id="translation-font" className="py-6">
                         <SelectValue placeholder="Select English Font" />
                     </SelectTrigger>
                     <SelectContent>
@@ -188,7 +189,7 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                 <div className="grid gap-2">
                     <Label htmlFor="urdu-font">Urdu Font</Label>
                     <Select value={settings.urduFont} onValueChange={settings.setUrduFont} disabled={!settings.showTranslation}>
-                    <SelectTrigger id="urdu-font">
+                    <SelectTrigger id="urdu-font" className="py-6">
                         <SelectValue placeholder="Select Urdu Font" />
                     </SelectTrigger>
                     <SelectContent>
