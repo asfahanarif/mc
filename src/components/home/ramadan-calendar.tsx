@@ -315,7 +315,7 @@ export function RamadanCalendar() {
                 <CardContent className="space-y-6 text-center">
                     <p className="font-arabic text-3xl/relaxed" dir="rtl">ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ</p>
                     <Separator />
-                    <div className="space-y-4">
+                    <div className="space-y-4 text-center">
                         <div className="flex items-start justify-center gap-3">
                             <Footprints className="h-5 w-5 text-primary/70 flex-shrink-0 mt-0.5" />
                             <div>
@@ -330,12 +330,12 @@ export function RamadanCalendar() {
                             <p className="text-sm text-muted-foreground">The thirst is gone, the veins are moistened, and the reward is confirmed, if Allah wills.</p>
                             </div>
                         </div>
-                        <div className="flex items-start justify-center gap-3">
-                        <BookMarked className="h-5 w-5 text-primary/70 flex-shrink-0 mt-0.5" />
+                    </div>
+                     <div className="flex items-center justify-center gap-3 pt-4 border-t">
+                        <BookMarked className="h-5 w-5 text-primary/70 flex-shrink-0" />
                         <div>
                             <h4 className="font-semibold">Reference</h4>
                             <p className="text-xs text-muted-foreground">Sunan Abi Dawud 2357</p>
-                        </div>
                         </div>
                     </div>
                 </CardContent>
