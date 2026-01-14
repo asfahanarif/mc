@@ -65,6 +65,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   const [error, setError] = useState<string | null>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const ayahRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -193,13 +194,34 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     }
   }, [playingAudio, surahDetails]);
 
-  const togglePlay = (audioUrl: string) => {
-    if (playingAudio === audioUrl) {
-      setPlayingAudio(null); // Pause
-    } else {
-      setPlayingAudio(audioUrl); // Play
+  const playAudio = async (audioUrl: string) => {
+    if (!audioRef.current) return;
+    
+    if (playingAudio === audioUrl) { // If it's the same URL, pause it
+      audioRef.current.pause();
+      setPlayingAudio(null);
+    } else { // If it's a new URL
+      setPlayingAudio(audioUrl); // Set the new source
+      // The useEffect below will handle playing
     }
   };
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    if (playingAudio) {
+      if (audioRef.current.src !== playingAudio) {
+        audioRef.current.src = playingAudio;
+      }
+      audioRef.current.play().catch(error => {
+        if (error.name !== 'AbortError') {
+          console.error("Audio play failed:", error);
+        }
+      });
+    } else {
+      audioRef.current.pause();
+    }
+  }, [playingAudio]);
 
   const handleNextSurah = () => {
     const currentIndex = allSurahs.findIndex(s => s.number === surah.number);
@@ -252,10 +274,8 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
   return (
     <div className="bg-background flex flex-col h-screen overflow-hidden">
-      {/* Audio Element */}
-      {playingAudio && (
-        <audio src={playingAudio} autoPlay onEnded={handleAudioEnd} />
-      )}
+      {/* Central Audio Element */}
+      <audio ref={audioRef} onEnded={handleAudioEnd} />
 
       {/* Header */}
       <header className="p-4 border-b flex-shrink-0 flex items-center justify-between gap-4 md:sticky top-0 bg-secondary/30 backdrop-blur-sm z-10">
@@ -310,7 +330,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
       {/* Main Content */}
       <ScrollArea className="flex-grow" viewportRef={scrollContainerRef} onScroll={handleScroll}>
-        <div className="container max-w-4xl pt-8 pb-32">
+        <div className="container max-w-4xl pt-8 pb-40">
           {loadingDetails && (
             <div className="space-y-6">
               {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-24 w-full" />)}
@@ -336,7 +356,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                   <div className="flex items-start gap-4 px-4">
                     <div className="flex flex-col items-center gap-2">
                         <div className="w-9 h-9 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
-                         <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50 border-primary/20 hover:bg-primary/10" onClick={() => togglePlay(ayah.audio)}>
+                         <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50 border-primary/20 hover:bg-primary/10" onClick={() => playAudio(ayah.audio)}>
                             {playingAudio === ayah.audio ? <PauseCircle className="h-5 w-5" /> : <PlayCircle className="h-5 w-5" />}
                         </Button>
                     </div>
@@ -382,7 +402,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                 <PopoverTrigger asChild>
                     <Button size="icon" variant="ghost" className="h-8 w-8"><Settings className="h-4 w-4" /></Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-80 mb-2 p-0">
+                <PopoverContent align="center" side="top" className="w-80 mb-2 p-0">
                     <QuranSettings allTranslations={allTranslations} allReciters={allReciters} />
                 </PopoverContent>
             </Popover>
@@ -404,10 +424,3 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
-
-
-    
-
-    
-
-    
