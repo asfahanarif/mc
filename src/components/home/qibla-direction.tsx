@@ -193,6 +193,12 @@ export function QiblaDirection() {
                 "bg-transparent border-0 shadow-none",
               )}>
                 <div className="bg-background/90 backdrop-blur-lg rounded-lg p-6 relative">
+                    <DialogHeader>
+                        <DialogTitle className="text-center font-headline text-2xl text-primary">Qibla Compass</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            A compass to help you find the direction of the Qibla for prayer.
+                        </DialogDescription>
+                    </DialogHeader>
                     <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
                         <X className="h-4 w-4" />
                         <span className="sr-only">Close</span>
