@@ -321,18 +321,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       {/* Footer */}
       <footer className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">
         <div className="p-2 bg-background/80 backdrop-blur-sm border rounded-full shadow-lg flex items-center gap-2">
-            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomOut}><ZoomOut className="h-4 w-4" /></Button>
-            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomIn}><ZoomIn className="h-4 w-4" /></Button>
-            
-            <Popover>
-                <PopoverTrigger asChild>
-                    <Button size="icon" variant="ghost" className="h-8 w-8"><Settings className="h-4 w-4" /></Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 mb-2 p-0">
-                    <QuranSettings allTranslations={allTranslations} allReciters={allReciters} />
-                </PopoverContent>
-            </Popover>
-
             <div className="flex items-center gap-2">
                 <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setIsAutoScrolling(!isAutoScrolling)}>
                     {isAutoScrolling ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
@@ -348,6 +336,18 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                     />
                 </div>
             </div>
+
+            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomOut}><ZoomOut className="h-4 w-4" /></Button>
+            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomIn}><ZoomIn className="h-4 w-4" /></Button>
+            
+            <Popover>
+                <PopoverTrigger asChild>
+                    <Button size="icon" variant="ghost" className="h-8 w-8"><Settings className="h-4 w-4" /></Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 mb-2 p-0">
+                    <QuranSettings allTranslations={allTranslations} allReciters={allReciters} />
+                </PopoverContent>
+            </Popover>
 
             <div className="flex items-center justify-center rounded-full bg-primary/10 px-1">
                 <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handlePrevSurah} disabled={surah.number === 1}>
