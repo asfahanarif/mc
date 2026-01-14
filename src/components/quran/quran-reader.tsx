@@ -322,7 +322,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
         const textToCopy = getShareableText(ayah);
         try {
             await navigator.clipboard.writeText(textToCopy);
-            toast({ title: 'Ayah Copied!', description: 'The verse and its translation have been copied.' });
+            toast({ title: 'Ayah Copied!', description: 'The verse and its translation have been copied.', duration: 4000 });
         } catch (err) {
             console.error('Failed to copy: ', err);
             toast({ title: 'Failed to Copy', variant: 'destructive' });
