@@ -163,71 +163,62 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     }
   }, [surah, selectedTranslations, selectedReciter, fetchSurahDetails]);
 
-  const playAudio = useCallback(async (audioUrl: string) => {
-    if (!audioRef.current) return;
+  const handleAudioEnd = useCallback(() => {
+    if (!surahDetails || !playingAudio) return;
 
-    // If clicking the currently playing ayah, pause it.
-    if (playingAudio === audioUrl) {
-        audioRef.current.pause();
-        setPlayingAudio(null);
-        return;
+    const currentAyahIndex = surahDetails.ayahs.findIndex(a => a.audio === playingAudio);
+
+    if (currentAyahIndex > -1 && currentAyahIndex < surahDetails.ayahs.length - 1) {
+        const nextAyah = surahDetails.ayahs[currentAyahIndex + 1];
+        setPlayingAudio(nextAyah.audio); // This will trigger the useEffect below
+    } else {
+        setPlayingAudio(null); // End of surah
     }
+  }, [surahDetails, playingAudio]);
 
-    // Pause any currently playing audio before starting a new one.
-    if (playingAudio) {
-        audioRef.current.pause();
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+        audioRef.current = new Audio();
+        audioRef.current.addEventListener('ended', handleAudioEnd);
+
+        return () => {
+            const audio = audioRef.current;
+            if (audio) {
+                audio.removeEventListener('ended', handleAudioEnd);
+                audio.pause();
+            }
+        };
     }
+  }, [handleAudioEnd]);
 
-    // Set the new source and play it.
-    audioRef.current.src = audioUrl;
-    setPlayingAudio(audioUrl);
-
-    try {
-        await audioRef.current.play();
-        const ayahNumberInSurah = surahDetails?.ayahs.find(a => a.audio === audioUrl)?.numberInSurah;
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (playingAudio && audio) {
+        if (audio.src !== playingAudio) {
+            audio.src = playingAudio;
+        }
+        audio.play().catch(error => {
+            if (error.name !== 'AbortError') {
+                console.error("Error playing audio:", error);
+                setPlayingAudio(null);
+            }
+        });
+        const ayahNumberInSurah = surahDetails?.ayahs.find(a => a.audio === playingAudio)?.numberInSurah;
         if (ayahNumberInSurah && ayahRefs.current[ayahNumberInSurah]) {
             ayahRefs.current[ayahNumberInSurah]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-    } catch (error: any) {
-        // The play request can be interrupted by another play/pause action.
-        // This is a common race condition, and we can safely ignore the AbortError.
-        if (error.name !== 'AbortError') {
-            console.error('Error playing audio:', error);
-            setPlayingAudio(null); // Reset state if there's a real error
-        }
-    }
-}, [playingAudio, surahDetails]);
-
-  const handleAudioEnd = useCallback(() => {
-    if (!surahDetails || !playingAudio) return;
-  
-    const currentAyahIndex = surahDetails.ayahs.findIndex(a => a.audio === playingAudio);
-  
-    if (currentAyahIndex > -1 && currentAyahIndex < surahDetails.ayahs.length - 1) {
-      const nextAyah = surahDetails.ayahs[currentAyahIndex + 1];
-      playAudio(nextAyah.audio);
-    } else {
-      setPlayingAudio(null); // End of surah
-    }
-  }, [surahDetails, playingAudio, playAudio]);
-
-  useEffect(() => {
-    // Create the audio element once and attach listeners.
-    audioRef.current = new Audio();
-    const audio = audioRef.current;
-    
-    audio.addEventListener('ended', handleAudioEnd);
-    
-    // Cleanup function to remove listeners and pause audio when the component unmounts.
-    return () => {
-      if (audio) {
-        audio.removeEventListener('ended', handleAudioEnd);
+    } else if (audio) {
         audio.pause();
-        audioRef.current = null;
-      }
-    };
-  }, [handleAudioEnd]); // Re-run effect only if the handleAudioEnd callback changes.
-  
+    }
+  }, [playingAudio, surahDetails]);
+
+  const togglePlay = (audioUrl: string) => {
+    if (playingAudio === audioUrl) {
+      setPlayingAudio(null); // Pause
+    } else {
+      setPlayingAudio(audioUrl); // Play
+    }
+  };
 
   const handleNextSurah = () => {
     const currentIndex = allSurahs.findIndex(s => s.number === surah.number);
@@ -340,7 +331,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                   <div className="flex items-start gap-4">
                     <div className="flex flex-col items-center gap-2">
                         <div className="w-9 h-9 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
-                         <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50 border-primary/20 hover:bg-primary/10" onClick={() => playAudio(ayah.audio)}>
+                         <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50 border-primary/20 hover:bg-primary/10" onClick={() => togglePlay(ayah.audio)}>
                             {playingAudio === ayah.audio ? <PauseCircle className="h-5 w-5" /> : <PlayCircle className="h-5 w-5" />}
                         </Button>
                     </div>
