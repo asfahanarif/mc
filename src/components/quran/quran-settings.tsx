@@ -157,7 +157,7 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                     <SelectContent>
                         <SelectItem value="'Al Qalam', sans-serif">Al Qalam</SelectItem>
                         <SelectItem value="'Almarai', sans-serif">Almarai</SelectItem>
-                        <SelectItem value="'Nastaleeq', sans-serif">Nastaleeq (Custom)</SelectItem>
+                        <SelectItem value="'Nastaleeq', sans-serif">Nastaleeq</SelectItem>
                     </SelectContent>
                     </Select>
                 </div>
