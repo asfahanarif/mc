@@ -144,17 +144,39 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       const arabicEdition = multiEditionData.data.find((d: any) => d.edition.identifier === script);
       const translationEditions = multiEditionData.data.filter((d: any) => d.edition.type === 'translation');
 
-      if (!audioEdition || !arabicEdition) throw new Error("Could not find required audio or text editions.");
+      if (!audioEdition || !arabicEdition) {
+          const fallbackResponse = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.number}/editions/quran-uthmani,${reciter},${translations.join(',')}`);
+          if (!fallbackResponse.ok) throw new Error("Could not find required audio or text editions, and fallback failed.");
+          const fallbackData = await fallbackResponse.json();
+          
+          const fallbackAudioEdition = fallbackData.data.find((d: any) => d.edition.identifier === reciter);
+          const originalScriptEdition = arabicEdition; // This might be null, that's fine for the logic below
+          
+          if(!fallbackAudioEdition) throw new Error("Fallback failed to find required audio edition.");
 
-      const combinedAyahs = audioEdition.ayahs.map((ayah: Ayah, index: number) => {
-        const ayahTranslations = translationEditions.map((transData: any) => ({
-          identifier: transData.edition.identifier,
-          text: transData.ayahs[index].text,
-        }));
-        return { ...ayah, text: arabicEdition.ayahs[index].text, translations: ayahTranslations };
-      });
-      
-      setSurahDetails({ ayahs: combinedAyahs });
+          // Keep original script if it loaded, otherwise use fallback Uthmani for text
+          const textEditionToUse = originalScriptEdition || fallbackData.data.find((d: any) => d.edition.identifier === 'quran-uthmani');
+          if(!textEditionToUse) throw new Error("Fallback failed to find any Arabic text edition.");
+
+          const combinedAyahs = fallbackAudioEdition.ayahs.map((ayah: Ayah, index: number) => {
+              const ayahTranslations = fallbackData.data.filter((d: any) => d.edition.type === 'translation').map((transData: any) => ({
+                  identifier: transData.edition.identifier,
+                  text: transData.ayahs[index].text,
+              }));
+              return { ...ayah, text: textEditionToUse.ayahs[index].text, translations: ayahTranslations };
+          });
+          setSurahDetails({ ayahs: combinedAyahs });
+
+      } else {
+          const combinedAyahs = audioEdition.ayahs.map((ayah: Ayah, index: number) => {
+            const ayahTranslations = translationEditions.map((transData: any) => ({
+              identifier: transData.edition.identifier,
+              text: transData.ayahs[index].text,
+            }));
+            return { ...ayah, text: arabicEdition.ayahs[index].text, translations: ayahTranslations };
+          });
+          setSurahDetails({ ayahs: combinedAyahs });
+      }
     } catch (e: any) {
       console.error(e);
       setError("Could not load Surah. Please try again.");
