@@ -1,11 +1,10 @@
-
 'use client';
 
 import { useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Loader2, PlayCircle, BookText, Type, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Music4, ArrowLeft } from "lucide-react";
+import { Loader2, PlayCircle, BookText, Type, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Music4, ArrowLeft, PauseCircle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -217,8 +216,8 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                   <div className="flex items-start gap-4">
                     <div className="flex flex-col items-center gap-2">
                         <div className="w-9 h-9 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
-                         <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => playAudio(ayah.audio)}>
-                            {playingAudio === ayah.audio ? <Loader2 className="h-5 w-5 animate-spin" /> : <PlayCircle className="h-5 w-5" />}
+                         <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50" onClick={() => playAudio(ayah.audio)}>
+                            {playingAudio === ayah.audio ? <PauseCircle className="h-5 w-5" /> : <PlayCircle className="h-5 w-5" />}
                         </Button>
                     </div>
                     <p className="text-2xl md:text-3xl text-right flex-grow leading-loose" dir="rtl" style={arabicStyle}>{ayah.text}</p>
@@ -274,5 +273,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
+
 
 
