@@ -149,6 +149,22 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                     </Select>
                 </div>
                 <div className="grid gap-2">
+                    <Label htmlFor="indopak-font">Arabic Font (Indo-Pak)</Label>
+                    <Select value={settings.indoPakFont} onValueChange={settings.setIndoPakFont} disabled={settings.arabicScript !== 'quran-indopak'}>
+                    <SelectTrigger id="indopak-font">
+                        <SelectValue placeholder="Select Indo-Pak Font" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="'Qalam', cursive">Qalam (Madinah)</SelectItem>
+                        <SelectItem value="'Noto Nastaliq Urdu', serif">Noto Nastaliq Urdu</SelectItem>
+                        <SelectItem value="'Amiri', serif">Amiri</SelectItem>
+                        <SelectItem value="'Scheherazade New', serif">Scheherazade New</SelectItem>
+                        <SelectItem value="'Lateef', serif">Lateef</SelectItem>
+                        <SelectItem value="'Almarai', sans-serif">Almarai</SelectItem>
+                    </SelectContent>
+                    </Select>
+                </div>
+                <div className="grid gap-2">
                     <Label htmlFor="translation-font">English Font</Label>
                     <Select value={settings.translationFont} onValueChange={settings.setTranslationFont} disabled={!settings.showTranslation}>
                     <SelectTrigger id="translation-font">

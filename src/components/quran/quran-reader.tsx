@@ -65,10 +65,10 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   const [error, setError] = useState<string | null>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const ayahRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const {
     selectedTranslations,
@@ -81,6 +81,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     zoomOut,
     arabicFont,
     setArabicFont,
+    indoPakFont,
     translationFont,
     setTranslationFont,
     urduFont,
@@ -155,8 +156,8 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
         const uthmaniEdition = multiEditionData.data.find((d: any) => d.edition.identifier === 'quran-uthmani');
         const translationEditions = multiEditionData.data.filter((d: any) => d.edition.type === 'translation');
 
-        if (!audioEdition) {
-            throw new Error("Could not find the required audio edition.");
+        if (!audioEdition || !uthmaniEdition) {
+             throw new Error("Could not find required audio or text editions.");
         }
         
         // If we didn't fetch IndoPak separately, use the one from this API call.
@@ -221,34 +222,40 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     }
   }, [playingAudio, surahDetails]);
 
-  const playAudio = async (audioUrl: string) => {
-    if (!audioRef.current) return;
-    
-    if (playingAudio === audioUrl) { // If it's the same URL, pause it
-      audioRef.current.pause();
-      setPlayingAudio(null);
-    } else { // If it's a new URL
-      setPlayingAudio(audioUrl); // Set the new source
-      // The useEffect below will handle playing
-    }
-  };
+  useEffect(() => {
+    // Create and manage a single audio element
+    const audio = new Audio();
+    audioRef.current = audio;
+    audio.addEventListener('ended', handleAudioEnd);
+
+    return () => {
+      audio.removeEventListener('ended', handleAudioEnd);
+      audio.pause();
+      audioRef.current = null;
+    };
+  }, [handleAudioEnd]);
 
   useEffect(() => {
-    if (!audioRef.current) return;
-
-    if (playingAudio) {
-      if (audioRef.current.src !== playingAudio) {
-        audioRef.current.src = playingAudio;
-      }
-      audioRef.current.play().catch(error => {
-        if (error.name !== 'AbortError') {
-          console.error("Audio play failed:", error);
+    const audio = audioRef.current;
+    if (audio) {
+      if (playingAudio) {
+        if (audio.src !== playingAudio) {
+          audio.src = playingAudio;
         }
-      });
-    } else {
-      audioRef.current.pause();
+        audio.play().catch(e => console.error("Audio play error:", e));
+      } else {
+        audio.pause();
+      }
     }
   }, [playingAudio]);
+
+  const playAudio = (audioUrl: string) => {
+    if (playingAudio === audioUrl) {
+      setPlayingAudio(null);
+    } else {
+      setPlayingAudio(audioUrl);
+    }
+  };
 
   const handleNextSurah = () => {
     const currentIndex = allSurahs.findIndex(s => s.number === surah.number);
@@ -267,7 +274,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   const arabicStyle: CSSProperties = {
     fontSize: `${arabicFontSize * zoomLevel}rem`,
     lineHeight,
-    fontFamily: arabicScript === 'quran-indopak' ? "'Noto Nastaliq Urdu', serif" : arabicFont,
+    fontFamily: arabicScript === 'quran-indopak' ? indoPakFont : arabicFont,
     fontWeight: isArabicBold ? 700 : 400,
   };
 
@@ -301,9 +308,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
   return (
     <div className="bg-background flex flex-col h-screen overflow-hidden">
-      {/* Central Audio Element */}
-      <audio ref={audioRef} onEnded={handleAudioEnd} />
-
       {/* Header */}
       <header className="p-4 border-b flex-shrink-0 flex items-center justify-between gap-4 md:sticky top-0 bg-secondary/30 backdrop-blur-sm z-10">
         <div className="flex-1">
@@ -451,5 +455,3 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
-
-    
