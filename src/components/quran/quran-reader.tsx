@@ -18,6 +18,7 @@ import { Label } from '../ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from '@/hooks/use-toast';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 type Surah = {
   number: number;
@@ -81,6 +82,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     zoomLevel,
     zoomIn,
     zoomOut,
+    setZoomLevel,
     arabicFont,
     setArabicFont,
     indoPakFont,
@@ -106,6 +108,43 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   } = useQuranSettings();
 
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const initialPinchDistance = useRef<number | null>(null);
+    const initialZoom = useRef<number>(1);
+    const [isPinching, setIsPinching] = useState(false);
+    
+    const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            setIsPinching(true);
+            initialPinchDistance.current = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+            initialZoom.current = zoomLevel;
+        }
+    };
+
+    const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+        if (isPinching && e.touches.length === 2 && initialPinchDistance.current) {
+            e.preventDefault();
+            const currentPinchDistance = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+            const zoomFactor = currentPinchDistance / initialPinchDistance.current;
+            const newZoom = initialZoom.current * zoomFactor;
+            // Clamp the zoom level within min/max bounds
+            const clampedZoom = Math.max(0.5, Math.min(newZoom, 2));
+            setZoomLevel(clampedZoom);
+        }
+    };
+    
+    const handleTouchEnd = () => {
+        setIsPinching(false);
+        initialPinchDistance.current = null;
+    };
+
 
   const startAutoScroll = useCallback(() => {
     if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
@@ -357,9 +396,18 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     <div className="bg-background flex flex-col h-screen overflow-hidden">
       {/* Header */}
       <header className="p-4 border-b flex-shrink-0 flex items-center justify-between gap-4 md:sticky top-0 bg-secondary/30 backdrop-blur-sm z-10">
+        <TooltipProvider>
         <div className="flex-1">
-          <Button variant="outline" size="icon" className="rounded-full" onClick={onClose}><ArrowLeft className="h-5 w-5" /></Button>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button variant="outline" size="icon" className="rounded-full" onClick={onClose}><ArrowLeft className="h-5 w-5" /></Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Back to Surah List</p>
+                </TooltipContent>
+            </Tooltip>
         </div>
+        </TooltipProvider>
         <div className="flex-1 flex items-center gap-2 justify-center text-center">
             <Dialog>
                 <DialogTrigger asChild>
@@ -407,7 +455,14 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
        <Progress value={scrollProgress} className="h-1 rounded-none w-full transition-transform duration-300 ease-in-out" />
 
       {/* Main Content */}
-      <ScrollArea className="flex-grow" viewportRef={scrollContainerRef} onScroll={handleScroll}>
+      <ScrollArea 
+        className="flex-grow" 
+        viewportRef={scrollContainerRef} 
+        onScroll={handleScroll}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <div className="container max-w-4xl pt-8 pb-64">
           {loadingDetails && (
             <div className="space-y-6">
@@ -434,7 +489,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                     <div className="flex items-start gap-4 px-4">
                         <div className="flex flex-col items-center gap-2">
                             <div className="w-9 h-9 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
-                             <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50 border-primary/20 hover:bg-primary/10" onClick={() => playAudio(ayah.audio)}>
+                             <Button size="icon" variant="default" className="h-9 w-9" onClick={() => playAudio(ayah.audio)}>
                                 {playingAudio === ayah.audio ? <PauseCircle className="h-5 w-5" /> : <PlayCircle className="h-5 w-5" />}
                             </Button>
                         </div>
@@ -451,16 +506,28 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                         </div>
                     )}
                     <div className="px-4 flex justify-start items-center gap-1 mt-2">
-                        <Button size="icon" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={() => handleCopy(ayah)}>
-                            <Copy className="h-4 w-4" />
-                            <span className="sr-only">Copy</span>
-                        </Button>
+                        <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button size="icon" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={() => handleCopy(ayah)}>
+                                    <Copy className="h-4 w-4" />
+                                    <span className="sr-only">Copy</span>
+                                </Button>
+                            </TooltipTrigger>
+                             <TooltipContent><p>Copy Ayah</p></TooltipContent>
+                        </Tooltip>
                         {navigator.share && (
-                        <Button size="icon" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={() => handleShare(ayah)}>
-                                <Share2 className="h-4 w-4" />
-                                <span className="sr-only">Share</span>
-                            </Button>
+                             <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button size="icon" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={() => handleShare(ayah)}>
+                                            <Share2 className="h-4 w-4" />
+                                            <span className="sr-only">Share</span>
+                                        </Button>
+                                </TooltipTrigger>
+                                <TooltipContent><p>Share Ayah</p></TooltipContent>
+                            </Tooltip>
                         )}
+                        </TooltipProvider>
                     </div>
                 </div>
               ))}
@@ -471,11 +538,17 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
       {/* Footer */}
       <footer className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">
+        <TooltipProvider>
         <div className="p-2 bg-background/80 backdrop-blur-sm border rounded-full shadow-lg flex items-center gap-2">
             <div className="flex items-center gap-2">
-                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setIsAutoScrolling(!isAutoScrolling)}>
-                    {isAutoScrolling ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                </Button>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setIsAutoScrolling(!isAutoScrolling)}>
+                            {isAutoScrolling ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top"><p>Auto Scroll</p></TooltipContent>
+                </Tooltip>
                 <div className="w-24">
                     <Slider
                     id="scroll-speed"
@@ -489,27 +562,53 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
             </div>
 
             <Popover>
-                <PopoverTrigger asChild>
-                    <Button size="icon" variant="ghost" className="h-8 w-8"><Settings className="h-4 w-4" /></Button>
-                </PopoverTrigger>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <PopoverTrigger asChild>
+                            <Button size="icon" variant="ghost" className="h-8 w-8"><Settings className="h-4 w-4" /></Button>
+                        </PopoverTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="top"><p>Settings</p></TooltipContent>
+                </Tooltip>
                 <PopoverContent align="center" side="top" className="w-80 mb-2 p-0">
                     <QuranSettings allTranslations={allTranslations} allReciters={allReciters} />
                 </PopoverContent>
             </Popover>
 
-            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomOut}><ZoomOut className="h-4 w-4" /></Button>
-            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomIn}><ZoomIn className="h-4 w-4" /></Button>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomOut}><ZoomOut className="h-4 w-4" /></Button>
+                </TooltipTrigger>
+                 <TooltipContent side="top"><p>Zoom Out</p></TooltipContent>
+            </Tooltip>
+             <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomIn}><ZoomIn className="h-4 w-4" /></Button>
+                </TooltipTrigger>
+                <TooltipContent side="top"><p>Zoom In</p></TooltipContent>
+            </Tooltip>
 
             <div className="flex items-center justify-center rounded-full bg-primary/10 px-1">
-                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handlePrevSurah} disabled={surah.number === 1}>
-                    <ChevronLeft className="h-5 w-5" />
-                </Button>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handlePrevSurah} disabled={surah.number === 1}>
+                            <ChevronLeft className="h-5 w-5" />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top"><p>Previous Surah</p></TooltipContent>
+                </Tooltip>
                 <Separator orientation='vertical' className='h-5'/>
-                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handleNextSurah} disabled={surah.number === 114}>
-                    <ChevronRight className="h-5 w-5" />
-                </Button>
+                 <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handleNextSurah} disabled={surah.number === 114}>
+                            <ChevronRight className="h-5 w-5" />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top"><p>Next Surah</p></TooltipContent>
+                </Tooltip>
             </div>
         </div>
+        </TooltipProvider>
       </footer>
     </div>
   );
