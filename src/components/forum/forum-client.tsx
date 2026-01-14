@@ -234,7 +234,7 @@ export default function ForumClient() {
                                                         </AvatarFallback>
                                                     </Avatar>
                                                     <div className="flex-grow">
-                                                        <div className='flex items-center gap-1'>
+                                                        <div className='flex items-center'>
                                                             <p className="font-semibold text-sm">{reply.authorName}</p>
                                                             {reply.isAdminReply && (
                                                                 <Badge variant="secondary" className="p-1 h-fit leading-none bg-transparent hover:bg-transparent">
