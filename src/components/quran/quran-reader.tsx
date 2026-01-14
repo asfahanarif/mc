@@ -261,9 +261,9 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       {/* Header */}
       <header className="p-4 border-b flex-shrink-0 flex items-center justify-between gap-4 sticky top-0 bg-background/80 backdrop-blur-sm z-10">
         <Button variant="outline" size="sm" onClick={onClose}><ArrowLeft className="mr-2 h-4 w-4" /> Back to Surah List</Button>
-        <div className="flex flex-col items-center text-center">
+        <div className="flex items-center gap-4">
             <h1 className="font-headline text-2xl text-primary">{surah.number}. {surah.englishName}</h1>
-            <p className="font-arabic text-3xl" style={{ fontFamily: "'Noto Naskh Arabic', serif" }}>{surah.name}</p>
+            <p className="font-arabic text-3xl" style={{ fontFamily: urduFont }}>{surah.name}</p>
         </div>
         <div className="w-[170px]"></div>
       </header>
