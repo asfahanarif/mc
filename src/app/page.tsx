@@ -214,19 +214,10 @@ export default function Home() {
           </div>
         </div>
       </section>
-      
-      <section className="w-full py-16 md:py-24 bg-secondary/50">
-        <div className="container px-4 md:px-6">
-          <div className="text-center space-y-3 mb-12">
-            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">What Our Sisters Say</h2>
-          </div>
-          <TestimonialsCarousel />
-        </div>
-      </section>
 
-       <section id="quran-cta" className="w-full py-16 md:py-24 bg-background">
+      <section id="quran-cta" className="w-full py-16 md:py-24 bg-secondary/50">
         <div className="container">
-          <div className="mx-auto max-w-4xl rounded-xl bg-primary/5 border border-primary/10 p-8 md:p-12 text-center shadow-lg">
+          <div className="mx-auto max-w-4xl rounded-xl bg-background/80 border border-primary/10 p-8 md:p-12 text-center shadow-lg">
             <div className="flex justify-center mb-6">
                 <div className="flex items-center justify-center h-20 w-20 rounded-full bg-primary/10">
                     <BookHeart className="h-10 w-10 text-primary" />
@@ -244,6 +235,15 @@ export default function Home() {
               </Button>
             </div>
           </div>
+        </div>
+      </section>
+      
+      <section className="w-full py-16 md:py-24 bg-background">
+        <div className="container px-4 md:px-6">
+          <div className="text-center space-y-3 mb-12">
+            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">What Our Sisters Say</h2>
+          </div>
+          <TestimonialsCarousel />
         </div>
       </section>
 
