@@ -159,6 +159,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   useEffect(() => {
     if (surah.number) {
         fetchSurahDetails(surah, selectedTranslations, selectedReciter);
+        window.scrollTo(0, 0);
     }
   }, [surah, selectedTranslations, selectedReciter, fetchSurahDetails]);
 
@@ -406,13 +407,3 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
-
-    
-
-    
-
-    
-
-    
-
-
