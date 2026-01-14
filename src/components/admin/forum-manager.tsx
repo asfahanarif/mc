@@ -25,6 +25,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { v4 as uuidv4 } from 'uuid';
 import { getAnswerSuggestion, type GetAnswerSuggestionInput } from '@/ai/flows/admin-assisted-q-and-a';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 type ForumPostWithId = ForumPost & { id: string };
 
@@ -230,6 +231,7 @@ export default function ForumManager() {
               </div>
             </CardHeader>
             <CardContent className='p-4'>
+                <TooltipProvider>
               {post.replies?.length > 0 ? (
                 <div className="space-y-3">
                   <h4 className="text-sm font-semibold text-muted-foreground mb-2">Replies ({post.replies.length})</h4>
@@ -245,9 +247,16 @@ export default function ForumManager() {
                              <div className='flex items-center'>
                                 <p className="font-semibold text-sm">{reply.authorName}</p>
                                 {reply.isAdminReply && (
-                                    <Badge variant="secondary" className="p-1 h-fit leading-none bg-transparent hover:bg-transparent">
-                                        <CheckCircle2 className="h-4 w-4 text-blue-500" />
-                                    </Badge>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <Badge variant="secondary" className="p-1 h-fit leading-none bg-transparent hover:bg-transparent">
+                                                <CheckCircle2 className="h-4 w-4 text-blue-500" />
+                                            </Badge>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Official</p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                 )}
                              </div>
                              <div className="flex items-center">
@@ -268,6 +277,7 @@ export default function ForumManager() {
                 <p className="text-sm text-muted-foreground text-center py-4">No replies yet.</p>
               )}
                {!post.isClosed && <AdminReplyForm postId={post.id} question={post.question} onReplied={() => refetch()} />}
+                </TooltipProvider>
             </CardContent>
           </Card>
         ))}
