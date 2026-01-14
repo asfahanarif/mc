@@ -61,6 +61,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     zoomOut,
     arabicFont,
     translationFont,
+    urduFont,
     selectedReciter,
   } = useQuranSettings();
 
@@ -82,7 +83,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
       const combinedAyahs = audioEdition.ayahs.map((ayah: Ayah, index: number) => {
         const ayahTranslations = translationEditions.map((transData: any) => ({
-          identifier: transData.edition.name,
+          identifier: transData.edition.identifier,
           text: transData.ayahs[index].text,
         }));
         return { ...ayah, text: arabicEdition.ayahs[index].text, translations: ayahTranslations };
@@ -163,16 +164,20 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     fontFamily: arabicFont,
   };
 
-  const translationStyle: CSSProperties = {
-    fontSize: `${translationFontSize * zoomLevel}rem`,
-    lineHeight,
-    fontFamily: translationFont,
+  const getTranslationStyle = (identifier: string): CSSProperties => {
+    const isUrdu = identifier.startsWith('ur.');
+    return {
+        fontSize: `${translationFontSize * zoomLevel}rem`,
+        lineHeight,
+        fontFamily: isUrdu ? urduFont : translationFont,
+        direction: isUrdu ? 'rtl' : 'ltr',
+    };
   };
 
   const translationNameMapping: { [key: string]: string } = {
-    "Sahih International": "Sahih International (English)",
-    "Hilali & Khan": "Hilali & Khan (English)",
-    "Junagarhi": "Junagarhi (Urdu)"
+    "en.sahih": "Sahih International (English)",
+    "en.hilali": "Hilali & Khan (English)",
+    "ur.junagarhi": "Junagarhi (Urdu)"
   };
 
   return (
@@ -218,10 +223,10 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                     <p className="text-2xl md:text-3xl text-right flex-grow leading-loose" dir="rtl" style={arabicStyle}>{ayah.text}</p>
                   </div>
                   {showTranslation && selectedTranslations.length > 0 && (
-                    <div className="pl-12 space-y-4" style={translationStyle}>
+                    <div className="pl-12 space-y-4">
                       {ayah.translations?.map((translation, index) => (
                         <div key={index}>
-                          <p className="text-foreground/80" style={{ direction: translation.identifier.toLowerCase().includes('urdu') ? 'rtl' : 'ltr', fontFamily: translation.identifier.toLowerCase().includes('urdu') ? "'Noto Nastaliq Urdu', serif" : translationFont }}>{translation.text}</p>
+                          <p className="text-foreground/80" style={getTranslationStyle(translation.identifier)}>{translation.text}</p>
                           <p className="text-xs text-muted-foreground mt-2">- {translationNameMapping[translation.identifier] || translation.identifier}</p>
                         </div>
                       ))}

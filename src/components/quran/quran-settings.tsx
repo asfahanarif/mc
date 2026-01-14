@@ -59,17 +59,17 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
                 <DropdownMenuLabel>Display Translations</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <ScrollArea className="h-auto">
-                  {filteredTranslations.map(trans => (
+                  {allowedTranslations.map(trans => (
                       <DropdownMenuCheckboxItem
-                          key={trans.identifier}
-                          checked={settings.selectedTranslations.includes(trans.identifier)}
+                          key={trans.id}
+                          checked={settings.selectedTranslations.includes(trans.id)}
                           onCheckedChange={(checked) => {
                               settings.setSelectedTranslations(prev => 
-                                  checked ? [...prev, trans.identifier] : prev.filter(t => t !== trans.identifier)
+                                  checked ? [...prev, trans.id] : prev.filter(t => t !== trans.id)
                               );
                           }}
                       >
-                          {allowedTranslations.find(at => at.id === trans.identifier)?.name || trans.englishName}
+                          {trans.name}
                       </DropdownMenuCheckboxItem>
                   ))}
                 </ScrollArea>
@@ -119,14 +119,25 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="translation-font">Translation Font</Label>
+            <Label htmlFor="translation-font">English Font</Label>
             <Select value={settings.translationFont} onValueChange={settings.setTranslationFont} disabled={!settings.showTranslation}>
               <SelectTrigger id="translation-font">
-                  <SelectValue placeholder="Select Translation Font" />
+                  <SelectValue placeholder="Select English Font" />
               </SelectTrigger>
               <SelectContent>
                   <SelectItem value="'Montserrat', sans-serif">Montserrat</SelectItem>
                   <SelectItem value="'Cormorant Garamond', serif">Cormorant Garamond</SelectItem>
+                  <SelectItem value="'Lora', serif">Lora</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+           <div className="grid gap-2">
+            <Label htmlFor="urdu-font">Urdu Font</Label>
+            <Select value={settings.urduFont} onValueChange={settings.setUrduFont} disabled={!settings.showTranslation}>
+              <SelectTrigger id="urdu-font">
+                  <SelectValue placeholder="Select Urdu Font" />
+              </SelectTrigger>
+              <SelectContent>
                   <SelectItem value="'Noto Nastaliq Urdu', serif">Noto Nastaliq Urdu</SelectItem>
               </SelectContent>
             </Select>
