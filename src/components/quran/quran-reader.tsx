@@ -272,7 +272,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
             )}
         </div>
         <div className="flex-1 text-right">
-            <p className="font-arabic text-3xl" style={{ fontFamily: "'Noto Nastaliq Urdu', serif" }}>{surah.name}</p>
+            <p className="font-arabic text-2xl" style={{ fontFamily: "'Noto Naskh Arabic', serif" }}>{surah.name}</p>
         </div>
       </header>
 
