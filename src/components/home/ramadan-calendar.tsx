@@ -159,10 +159,10 @@ export function RamadanCalendar() {
 
   const handleDownloadPdf = () => {
     const doc = new jsPDF();
-    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+    const primaryColor = '#6d574d'; // Approximating HSL(35, 33%, 41%)
 
     doc.setFont('Helvetica', 'bold');
-    doc.setTextColor('#333');
+    doc.setTextColor(primaryColor);
     doc.setFontSize(22);
     doc.text("Muslimahs Club", doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
 
@@ -192,13 +192,19 @@ export function RamadanCalendar() {
         body: tableRows,
         startY: 50,
         theme: 'grid',
-        headStyles: { fillColor: [41, 28, 25], textColor: 255 },
+        headStyles: { fillColor: primaryColor, textColor: 255 },
         styles: { halign: 'center' },
         columnStyles: {
             0: { halign: 'left' },
             1: { halign: 'left' },
         }
     });
+
+    const finalY = (doc as any).lastAutoTable.finalY;
+    doc.setFontSize(10);
+    doc.setTextColor('#888');
+    doc.text("Generated from MuslimahsClub.com", doc.internal.pageSize.getWidth() / 2, finalY + 10, { align: 'center' });
+
 
     doc.save(`Ramadan_2026_${locationName.replace(/, /g, '_')}.pdf`);
   };
@@ -298,5 +304,3 @@ export function RamadanCalendar() {
     </div>
   );
 }
-
-    
