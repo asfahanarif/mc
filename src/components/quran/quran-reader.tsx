@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, CSSProperties, useCallback } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Loader2, PlayCircle, BookText, Type, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Music4, ArrowLeft, PauseCircle, Play, Pause } from "lucide-react";
+import { Loader2, PlayCircle, BookText, Type, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Music4, ArrowLeft, PauseCircle, Play, Pause, Settings } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -174,7 +174,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     audioRef.current = new Audio();
     const audio = audioRef.current;
     
-    // Add the listener for when audio finishes playing
     audio.addEventListener('ended', handleAudioEnd);
     
     return () => {
@@ -210,8 +209,10 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
       return;
     }
 
+    // Stop any currently playing audio before starting a new one
     if (playingAudio) {
       audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
 
     audioRef.current.src = audioUrl;
@@ -320,24 +321,12 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
         <Button size="icon" variant="ghost" className="h-8 w-8" onClick={zoomIn}><ZoomIn className="h-4 w-4" /></Button>
         
         <Popover>
-          <PopoverTrigger asChild>
-            <Button size="icon" variant="ghost" className="h-8 w-8"><Music4 className="h-4 w-4" /></Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-64 p-2 mb-2"><QuranSettings allTranslations={allTranslations} allReciters={allReciters} settingType="audio" /></PopoverContent>
-        </Popover>
-
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button size="icon" variant="ghost" className="h-8 w-8"><BookText className="h-4 w-4" /></Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-64 p-2 mb-2"><QuranSettings allTranslations={allTranslations} allReciters={allReciters} settingType="translations" /></PopoverContent>
-        </Popover>
-
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button size="icon" variant="ghost" className="h-8 w-8"><Type className="h-4 w-4" /></Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 mb-2"><QuranSettings allTranslations={allTranslations} allReciters={allReciters} settingType="fonts" /></PopoverContent>
+            <PopoverTrigger asChild>
+                <Button size="icon" variant="ghost" className="h-8 w-8"><Settings className="h-4 w-4" /></Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 mb-2 p-0">
+                <QuranSettings allTranslations={allTranslations} allReciters={allReciters} />
+            </PopoverContent>
         </Popover>
         
         <div className="flex items-center gap-2">
