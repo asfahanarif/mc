@@ -181,28 +181,30 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
         
         <div className="grid gap-4">
           <h3 className="font-medium">Text Size</h3>
-          <div className="grid gap-2">
-            <Label htmlFor="arabic-size">Arabic</Label>
-            <Slider
-              id="arabic-size"
-              min={1}
-              max={3}
-              step={0.1}
-              value={[settings.arabicFontSize]}
-              onValueChange={(value) => settings.setArabicFontSize(value[0])}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="translation-size">Translation</Label>
-            <Slider
-              id="translation-size"
-              min={0.8}
-              max={2}
-              step={0.1}
-              value={[settings.translationFontSize]}
-              onValueChange={(value) => settings.setTranslationFontSize(value[0])}
-              disabled={!settings.showTranslation}
-            />
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="arabic-size">Arabic</Label>
+              <Slider
+                id="arabic-size"
+                min={1}
+                max={3}
+                step={0.1}
+                value={[settings.arabicFontSize]}
+                onValueChange={(value) => settings.setArabicFontSize(value[0])}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="translation-size">Translation</Label>
+              <Slider
+                id="translation-size"
+                min={0.8}
+                max={2}
+                step={0.1}
+                value={[settings.translationFontSize]}
+                onValueChange={(value) => settings.setTranslationFontSize(value[0])}
+                disabled={!settings.showTranslation}
+              />
+            </div>
           </div>
         </div>
         <Separator />
