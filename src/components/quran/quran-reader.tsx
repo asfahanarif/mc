@@ -264,31 +264,31 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   }, [playingAudio, surahDetails]);
 
   useEffect(() => {
-    // Create and manage a single audio element
+    // This effect manages the Audio object lifecycle and playback.
     const audio = new Audio();
     audioRef.current = audio;
-    audio.addEventListener('ended', handleAudioEnd);
+
+    const handleEnded = () => handleAudioEnd();
+    audio.addEventListener('ended', handleEnded);
+
+    if (playingAudio) {
+      audio.src = playingAudio;
+      audio.play().catch(e => {
+        // AbortError is common if user clicks away quickly. We can safely ignore it.
+        if (e.name !== 'AbortError') {
+          console.error("Audio play error:", e);
+        }
+      });
+    }
 
     return () => {
-      audio.removeEventListener('ended', handleAudioEnd);
+      // Cleanup function: remove listener and pause audio
+      audio.removeEventListener('ended', handleEnded);
       audio.pause();
       audioRef.current = null;
     };
-  }, [handleAudioEnd]);
+  }, [playingAudio, handleAudioEnd]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      if (playingAudio) {
-        if (audio.src !== playingAudio) {
-          audio.src = playingAudio;
-        }
-        audio.play().catch(e => console.error("Audio play error:", e));
-      } else {
-        audio.pause();
-      }
-    }
-  }, [playingAudio]);
 
   const playAudio = (audioUrl: string) => {
     if (playingAudio === audioUrl) {
@@ -613,3 +613,4 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
+
