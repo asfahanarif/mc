@@ -148,11 +148,22 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
   const startAutoScroll = useCallback(() => {
     if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
+  
+    // Map the linear slider value (1-100) to a non-linear interval (e.g., 300ms down to 10ms)
+    // This gives more control at slower speeds.
+    const minInterval = 10; // Fastest
+    const maxInterval = 300; // Slowest
+    const speedPercentage = (scrollSpeed - 1) / 99; // 0 to 1
+    // Use an exponential curve for a more natural feel
+    const interval = maxInterval - (maxInterval - minInterval) * Math.pow(speedPercentage, 2);
+
+    const scrollStep = (scrollContainerRef.current?.clientHeight || window.innerHeight) * 0.002;
+  
     scrollIntervalRef.current = setInterval(() => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollBy({ top: 1, behavior: 'smooth' });
-        }
-    }, 110 - scrollSpeed); // Adjust interval based on speed
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollBy({ top: scrollStep, behavior: 'smooth' });
+      }
+    }, interval);
   }, [scrollSpeed]);
 
   const stopAutoScroll = useCallback(() => {
@@ -264,28 +275,27 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   }, [playingAudio, surahDetails]);
 
   useEffect(() => {
-    // This effect manages the Audio object lifecycle and playback.
+    if (audioRef.current) {
+      audioRef.current.removeEventListener('ended', handleAudioEnd);
+      audioRef.current.pause();
+    }
+  
     const audio = new Audio();
     audioRef.current = audio;
-
-    const handleEnded = () => handleAudioEnd();
-    audio.addEventListener('ended', handleEnded);
-
+    audio.addEventListener('ended', handleAudioEnd);
+  
     if (playingAudio) {
       audio.src = playingAudio;
       audio.play().catch(e => {
-        // AbortError is common if user clicks away quickly. We can safely ignore it.
         if (e.name !== 'AbortError') {
           console.error("Audio play error:", e);
         }
       });
     }
-
+  
     return () => {
-      // Cleanup function: remove listener and pause audio
-      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('ended', handleAudioEnd);
       audio.pause();
-      audioRef.current = null;
     };
   }, [playingAudio, handleAudioEnd]);
 
@@ -614,3 +624,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   );
 }
 
+
+
+    
