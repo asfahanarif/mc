@@ -431,33 +431,37 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                         playingAudio === ayah.audio && "bg-primary/5"
                     )}
                 >
-                  <div className="flex items-start gap-4 px-4">
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="w-9 h-9 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
-                         <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50 border-primary/20 hover:bg-primary/10" onClick={() => playAudio(ayah.audio)}>
-                            {playingAudio === ayah.audio ? <PauseCircle className="h-5 w-5" /> : <PlayCircle className="h-5 w-5" />}
-                        </Button>
-                        <Button size="icon" variant="ghost" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => handleCopy(ayah)}>
-                            <Copy className="h-4 w-4" />
+                    <div className="flex items-start gap-4 px-4">
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="w-9 h-9 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">{ayah.numberInSurah}</div>
+                             <Button size="icon" variant="outline" className="h-9 w-9 bg-secondary/50 border-primary/20 hover:bg-primary/10" onClick={() => playAudio(ayah.audio)}>
+                                {playingAudio === ayah.audio ? <PauseCircle className="h-5 w-5" /> : <PlayCircle className="h-5 w-5" />}
+                            </Button>
+                        </div>
+                        <p className="text-2xl md:text-3xl text-right flex-grow leading-loose" dir="rtl" style={arabicStyle}>{ayah.text}</p>
+                    </div>
+                    {showTranslation && selectedTranslations.length > 0 && (
+                        <div className="pl-16 pr-4 space-y-4">
+                        {ayah.translations?.filter(t => selectedTranslations.includes(t.identifier)).map((translation, index) => (
+                            <div key={index}>
+                            <p className="text-foreground/80" style={getTranslationStyle(translation.identifier)}>{translation.text}</p>
+                            <p className="text-xs text-muted-foreground mt-2">- {translationNameMapping[translation.identifier] || translation.identifier}</p>
+                            </div>
+                        ))}
+                        </div>
+                    )}
+                    <div className="px-4 flex justify-end items-center gap-2 mt-2">
+                        <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={() => handleCopy(ayah)}>
+                            <Copy className="h-4 w-4 mr-2" />
+                            Copy
                         </Button>
                         {navigator.share && (
-                           <Button size="icon" variant="ghost" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => handleShare(ayah)}>
-                                <Share2 className="h-4 w-4" />
+                        <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={() => handleShare(ayah)}>
+                                <Share2 className="h-4 w-4 mr-2" />
+                                Share
                             </Button>
                         )}
                     </div>
-                    <p className="text-2xl md:text-3xl text-right flex-grow leading-loose" dir="rtl" style={arabicStyle}>{ayah.text}</p>
-                  </div>
-                  {showTranslation && selectedTranslations.length > 0 && (
-                    <div className="pl-16 pr-4 space-y-4">
-                      {ayah.translations?.filter(t => selectedTranslations.includes(t.identifier)).map((translation, index) => (
-                        <div key={index}>
-                          <p className="text-foreground/80" style={getTranslationStyle(translation.identifier)}>{translation.text}</p>
-                          <p className="text-xs text-muted-foreground mt-2">- {translationNameMapping[translation.identifier] || translation.identifier}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
