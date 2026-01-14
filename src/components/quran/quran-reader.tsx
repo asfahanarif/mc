@@ -229,7 +229,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                   </div>
                   {showTranslation && selectedTranslations.length > 0 && (
                     <div className="pl-12 space-y-4">
-                      {ayah.translations?.map((translation, index) => (
+                      {ayah.translations?.filter(t => selectedTranslations.includes(t.identifier)).map((translation, index) => (
                         <div key={index}>
                           <p className="text-foreground/80" style={getTranslationStyle(translation.identifier)}>{translation.text}</p>
                           <p className="text-xs text-muted-foreground mt-2">- {translationNameMapping[translation.identifier] || translation.identifier}</p>

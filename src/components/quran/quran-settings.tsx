@@ -35,8 +35,6 @@ const allowedTranslations = [
 export function QuranSettings({ allTranslations, allReciters, settingType }: { allTranslations: TranslationEdition[], allReciters: TranslationEdition[], settingType: 'translations' | 'fonts' | 'audio' }) {
   const settings = useQuranSettings();
 
-  const filteredTranslations = allTranslations.filter(t => allowedTranslations.some(at => at.id === t.identifier));
-
   if (settingType === 'translations') {
     return (
       <div className="grid gap-4">
@@ -193,7 +191,7 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
                 onValueChange={(value) => settings.setArabicFontSize(value[0])}
               />
             </div>
-            <div className="grid gap-2">
+            <div className="grid gap-2 pt-2">
               <Label htmlFor="translation-size">Translation</Label>
               <Slider
                 id="translation-size"
