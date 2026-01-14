@@ -30,6 +30,7 @@ type RamadanDay = {
     date: {
         readable: string;
         gregorian: {
+            date: string; // DD-MM-YYYY
             weekday: {
                 en: string;
             }
@@ -84,7 +85,8 @@ export function RamadanCalendar() {
         const ramadanEndDate = new Date(`${RAMADAN_YEAR}-03-19`);
         
         const filteredTimings = allTimings.filter(day => {
-            const dayDate = new Date(day.date.readable);
+            const [dayOfMonth, month, year] = day.date.gregorian.date.split('-');
+            const dayDate = new Date(Number(year), Number(month) - 1, Number(dayOfMonth));
             return dayDate >= ramadanStartDate && dayDate <= ramadanEndDate;
         });
 
@@ -150,7 +152,7 @@ export function RamadanCalendar() {
   }
 
   const formatTime = (time: string) => {
-      const [hours, minutes] = time.split(':');
+      const [hours, minutes] = time.split('(')[0].trim().split(':');
       const date = new Date();
       date.setHours(parseInt(hours));
       date.setMinutes(parseInt(minutes));
@@ -159,7 +161,7 @@ export function RamadanCalendar() {
 
   const handleDownloadPdf = async () => {
     const doc = new jsPDF();
-    const primaryColor = '#6d574d'; // Approximating HSL(35, 33%, 41%)
+    const primaryColor = '#6d574d'; 
     
     doc.setFont('Helvetica', 'bold');
     doc.setTextColor(primaryColor);
@@ -198,11 +200,21 @@ export function RamadanCalendar() {
             0: { halign: 'left' },
             1: { halign: 'left' },
         },
-        pageBreak: 'avoid',
+        pageBreak: 'auto',
     });
 
     doc.save(`Ramadan_2026_${locationName.replace(/, /g, '_')}.pdf`);
   };
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize to the start of the day
+
+  const visibleCalendar = calendar.filter(day => {
+    const [dayOfMonth, month, year] = day.date.gregorian.date.split('-');
+    const dayDate = new Date(Number(year), Number(month) - 1, Number(dayOfMonth));
+    dayDate.setHours(0,0,0,0);
+    return dayDate >= today;
+  });
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -276,7 +288,7 @@ export function RamadanCalendar() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {calendar.map((day, index) => (
+                            {visibleCalendar.map((day, index) => (
                                 <TableRow key={index}>
                                     <TableCell>{day.date.readable}</TableCell>
                                     <TableCell>{day.date.gregorian.weekday.en}</TableCell>
