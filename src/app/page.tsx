@@ -224,9 +224,32 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="forum-cta" className="w-full py-16 md:py-24 bg-background">
+       <section id="quran-cta" className="w-full py-16 md:py-24 bg-background">
         <div className="container">
           <div className="mx-auto max-w-4xl rounded-xl bg-primary/5 border border-primary/10 p-8 md:p-12 text-center shadow-lg">
+            <div className="flex justify-center mb-6">
+                <div className="flex items-center justify-center h-20 w-20 rounded-full bg-primary/10">
+                    <BookHeart className="h-10 w-10 text-primary" />
+                </div>
+            </div>
+            <h2 className="text-3xl font-headline font-bold text-primary">Explore the Holy Qur'an</h2>
+            <p className="mt-2 text-lg text-foreground/80 max-w-2xl mx-auto">
+              Dive into the words of Allah with our interactive Qur'an Explorer. Read, listen, and reflect upon the verses with multiple translations and reciters.
+            </p>
+            <div className="mt-8">
+              <Button asChild size="lg">
+                <Link href="/quran">
+                  Start Reading
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="forum-cta" className="w-full py-16 md:py-24 bg-secondary/50">
+        <div className="container">
+          <div className="mx-auto max-w-4xl rounded-xl bg-background/80 border border-primary/10 p-8 md:p-12 text-center shadow-lg">
             <div className="flex justify-center mb-6">
                 <div className="flex items-center justify-center h-20 w-20 rounded-full bg-primary/10">
                     <MessageSquare className="h-10 w-10 text-primary" />
