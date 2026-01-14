@@ -200,12 +200,6 @@ export function RamadanCalendar() {
         }
     });
 
-    doc.setFontSize(10);
-    doc.setTextColor(150);
-    const footerText = "Generated from muslimahsclub.com";
-    const pageWidth = doc.internal.pageSize.getWidth();
-    doc.text(footerText, pageWidth - 14, doc.internal.pageSize.getHeight() - 10, { align: 'right'});
-
     doc.save(`Ramadan_2026_${locationName.replace(/, /g, '_')}.pdf`);
   };
 
@@ -304,3 +298,5 @@ export function RamadanCalendar() {
     </div>
   );
 }
+
+    
