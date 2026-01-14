@@ -212,6 +212,7 @@ export function RamadanCalendar() {
                     <h3 className="text-xl font-semibold">Ramadan Timings for {locationName}</h3>
                 </CardHeader>
                 <CardContent>
+                  <ScrollArea className="h-72">
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -236,6 +237,7 @@ export function RamadanCalendar() {
                             ))}
                         </TableBody>
                     </Table>
+                  </ScrollArea>
                 </CardContent>
             </Card>
         ) : hasSearched ? (
