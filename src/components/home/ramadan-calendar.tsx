@@ -157,22 +157,41 @@ export function RamadanCalendar() {
       return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   }
 
-  const handleDownloadPdf = () => {
+  const getImageDataUri = async (url: string): Promise<string> => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const handleDownloadPdf = async () => {
     const doc = new jsPDF();
     const primaryColor = '#6d574d'; // Approximating HSL(35, 33%, 41%)
+    const logoUrl = 'https://i.ibb.co/5g03Zq7C/MC-logo.png';
+    
+    try {
+        const logoDataUri = await getImageDataUri(logoUrl);
+        doc.addImage(logoDataUri, 'PNG', doc.internal.pageSize.getWidth() / 2 - 15, 10, 30, 30);
+    } catch (error) {
+        console.error("Could not load logo for PDF:", error);
+    }
 
     doc.setFont('Helvetica', 'bold');
     doc.setTextColor(primaryColor);
     doc.setFontSize(22);
-    doc.text("Muslimahs Club", doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+    doc.text("MUSLIMAHS CLUB", doc.internal.pageSize.getWidth() / 2, 50, { align: 'center' });
 
     doc.setFontSize(16);
-    doc.text("Ramadan 2026 Calendar", doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+    doc.text("Ramadan 2026 Calendar", doc.internal.pageSize.getWidth() / 2, 60, { align: 'center' });
     
     doc.setFont('Helvetica', 'normal');
     doc.setFontSize(12);
     doc.setTextColor('#666');
-    doc.text(`Location: ${locationName}`, doc.internal.pageSize.getWidth() / 2, 38, { align: 'center' });
+    doc.text(`Location: ${locationName}`, doc.internal.pageSize.getWidth() / 2, 68, { align: 'center' });
 
     const tableColumn = ["Date", "Day", "Suhoor", "Iftar"];
     const tableRows: any[] = [];
@@ -190,7 +209,7 @@ export function RamadanCalendar() {
     (doc as any).autoTable({
         head: [tableColumn],
         body: tableRows,
-        startY: 50,
+        startY: 80,
         theme: 'grid',
         headStyles: { fillColor: primaryColor, textColor: 255 },
         styles: { halign: 'center' },
@@ -199,12 +218,6 @@ export function RamadanCalendar() {
             1: { halign: 'left' },
         }
     });
-
-    const finalY = (doc as any).lastAutoTable.finalY;
-    doc.setFontSize(10);
-    doc.setTextColor('#888');
-    doc.text("Generated from MuslimahsClub.com", doc.internal.pageSize.getWidth() / 2, finalY + 10, { align: 'center' });
-
 
     doc.save(`Ramadan_2026_${locationName.replace(/, /g, '_')}.pdf`);
   };
