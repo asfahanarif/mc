@@ -157,7 +157,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     // Use an exponential curve for a more natural feel
     const interval = maxInterval - (maxInterval - minInterval) * Math.pow(speedPercentage, 2);
 
-    const scrollStep = (scrollContainerRef.current?.clientHeight || window.innerHeight) * 0.002;
+    const scrollStep = (scrollContainerRef.current?.clientHeight || window.innerHeight) * 0.003;
   
     scrollIntervalRef.current = setInterval(() => {
       if (scrollContainerRef.current) {
@@ -294,8 +294,10 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     }
   
     return () => {
-      audio.removeEventListener('ended', handleAudioEnd);
-      audio.pause();
+      if (audioRef.current) {
+        audioRef.current.removeEventListener('ended', handleAudioEnd);
+        audioRef.current.pause();
+      }
     };
   }, [playingAudio, handleAudioEnd]);
 
@@ -625,5 +627,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 }
 
 
+
+    
 
     
