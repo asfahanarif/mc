@@ -2,12 +2,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Search, LocateFixed, Loader2, Download } from 'lucide-react';
+import { Search, LocateFixed, Loader2, Download, BookOpen, Footprints, BookMarked } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -21,6 +21,7 @@ import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { Separator } from '../ui/separator';
 
 type RamadanDay = {
     timings: {
@@ -75,7 +76,8 @@ export function RamadanCalendar() {
             }
             const data = await response.json();
             if (data.code === 200) {
-                allTimings = [...allTimings, ...data.data];
+                 const timingsData = Array.isArray(data.data) ? data.data : Object.values(data.data);
+                allTimings = [...allTimings, ...timingsData];
             } else {
                 throw new Error(data.data || 'Could not fetch Ramadan calendar.');
             }
@@ -200,7 +202,6 @@ export function RamadanCalendar() {
             0: { halign: 'left' },
             1: { halign: 'left' },
         },
-        pageBreak: 'auto',
     });
 
     doc.save(`Ramadan_2026_${locationName.replace(/, /g, '_')}.pdf`);
@@ -272,6 +273,7 @@ export function RamadanCalendar() {
                 <AlertDescription>{error}</AlertDescription>
             </Alert>
         ) : calendar.length > 0 ? (
+          <>
             <Card>
                 <CardHeader className="text-center">
                     <h3 className="text-xl font-semibold">Ramadan Timings for {locationName}</h3>
@@ -305,9 +307,45 @@ export function RamadanCalendar() {
                   </ScrollArea>
                 </CardContent>
             </Card>
+
+            <Card className="mt-8 shadow-sm overflow-hidden">
+                <CardHeader>
+                    <CardTitle className="font-headline text-primary text-center">Dua for Breaking the Fast (Iftar)</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6 text-center">
+                    <p className="font-arabic text-3xl/relaxed" dir="rtl">ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ</p>
+                    <Separator />
+                    <div className="space-y-4">
+                        <div className="flex items-start justify-center gap-3">
+                            <Footprints className="h-5 w-5 text-primary/70 flex-shrink-0 mt-0.5" />
+                            <div>
+                                <h4 className="font-semibold">Transliteration</h4>
+                                <p className="text-sm text-muted-foreground italic">Dhahaba al-zama' wa abtallat al-'urooq wa thabata al-ajr in sha Allah.</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start justify-center gap-3">
+                            <BookOpen className="h-5 w-5 text-primary/70 flex-shrink-0 mt-0.5" />
+                            <div>
+                            <h4 className="font-semibold">Translation</h4>
+                            <p className="text-sm text-muted-foreground">The thirst is gone, the veins are moistened, and the reward is confirmed, if Allah wills.</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start justify-center gap-3">
+                        <BookMarked className="h-5 w-5 text-primary/70 flex-shrink-0 mt-0.5" />
+                        <div>
+                            <h4 className="font-semibold">Reference</h4>
+                            <p className="text-xs text-muted-foreground">Sunan Abi Dawud 2357</p>
+                        </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+          </>
         ) : hasSearched ? (
             <p className="text-center text-muted-foreground">Could not find Ramadan timings for the selected location.</p>
         ) : null}
     </div>
   );
 }
+
+    
