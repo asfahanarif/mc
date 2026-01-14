@@ -181,7 +181,7 @@ export default function Home() {
             <div className="text-center space-y-3 mb-12">
                 <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-4xl text-primary">Qibla Direction</h2>
                 <p className="max-w-[700px] mx-auto text-foreground/80 md:text-lg">
-                  Find the direction of the Kaaba from your current location. For the compass to work, you'll need to grant permission to access your device's location and motion sensors. Hold your phone flat and align the North mark (N) with the top of your phone. The Kaaba icon will point towards the Qibla.
+                  Find the Qibla direction from your location. Grant permissions, hold your phone flat, and the Kaaba icon will point the way.
                 </p>
             </div>
             <QiblaDirection />
@@ -301,3 +301,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
