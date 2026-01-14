@@ -119,8 +119,21 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
           <ScrollArea className="h-72 p-4">
              <div className="grid gap-6">
                 <div className="grid gap-2">
-                    <Label htmlFor="arabic-font">Arabic Font</Label>
-                    <Select value={settings.arabicFont} onValueChange={settings.setArabicFont}>
+                    <Label htmlFor="arabic-script">Arabic Script</Label>
+                    <Select value={settings.arabicScript} onValueChange={settings.setArabicScript}>
+                    <SelectTrigger id="arabic-script">
+                        <SelectValue placeholder="Select Arabic Script" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="quran-uthmani">Uthmani</SelectItem>
+                        <SelectItem value="quran-indopak">Indo-Pak</SelectItem>
+                    </SelectContent>
+                    </Select>
+                </div>
+                 <Separator />
+                <div className="grid gap-2">
+                    <Label htmlFor="arabic-font">Arabic Font (Uthmani)</Label>
+                    <Select value={settings.arabicFont} onValueChange={settings.setArabicFont} disabled={settings.arabicScript !== 'quran-uthmani'}>
                     <SelectTrigger id="arabic-font">
                         <SelectValue placeholder="Select Arabic Font" />
                     </SelectTrigger>
