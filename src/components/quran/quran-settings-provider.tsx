@@ -46,15 +46,15 @@ const STORAGE_KEY = 'quran-settings';
 const defaultSettings = {
   arabicFontSize: 1.75, // rem
   translationFontSize: 1, // rem
-  lineHeight: 1.8,
-  selectedTranslations: ['en.sahih', 'en.hilali', 'ur.junagarhi'],
+  lineHeight: 1.6,
+  selectedTranslations: ['en.sahih', 'ur.junagarhi'],
   showTranslation: true,
   zoomLevel: 1,
-  arabicFont: "'Amiri', serif",
-  translationFont: "Montserrat, sans-serif",
+  arabicFont: "'Scheherazade New', serif",
+  translationFont: "'Roboto', sans-serif",
   urduFont: "'Noto Nastaliq Urdu', serif",
   selectedReciter: 'ar.alafasy',
-  isArabicBold: false,
+  isArabicBold: true,
   isTranslationBold: false,
   isUrduBold: false,
   scrollSpeed: 50,
