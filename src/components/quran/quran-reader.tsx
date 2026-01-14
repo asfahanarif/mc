@@ -78,11 +78,17 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     arabicFont,
     setArabicFont,
     translationFont,
+    setTranslationFont,
     urduFont,
+    setUrduFont,
     selectedReciter,
+    setSelectedReciter,
     isArabicBold,
+    setIsArabicBold,
     isTranslationBold,
+    setIsTranslationBold,
     isUrduBold,
+    setIsUrduBold,
     isAutoScrolling,
     setIsAutoScrolling,
     scrollSpeed,
@@ -266,7 +272,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
         <div className="flex-1">
           <Button variant="outline" size="icon" className="rounded-full" onClick={onClose}><ArrowLeft className="h-5 w-5" /></Button>
         </div>
-        <div className="flex items-center gap-2 justify-center">
+        <div className="flex-1 text-center lg:text-right flex items-center gap-2 justify-center lg:justify-end">
             <Dialog>
                 <DialogTrigger asChild>
                     <Button variant="ghost" size="icon" className='h-7 w-7 text-primary/50 hover:text-primary'>
@@ -393,6 +399,8 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     </div>
   );
 }
+
+    
 
     
 
