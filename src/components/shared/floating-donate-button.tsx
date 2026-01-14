@@ -11,8 +11,9 @@ export function FloatingDonateButton() {
     const pathname = usePathname();
 
     const isAdminPage = pathname.startsWith('/admin');
+    const isQuranPage = pathname.startsWith('/quran');
 
-    if (isAdminPage) {
+    if (isAdminPage || isQuranPage) {
         return null;
     }
 
