@@ -24,7 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown, Copy } from 'lucide-react';
 import Image from 'next/image';
 import { Skeleton } from '../ui/skeleton';
-import { getTeamMemberBioSuggestion } from '@/ai/flows/suggest-team-member-bio';
+import { getTeamMemberBioSuggestion } from '@/lib/actions/ai';
 
 type TeamMemberWithId = TeamMember & { id: string };
 
@@ -265,7 +265,5 @@ export default function TeamManager() {
     </Card>
   );
 }
-
-    
 
     

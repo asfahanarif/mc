@@ -24,7 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown, Copy } from 'lucide-react';
 import Image from 'next/image';
 import { Skeleton } from '../ui/skeleton';
-import { getTestimonialContentSuggestion } from '@/ai/flows/suggest-testimonial-content';
+import { getTestimonialContentSuggestion } from '@/lib/actions/ai';
 
 type TestimonialWithId = Testimonial & { id: string };
 
@@ -264,7 +264,5 @@ export default function TestimonialManager() {
     </Card>
   );
 }
-
-    
 
     

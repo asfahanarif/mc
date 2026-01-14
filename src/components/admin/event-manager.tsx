@@ -24,7 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Pencil, PlusCircle, Trash2, Loader2, ArrowUp, ArrowDown, Copy } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
-import { getEventDescriptionSuggestion } from '@/ai/flows/suggest-event-description';
+import { getEventDescriptionSuggestion } from '@/lib/actions/ai';
 import { Label } from '../ui/label';
 
 type EventWithId = Event & { id: string };
@@ -424,3 +424,5 @@ export default function EventManager() {
     </Card>
   );
 }
+
+    

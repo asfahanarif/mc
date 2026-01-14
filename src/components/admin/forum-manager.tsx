@@ -24,7 +24,8 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { v4 as uuidv4 } from 'uuid';
-import { getAnswerSuggestion, type GetAnswerSuggestionInput } from '@/ai/flows/admin-assisted-q-and-a';
+import { getAnswerSuggestion } from '@/lib/actions/ai';
+import type { GetAnswerSuggestionInput } from '@/ai/flows/admin-assisted-q-and-a';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 type ForumPostWithId = ForumPost & { id: string };
