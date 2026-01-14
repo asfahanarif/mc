@@ -205,6 +205,7 @@ export function QuranSettings({ allTranslations, allReciters, settingType }: { a
             />
           </div>
         </div>
+        <Separator />
          <div className="grid gap-4">
           <h3 className="font-medium">Line Height</h3>
           <div className="grid gap-2">
