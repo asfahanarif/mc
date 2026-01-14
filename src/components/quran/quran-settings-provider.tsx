@@ -47,7 +47,7 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
   const [selectedTranslations, setSelectedTranslations] = useState<string[]>(['en.sahih', 'en.hilali', 'ur.junagarhi']);
   const [showTranslation, setShowTranslation] = useState(true);
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [arabicFont, setArabicFont] = useState("'Noto Naskh Arabic', serif");
+  const [arabicFont, setArabicFont] = useState("'Amiri', serif");
   const [translationFont, setTranslationFont] = useState("Montserrat, sans-serif");
   const [urduFont, setUrduFont] = useState("'Noto Nastaliq Urdu', serif");
   const [selectedReciter, setSelectedReciter] = useState('ar.alafasy');
