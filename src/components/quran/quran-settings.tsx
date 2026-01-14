@@ -156,12 +156,8 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="'Al Qalam', sans-serif">Al Qalam</SelectItem>
-                        <SelectItem value="'Qalam', cursive">Qalam (Madinah)</SelectItem>
-                        <SelectItem value="'Noto Nastaliq Urdu', serif">Noto Nastaliq Urdu</SelectItem>
-                        <SelectItem value="'Amiri', serif">Amiri</SelectItem>
-                        <SelectItem value="'Scheherazade New', serif">Scheherazade New</SelectItem>
-                        <SelectItem value="'Lateef', serif">Lateef</SelectItem>
                         <SelectItem value="'Almarai', sans-serif">Almarai</SelectItem>
+                        <SelectItem value="'Nastaleeq', sans-serif">Nastaleeq (Custom)</SelectItem>
                     </SelectContent>
                     </Select>
                 </div>
