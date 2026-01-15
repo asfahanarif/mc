@@ -19,7 +19,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Progress } from "@/components/ui/progress";
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import indoPakScriptData from '@/lib/quran-indopak.json';
 
 type Surah = {
   number: number;
@@ -61,8 +60,6 @@ const allReciters: TranslationEdition[] = [
     { identifier: 'ur.khan', language: 'ur', name: 'Khan', englishName: 'Shamshad Ali Khan (Urdu)', format: 'audio', type: 'versebyverse', direction: 'ltr' }
 ];
 
-const indoPakDataTyped: Record<string, { text: string }> = indoPakScriptData;
-
 export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSurahChange }: QuranReaderProps) {
   const [surahDetails, setSurahDetails] = useState<SurahDetails | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
@@ -87,7 +84,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     setZoomLevel,
     arabicFont,
     setArabicFont,
-    indoPakFont,
     translationFont,
     setTranslationFont,
     urduFont,
@@ -106,7 +102,6 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     setScrollSpeed,
     isAutoplayEnabled,
     setIsAutoplayEnabled,
-    arabicScript,
   } = useQuranSettings();
 
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -185,19 +180,19 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   }, [isAutoScrolling, startAutoScroll, stopAutoScroll]);
 
 
- const fetchSurahDetails = useCallback(async (currentSurah: Surah, translations: string[], reciter: string, script: string) => {
+ const fetchSurahDetails = useCallback(async (currentSurah: Surah, translations: string[], reciter: string) => {
     setLoadingDetails(true);
     setSurahDetails(null);
     setError(null);
     try {
-        const editions = [reciter, ...translations, (script !== 'quran-indopak' ? script : 'quran-uthmani')].join(',');
+        const editions = [reciter, ...translations, 'quran-uthmani'].join(',');
         const response = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.number}/editions/${editions}`);
         if (!response.ok) throw new Error("Failed to fetch Surah details.");
         
         const multiEditionData = await response.json();
 
         const audioEdition = multiEditionData.data.find((d: any) => d.edition.format === 'audio');
-        const textEdition = multiEditionData.data.find((d: any) => d.edition.identifier === (script !== 'quran-indopak' ? script : 'quran-uthmani'));
+        const textEdition = multiEditionData.data.find((d: any) => d.edition.identifier === 'quran-uthmani');
         const translationEditions = multiEditionData.data.filter((d: any) => d.edition.type === 'translation');
 
         if (!audioEdition || !textEdition) {
@@ -209,18 +204,10 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
                 identifier: transData.edition.identifier,
                 text: transData.ayahs[index].text,
             }));
-            
-            let arabicText = textEdition.ayahs[index].text;
-            if (script === 'quran-indopak') {
-                const verseKey = `${currentSurah.number}:${ayah.numberInSurah}`;
-                if (indoPakDataTyped[verseKey]) {
-                    arabicText = indoPakDataTyped[verseKey].text;
-                }
-            }
 
             return {
                 ...ayah,
-                text: arabicText,
+                text: textEdition.ayahs[index].text,
                 translations: ayahTranslations,
             };
         });
@@ -237,10 +224,10 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
 
   useEffect(() => {
     if (surah.number) {
-        fetchSurahDetails(surah, selectedTranslations, selectedReciter, arabicScript);
+        fetchSurahDetails(surah, selectedTranslations, selectedReciter);
         window.scrollTo(0, 0);
     }
-  }, [surah, selectedTranslations, selectedReciter, arabicScript, fetchSurahDetails]);
+  }, [surah, selectedTranslations, selectedReciter, fetchSurahDetails]);
 
   const handleAudioEnd = useCallback(() => {
     if (!isAutoplayEnabled || !surahDetails || !playingAudio) {
@@ -320,7 +307,7 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
   const arabicStyle: CSSProperties = {
     fontSize: `${arabicFontSize * zoomLevel}rem`,
     lineHeight,
-    fontFamily: arabicScript === 'quran-indopak' ? indoPakFont : arabicFont,
+    fontFamily: arabicFont,
     fontWeight: isArabicBold ? 700 : 400,
   };
 

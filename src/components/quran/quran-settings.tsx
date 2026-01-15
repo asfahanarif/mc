@@ -120,53 +120,20 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
           <ScrollArea className="h-72">
              <div className="grid gap-6 p-4">
                 <div className="grid gap-2">
-                    <Label htmlFor="arabic-script">Arabic Script</Label>
-                    <Select value={settings.arabicScript} onValueChange={settings.setArabicScript}>
-                    <SelectTrigger id="arabic-script" className="py-6">
-                        <SelectValue placeholder="Select Arabic Script" />
+                    <Label htmlFor="arabic-font">Arabic Font</Label>
+                    <Select value={settings.arabicFont} onValueChange={settings.setArabicFont}>
+                    <SelectTrigger id="arabic-font" className="py-6">
+                        <SelectValue placeholder="Select Arabic Font" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="quran-uthmani">Uthmani</SelectItem>
-                        <SelectItem value="quran-indopak">Indo-Pak</SelectItem>
+                        <SelectItem value="'Noto Naskh Arabic', serif">Noto Naskh Arabic</SelectItem>
+                        <SelectItem value="'Amiri', serif">Amiri</SelectItem>
+                        <SelectItem value="'Scheherazade New', serif">Scheherazade New</SelectItem>
+                        <SelectItem value="'Al Qalam'">Al Qalam</SelectItem>
+                        <SelectItem value="'Nastaleeq'">Nastaleeq</SelectItem>
                     </SelectContent>
                     </Select>
                 </div>
-                 <Separator />
-                
-                {settings.arabicScript === 'quran-uthmani' && (
-                    <div className="grid gap-2">
-                        <Label htmlFor="arabic-font">Arabic Font (Uthmani)</Label>
-                        <Select value={settings.arabicFont} onValueChange={settings.setArabicFont}>
-                        <SelectTrigger id="arabic-font" className="py-6">
-                            <SelectValue placeholder="Select Arabic Font" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="'Noto Naskh Arabic', serif">Noto Naskh Arabic</SelectItem>
-                            <SelectItem value="'Amiri', serif">Amiri</SelectItem>
-                            <SelectItem value="'Lateef', serif">Lateef</SelectItem>
-                            <SelectItem value="'Tajawal', sans-serif">Tajawal</SelectItem>
-                            <SelectItem value="'Cairo', sans-serif">Cairo</SelectItem>
-                            <SelectItem value="'Almarai', sans-serif">Almarai</SelectItem>
-                            <SelectItem value="'Scheherazade New', serif">Scheherazade New</SelectItem>
-                        </SelectContent>
-                        </Select>
-                    </div>
-                )}
-
-                {settings.arabicScript === 'quran-indopak' && (
-                    <div className="grid gap-2">
-                        <Label htmlFor="indopak-font">Arabic Font (Indo-Pak)</Label>
-                        <Select value={settings.indoPakFont} onValueChange={settings.setIndoPakFont}>
-                        <SelectTrigger id="indopak-font" className="py-6">
-                            <SelectValue placeholder="Select Indo-Pak Font" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="'Al Qalam'">Al Qalam</SelectItem>
-                            <SelectItem value="'Nastaleeq'">Nastaleeq</SelectItem>
-                        </SelectContent>
-                        </Select>
-                    </div>
-                )}
                 <div className="grid gap-2">
                     <Label htmlFor="translation-font">English Font</Label>
                     <Select value={settings.translationFont} onValueChange={settings.setTranslationFont} disabled={!settings.showTranslation}>
