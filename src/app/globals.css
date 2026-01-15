@@ -61,7 +61,7 @@
 @layer base {
   @font-face {
     font-family: 'Al Qalam';
-    src: url('/fonts/Alqalam.ttf') format('truetype');
+    src: url('https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/alqalam/AlQalam-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -69,7 +69,7 @@
 
   @font-face {
     font-family: 'Nastaleeq';
-    src: url('/fonts/Nastaleeq.woff2') format('woff2');
+    src: url('https://static.tarteel.ai/qul/fonts/nastaleeq/Hanafi/normal-v4.2.2/with-waqf-lazmi/font.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
