@@ -18,6 +18,7 @@ interface QuranSettings {
   zoomLevel: number;
   zoomIn: () => void;
   zoomOut: () => void;
+  setZoomLevel: (level: number) => void;
   arabicFont: string;
   setArabicFont: (font: string) => void;
   translationFont: string;
@@ -57,7 +58,7 @@ const defaultSettings = {
   showTranslation: true,
   zoomLevel: 1,
   arabicFont: "'Scheherazade New', serif",
-  indoPakFont: "'Al Qalam', sans-serif",
+  indoPakFont: "'Scheherazade New', serif",
   translationFont: "'Roboto', sans-serif",
   urduFont: "'Noto Nastaliq Urdu', serif",
   selectedReciter: 'ar.alafasy',
@@ -66,7 +67,7 @@ const defaultSettings = {
   isUrduBold: false,
   scrollSpeed: 50,
   isAutoplayEnabled: true,
-  arabicScript: 'quran-indopak',
+  arabicScript: 'quran-uthmani',
 };
 
 export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => {
@@ -188,6 +189,7 @@ export const QuranSettingsProvider = ({ children }: { children: ReactNode }) => 
     zoomLevel,
     zoomIn,
     zoomOut,
+    setZoomLevel,
     arabicFont,
     setArabicFont,
     indoPakFont,
