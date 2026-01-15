@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Progress } from "@/components/ui/progress";
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import indoPakScriptData from '@/lib/quran-indopak.json';
 
 type Surah = {
   number: number;
@@ -59,6 +60,8 @@ const allReciters: TranslationEdition[] = [
     { identifier: 'en.walk', language: 'en', name: 'Walk', englishName: 'Ibrahim Walk (English)', format: 'audio', type: 'versebyverse', direction: 'ltr' },
     { identifier: 'ur.khan', language: 'ur', name: 'Khan', englishName: 'Shamshad Ali Khan (Urdu)', format: 'audio', type: 'versebyverse', direction: 'ltr' }
 ];
+
+const indoPakDataTyped: Record<string, { text: string }> = indoPakScriptData;
 
 
 export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSurahChange }: QuranReaderProps) {
@@ -188,46 +191,37 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     setSurahDetails(null);
     setError(null);
     try {
-        let arabicTextAyahs: any[] = [];
-        // Use Quran.com for IndoPak script, as alquran.cloud's is incorrect
-        if (script === 'quran-indopak') {
-            const indoPakResponse = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani_indopak?chapter_number=${currentSurah.number}`);
-            if (!indoPakResponse.ok) throw new Error("Failed to fetch Indo-Pak script text.");
-            const indoPakData = await indoPakResponse.json();
-            arabicTextAyahs = indoPakData.verses.map((v: any) => ({ text: v.text_indopak, number: v.id }));
-        }
-
-        // Fetch audio and translations from alquran.cloud
         const editions = [reciter, ...translations, (script !== 'quran-indopak' ? script : 'quran-uthmani')].join(',');
         const response = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.number}/editions/${editions}`);
-        if (!response.ok) throw new Error("Failed to fetch Surah details (audio/translations).");
+        if (!response.ok) throw new Error("Failed to fetch Surah details.");
         
         const multiEditionData = await response.json();
 
         const audioEdition = multiEditionData.data.find((d: any) => d.edition.format === 'audio');
-        const uthmaniEdition = multiEditionData.data.find((d: any) => d.edition.identifier === 'quran-uthmani');
+        const textEdition = multiEditionData.data.find((d: any) => d.edition.identifier === (script !== 'quran-indopak' ? script : 'quran-uthmani'));
         const translationEditions = multiEditionData.data.filter((d: any) => d.edition.type === 'translation');
 
-        if (!audioEdition || !uthmaniEdition) {
+        if (!audioEdition || !textEdition) {
              throw new Error("Could not find required audio or text editions.");
         }
         
-        // If we didn't fetch IndoPak separately, use the one from this API call.
-        if (script !== 'quran-indopak') {
-             const arabicEdition = multiEditionData.data.find((d: any) => d.edition.identifier === script);
-             if (!arabicEdition) throw new Error("Could not find the required Arabic text edition.");
-             arabicTextAyahs = arabicEdition.ayahs;
-        }
-
-        // Combine the data
         const combinedAyahs = audioEdition.ayahs.map((ayah: Ayah, index: number) => {
             const ayahTranslations = translationEditions.map((transData: any) => ({
                 identifier: transData.edition.identifier,
                 text: transData.ayahs[index].text,
             }));
+            
+            let arabicText = textEdition.ayahs[index].text;
+            if (script === 'quran-indopak') {
+                const verseKey = `${currentSurah.number}:${ayah.numberInSurah}`;
+                if (indoPakDataTyped[verseKey]) {
+                    arabicText = indoPakDataTyped[verseKey].text;
+                }
+            }
+
             return {
                 ...ayah,
-                text: arabicTextAyahs[index]?.text || uthmaniEdition.ayahs[index].text, // Fallback to Uthmani if something goes wrong
+                text: arabicText,
                 translations: ayahTranslations,
             };
         });
@@ -631,3 +625,4 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     
 
     
+
