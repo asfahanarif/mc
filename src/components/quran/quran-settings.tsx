@@ -161,15 +161,8 @@ export function QuranSettings({ allTranslations, allReciters }: { allTranslation
                             <SelectValue placeholder="Select Indo-Pak Font" />
                         </SelectTrigger>
                         <SelectContent>
-<<<<<<< HEAD
                             <SelectItem value="'Al Qalam'">Al Qalam</SelectItem>
                             <SelectItem value="'Nastaleeq'">Nastaleeq</SelectItem>
-                             <SelectItem value="'Amiri', serif">Amiri</SelectItem>
-                            <SelectItem value="'Lateef', serif">Lateef</SelectItem>
-=======
-                            <SelectItem value="'Al Qalam', sans-serif">Al Qalam</SelectItem>
-                            <SelectItem value="'Nastaleeq', sans-serif">Nastaleeq</SelectItem>
->>>>>>> 1d29b4e (internal server error)
                         </SelectContent>
                         </Select>
                     </div>
