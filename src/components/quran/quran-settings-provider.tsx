@@ -53,7 +53,7 @@ const defaultSettings = {
   selectedTranslations: ['en.sahih', 'ur.junagarhi'],
   showTranslation: true,
   zoomLevel: 1,
-  arabicFont: "'Scheherazade New', serif",
+  arabicFont: "'Al Qalam'",
   translationFont: "'Roboto', sans-serif",
   urduFont: "'Noto Nastaliq Urdu', serif",
   selectedReciter: 'ar.alafasy',
