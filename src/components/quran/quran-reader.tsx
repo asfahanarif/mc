@@ -19,7 +19,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Progress } from "@/components/ui/progress";
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import indoPakScript from '@/lib/quran-indopak.json';
+import indoPakScriptData from '@/lib/quran-indopak.json';
 
 type Surah = {
   number: number;
@@ -61,12 +61,7 @@ const allReciters: TranslationEdition[] = [
     { identifier: 'ur.khan', language: 'ur', name: 'Khan', englishName: 'Shamshad Ali Khan (Urdu)', format: 'audio', type: 'versebyverse', direction: 'ltr' }
 ];
 
-const getIndoPakVerse = (surah: number, ayah: number) => {
-    const verseKey = `${surah}:${ayah}`;
-    const verseData = indoPakScript.verses.find(v => v[verseKey]);
-    return verseData ? verseData[verseKey].text : '';
-}
-
+const indoPakDataTyped: Record<string, { text: string }> = indoPakScriptData;
 
 export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSurahChange }: QuranReaderProps) {
   const [surahDetails, setSurahDetails] = useState<SurahDetails | null>(null);
@@ -197,31 +192,32 @@ export function QuranReader({ surah, allSurahs, allTranslations, onClose, onSura
     try {
         const editions = [reciter, ...translations, (script !== 'quran-indopak' ? script : 'quran-uthmani')].join(',');
         const response = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.number}/editions/${editions}`);
-        if (!response.ok) throw new Error("Failed to fetch Surah details (audio/translations).");
+        if (!response.ok) throw new Error("Failed to fetch Surah details.");
         
         const multiEditionData = await response.json();
 
         const audioEdition = multiEditionData.data.find((d: any) => d.edition.format === 'audio');
+        const textEdition = multiEditionData.data.find((d: any) => d.edition.identifier === (script !== 'quran-indopak' ? script : 'quran-uthmani'));
         const translationEditions = multiEditionData.data.filter((d: any) => d.edition.type === 'translation');
-        const arabicEdition = multiEditionData.data.find((d: any) => d.edition.identifier === (script === 'quran-indopak' ? 'quran-uthmani' : script));
 
-        if (!audioEdition || !arabicEdition) {
+        if (!audioEdition || !textEdition) {
              throw new Error("Could not find required audio or text editions.");
         }
-
-        // Combine the data
+        
         const combinedAyahs = audioEdition.ayahs.map((ayah: Ayah, index: number) => {
             const ayahTranslations = translationEditions.map((transData: any) => ({
                 identifier: transData.edition.identifier,
                 text: transData.ayahs[index].text,
             }));
-
-            let arabicText = arabicEdition.ayahs[index].text;
-            if (script === 'quran-indopak') {
-                const indoPakText = getIndoPakVerse(currentSurah.number, ayah.numberInSurah);
-                if (indoPakText) arabicText = indoPakText;
-            }
             
+            let arabicText = textEdition.ayahs[index].text;
+            if (script === 'quran-indopak') {
+                const verseKey = `${currentSurah.number}:${ayah.numberInSurah}`;
+                if (indoPakDataTyped[verseKey]) {
+                    arabicText = indoPakDataTyped[verseKey].text;
+                }
+            }
+
             return {
                 ...ayah,
                 text: arabicText,
